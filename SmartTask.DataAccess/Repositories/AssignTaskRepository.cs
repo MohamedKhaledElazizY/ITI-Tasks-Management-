@@ -148,7 +148,7 @@ namespace SmartTask.DataAccess.Repositories
                     Comments = ""
                 });
             }
-            //await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

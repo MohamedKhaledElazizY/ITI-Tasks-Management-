@@ -160,5 +160,21 @@ namespace SmartTask.DataAccess.Repositories
 
             return await _context.Tasks.Where(t => t.ProjectId == projectId).Include(t => t.Project).ToListAsync();
         }
+
+        public Task UpdateTaskDates(int id, DateOnly? start, DateOnly? End)
+        {
+            var task = _context.Tasks.Find(id);
+            if (task != null)
+            {
+                task.StartDate =Convert.ToDateTime(start);
+                task.EndDate = Convert.ToDateTime(End);
+                _context.Entry(task).State = EntityState.Modified;
+                return _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Task with ID {id} not found.");
+            }
+        }
     }
 }
