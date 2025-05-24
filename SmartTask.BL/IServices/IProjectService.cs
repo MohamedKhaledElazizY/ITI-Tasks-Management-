@@ -6,6 +6,8 @@ using Task = System.Threading.Tasks.Task;
 using SmartTask.Core.Models;
 using SmartTask.Bl.Helpers;
 
+
+
 namespace SmartTask.BL.IServices
 {
     public interface IProjectService
@@ -15,7 +17,7 @@ namespace SmartTask.BL.IServices
 
         Task<Project> AddProjectAsync(Project project);
         Task<Project> GetProjectByIdAsync(int id);
-
+        Task<IEnumerable<Project>> GetAllProjectsAsync();
         Task UpdateProjectAsync(Project project);
         Task DeleteProjectAsync(int id);
 

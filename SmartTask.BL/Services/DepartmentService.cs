@@ -38,7 +38,7 @@ namespace SmartTask.BL.Services
                 query = query.Where(d => d.Name.Contains(searchString));
             }
 
-            return PaginatedList<Department>.Create(query, page, pageSize);
+            return await PaginatedList<Department>.CreateAsync(query, page, pageSize);
         }
 
         public async Task<Department> AddDepartmentAsync(Department department)
@@ -50,6 +50,7 @@ namespace SmartTask.BL.Services
         {
        
             var existingDepartment = await _departmentRepository.GetQueryable()
+                .Include(d => d.BranchDepartments)
                 .Include(d => d.Users)
                 .FirstOrDefaultAsync(d => d.Id == department.Id);
 
@@ -90,6 +91,11 @@ namespace SmartTask.BL.Services
 
         public async Task DeleteDepartmentAsync(int id)
         {
+            var department = await _departmentRepository.GetByIdAsync(id);
+
+            if (department == null)
+                throw new InvalidOperationException("Department not found");
+
             await _departmentRepository.DeleteAsync(id);
         }
 

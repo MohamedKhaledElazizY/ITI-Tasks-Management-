@@ -14,6 +14,7 @@ using SmartTask.DataAccess.ExternalServices;
 using SmartTask.DataAccess.Repositories;
 using SmartTask.Web.CustomFilter;
 using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using task = System.Threading.Tasks.Task;
 
@@ -85,6 +86,11 @@ namespace SmartTask.Web
             // extendProjectDeadline Based ON Task Service
             builder.Services.AddScoped<IProjectDeadlineExtendService, ProjectDeadlineExtendService>();
 
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
             var app = builder.Build();
 
             #region Session and Migration
@@ -151,6 +157,7 @@ namespace SmartTask.Web
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<ITaskService, TaskService>();
+            //services.AddScoped<ITaskService, TaskService>();
 
             // Repositories
             services.AddScoped<IAISuggestionRepository, AISuggestionRepository>();
@@ -172,6 +179,11 @@ namespace SmartTask.Web
             services.AddScoped<IAuditRepository, AuditRepository>();
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IUserColumnPreferenceRepository, UserColumnPreferenceRepository>();
+            services.AddScoped<IUserColumnPreferenceService, UserColumnPreferenceService>();
+           
+
+
             services.AddScoped<INotificationRepository, NotificationRepository>();
         }
     }

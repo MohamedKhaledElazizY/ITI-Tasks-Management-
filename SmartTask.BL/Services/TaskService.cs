@@ -2,7 +2,9 @@
 using SmartTask.BL.IServices;
 using SmartTask.Core.IRepositories;
 using SmartTask.Core.Models;
+using SmartTask.Core.Models.Enums;
 using SmartTask.Core.Models.ServiceDto;
+
 
 namespace SmartTask.BL.Services
 {
@@ -150,7 +152,7 @@ namespace SmartTask.BL.Services
 
             return taskViewDeps;
         }
-         
+
         public async System.Threading.Tasks.Task SaveSelectedTasks(int SelectedTaskId, List<int> selectedTaskIds,List<DependencyType> dependencyTypes)
         {
             var existingDependencies = await _taskDependencyRepository.GetBySuccessorIdAsync(SelectedTaskId);
@@ -168,7 +170,7 @@ namespace SmartTask.BL.Services
                         DependencyType = DependancyType // Assuming a default dependency type
                     });
                 }
-                else if (TaskDependency?.DependencyType != DependancyType && TaskDependency != null)
+                else if (TaskDependency?.DependencyType != DependancyType)
                 {
                     TaskDependency.DependencyType = DependancyType;
                     await _taskDependencyRepository.UpdateAsync(TaskDependency);

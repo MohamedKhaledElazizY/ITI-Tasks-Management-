@@ -24,15 +24,15 @@ namespace SmartTask.Web.Controllers
         private readonly ITaskRepository _taskRepository;
         private readonly IAssignTaskRepository _assignTaskRepository;
 
-        public OutLookController(IConfiguration config, IEventRepository eventRepository
-            , IProjectRepository project, ITaskRepository taskRepository
-            , IAssignTaskRepository assignTaskRepository)
+        public OutLookController(IConfiguration config,IEventRepository eventRepository
+            ,IProjectRepository project,ITaskRepository taskRepository
+            ,IAssignTaskRepository assignTaskRepository)
         {
             _config = config;
             this.eventRepository = eventRepository;
             projectRepository = project;
-            _taskRepository = taskRepository;
-            _assignTaskRepository = assignTaskRepository;
+            _taskRepository=taskRepository;
+            _assignTaskRepository=assignTaskRepository;
         }
         //[Authorize]
         public IActionResult Index()
@@ -70,11 +70,11 @@ namespace SmartTask.Web.Controllers
 
 
         //[Authorize]
-        public async Task<IActionResult> Cal(int size = 100, int page = 0)
+        public async Task<IActionResult> Cal(int size=100,int page=0)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var allEvents = new List<Microsoft.Graph.Models.Event>();
-            var s = (await eventRepository.GetByImportedByIdAsync(userId)).Skip(page * size).Take(size).ToList();
+            var s = (await eventRepository.GetByImportedByIdAsync(userId)).Skip(page*size).Take(size).ToList();
             return View(s);
         }
         //[Authorize]
@@ -141,7 +141,7 @@ namespace SmartTask.Web.Controllers
 
                     Subject = a.Subject,
 
-                    Attendees = Regex.Replace(a.Body.Content, "<.*?>", string.Empty) + "\n " + string.Join(", ", a.Attendees.Select(att => att.EmailAddress?.Address)),
+                    Attendees = Regex.Replace(a.Body.Content, "<.*?>", string.Empty)+"\n "+ string.Join(", ", a.Attendees.Select(att => att.EmailAddress?.Address)),
 
                     ImportedById = userId
 
@@ -175,7 +175,7 @@ namespace SmartTask.Web.Controllers
             var model = new AddEventAsTaskViewModel
             {
                 EventId = eventId,
-                Start = DateTime.Now,
+                Start=DateTime.Now,
                 End = DateTime.Now,
                 Projects = projects.Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name }).ToList()
             };
@@ -251,7 +251,7 @@ namespace SmartTask.Web.Controllers
             ev.TaskId = task.Id;
             await eventRepository.UpdateAsync(ev);
             var projectname = (await projectRepository.GetByIdAsync(model.ProjectId.Value)).Name;
-            Console.WriteLine(model.EventId + " " + model.ProjectId + " " + model.UserIds.ToString() + " " + model.Start);
+            Console.WriteLine(model.EventId+" "+model.ProjectId+" "+model.UserIds.ToString()+" "+model.Start);
             return Ok(new { projectName = projectname, eventId = model.EventId });
         }
 
