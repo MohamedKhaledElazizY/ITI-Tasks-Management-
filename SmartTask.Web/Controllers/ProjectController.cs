@@ -11,6 +11,7 @@ using SmartTask.Web.ViewModels.ProjectVM;
 using SmartTask.DataAccess.Repositories;
 using SmartTask.Core.IRepositories;
 using ModelTask = SmartTask.Core.Models.Task;
+using System.Threading.Tasks;
 
 namespace SmartTask.Web.Controllers
 {
@@ -365,8 +366,8 @@ namespace SmartTask.Web.Controllers
                     ? (int)(task.EndDate.Value - task.StartDate.Value).TotalDays
                     : 0,
                 Progress = 0.0, // Default value, adjust as needed
-                Assignee = task.AssignedTo?.FullName ?? "Unassigned",
-                Status = task.Status,
+                //Assignee = task.AssignedTo?.FullName ?? "Unassigned",
+                Status = task.Status.ToString(), // Convert the Status enum to a string
                 Parent = task.ParentTaskId
             }).ToList();
 
@@ -417,8 +418,8 @@ namespace SmartTask.Web.Controllers
                         StartDate = startDate,
                         EndDate = startDate.AddDays(duration),
                         ParentTaskId = parent,
-                        AssignedToId = assignee,
-                        Status = status,
+                        //AssignedToId = assignee,
+                        //Status = status,
                         ProjectId = 1
                     };
 
@@ -434,8 +435,8 @@ namespace SmartTask.Web.Controllers
                         existing.StartDate = startDate;
                         existing.EndDate = startDate.AddDays(duration);
                         existing.ParentTaskId = parent;
-                        existing.AssignedToId = assignee;
-                        existing.Status = status;
+                        //existing.AssignedToId = assignee;
+                        //existing.Status = status;
                         await _taskRepository.UpdateAsync(existing);
                     }
                     return Json(new { action = "updated" });
