@@ -125,7 +125,7 @@ namespace SmartTask.BL.Services
             var allTasks = await _taskRepository.GetByProjectIdAsync(task.ProjectId);
 
             var taskdepn = (await _taskDependencyRepository.GetAllAsync()).ToList()
-                .Where(x => x.Predecessor.ProjectId == task.ProjectId).ToList();
+                .Where(x => x.Predecessor.ProjectId == task.ProjectId).ToList();//brings all pre that are in the same proj but doesnt have to be pre of task
 
             taskdepn.ForEach(t =>
                 {
@@ -140,31 +140,42 @@ namespace SmartTask.BL.Services
 
             var notReachable = allTasks.ToList().ExceptBy(visited, e => e.Id);
             var existingDeps = (await _taskDependencyRepository.GetBySuccessorIdAsync(id)).Select(e => e.PredecessorId).ToList();
+            var DependancyType = await _taskDependencyRepository.GetBySuccessorIdAsync(id);
 
             var taskViewDeps = notReachable.Select(n => new TaskDenpendDto
             {
                 TaskId = n.Id,
                 Name = n.Title,
-                IsSelected = existingDeps.Contains(n.Id)
+                IsSelected = existingDeps.Contains(n.Id),
+                DependencyType = DependancyType.Where(td=>td.PredecessorId == n.Id).Select(td=>td.DependencyType).FirstOrDefault()
             }).ToList();
 
             return taskViewDeps;
         }
-
-        public async System.Threading.Tasks.Task SaveSelectedTasks(int SelectedTaskId, List<int> selectedTaskIds)
+         
+        public async System.Threading.Tasks.Task SaveSelectedTasks(int SelectedTaskId, List<int> selectedTaskIds,List<DependencyType> dependencyTypes)
         {
             var existingDependencies = await _taskDependencyRepository.GetBySuccessorIdAsync(SelectedTaskId);
-
+            var ZipList = selectedTaskIds.Zip(dependencyTypes, (id, type) => new { id, type }).ToList();
             foreach (var selectedId in selectedTaskIds)
             {
+                var DependancyType = ZipList.Where(t => t.id == selectedId).Select(t => t.type).FirstOrDefault();
+                var TaskDependency = existingDependencies.FirstOrDefault(td => td.PredecessorId == selectedId);
                 if (!existingDependencies.Any(td => td.PredecessorId == selectedId))
                 {
                     await _taskDependencyRepository.AddAsync(new TaskDependency
                     {
                         SuccessorId = SelectedTaskId,
-                        PredecessorId = selectedId
+                        PredecessorId = selectedId,
+                        DependencyType = DependancyType // Assuming a default dependency type
                     });
                 }
+                else if (TaskDependency?.DependencyType != DependancyType)
+                {
+                    TaskDependency.DependencyType = DependancyType;
+                    await _taskDependencyRepository.UpdateAsync(TaskDependency);
+                }
+
             }
 
             foreach (var dependency in existingDependencies)
