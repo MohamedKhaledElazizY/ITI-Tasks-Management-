@@ -8,26 +8,33 @@ using SmartTask.BL.IServices;
 using SmartTask.BL.Services;
 using SmartTask.Core.Models;
 using SmartTask.Web.ViewModels.ProjectVM;
+using SmartTask.DataAccess.Repositories;
+using SmartTask.Core.IRepositories;
+using ModelTask = SmartTask.Core.Models.Task;
 
 namespace SmartTask.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
+   
     public class ProjectController : Controller
     {
         private readonly IProjectService _projectService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDepartmentService _departmentService;
         private readonly IBranchService _branchService;
+        private readonly ITaskRepository _taskRepository;
 
         public ProjectController(
             IProjectService projectService,
              IDepartmentService departmentService,
                IBranchService branchService,
+               ITaskRepository taskRepository,
             UserManager<ApplicationUser> userManager)
         {
             _projectService = projectService;
             _departmentService = departmentService;
             _branchService = branchService;
+            _taskRepository = taskRepository;
             _userManager = userManager;
         }
 
@@ -80,6 +87,15 @@ namespace SmartTask.Web.Controllers
           
         }
 
+        [HttpGet]
+        public async Task<ActionResult> ProjectTasksGantt(int projectId)
+        
+        {
+            ViewBag.Id = projectId;
+            var project = await _projectService.GetProjectByIdAsync(projectId);
+            ViewBag.ProjectName = project.Name;
+            return View();
+        }
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -272,5 +288,137 @@ namespace SmartTask.Web.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+        #region Gantt Chart Data
+        public class TaskModel
+        {
+            public int Id { get; set; }
+            public string Text { get; set; }
+            public DateTime StartDate { get; set; }
+            public int Duration { get; set; }
+            public double Progress { get; set; }
+            public string Assignee { get; set; }
+            public string Status { get; set; }
+            public int? Parent { get; set; }
+        }
+
+        [HttpGet]
+        public IActionResult GetTasks(int id = 1)
+        {
+            var tasks = _taskRepository.GetByProjectIdAsync(id).Result.Select(task => new TaskModel
+            {
+                Id = task.Id,
+                Text = task.Title,
+                StartDate = task.StartDate ?? DateTime.MinValue,
+                Duration = task.EndDate.HasValue && task.StartDate.HasValue
+                    ? (int)(task.EndDate.Value - task.StartDate.Value).TotalDays
+                    : 0,
+                Progress = 0.0, // Default value, adjust as needed
+                Assignee = task.AssignedTo?.FullName ?? "Unassigned",
+                Status = task.Status,
+                Parent = task.ParentTaskId
+            }).ToList();
+
+            var links = _taskRepository.GetByProjectIdAsync(id).Result.Select(l => new
+            {
+                id = l.Id,
+                source = l.ParentTaskId,
+                target = l.Id,
+                type = "0" // Finish-to-Start
+            }).ToList();
+
+            var data = new
+            {
+                data = tasks,
+                links = links
+            };
+
+            return Json(data);
+        }
+
+        
+        [HttpPost("SaveTask")]
+        [IgnoreAntiforgeryToken]
+       
+        public async Task<IActionResult> SaveTask()
+        {
+            try
+            {
+                var formData = Request.Form;
+                Console.WriteLine("Form Data: " + string.Join(", ", formData.Select(f => $"{f.Key}: {f.Value}")));
+
+                var action = formData["!nativeeditor_status"];
+                var id = int.Parse(formData["id"]);
+                var text = formData["text"];
+                var startDate = DateTime.Parse(formData["start_date"]);
+                var duration = int.Parse(formData["duration"]);
+                var parentStr = formData["parent"];
+                var assignee = formData["assignee"];
+                var status = formData["status"];
+
+                int? parent = string.IsNullOrEmpty(parentStr) || parentStr == "0" ? null : int.Parse(parentStr);
+
+                if (action == "inserted")
+                {
+                    var newTask = new ModelTask
+                    {
+                        Title = text,
+                        StartDate = startDate,
+                        EndDate = startDate.AddDays(duration),
+                        ParentTaskId = parent,
+                        AssignedToId = assignee,
+                        Status = status,
+                        ProjectId = 1
+                    };
+
+                    await _taskRepository.AddAsync(newTask);
+                    return Json(new { action = "inserted", tid = newTask.Id });
+                }
+                else if (action == "updated")
+                {
+                    var existing = await _taskRepository.GetByIdAsync(id);
+                    if (existing != null)
+                    {
+                        existing.Title = text;
+                        existing.StartDate = startDate;
+                        existing.EndDate = startDate.AddDays(duration);
+                        existing.ParentTaskId = parent;
+                        existing.AssignedToId = assignee;
+                        existing.Status = status;
+                        await _taskRepository.UpdateAsync(existing);
+                    }
+                    return Json(new { action = "updated" });
+                }
+
+                return StatusCode(400, new { error = "Invalid action" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in SaveTask: " + ex.Message);
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> DeleteTask()
+        {
+            var id = int.Parse(Request.Form["id"]);
+
+            await _taskRepository.DeleteAsync(id);
+
+            return Json(new { action = "deleted" });
+        }
+
+
+        //public ActionResult TaskDetails(int id)
+        //{
+           
+        //    var task = _taskRepository.GetWithDetailsAsync(id);
+        //    return PartialView("_DetailsPartial", task);
+        //}
     }
+        #endregion
+
+    
 }
