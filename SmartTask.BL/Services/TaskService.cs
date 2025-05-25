@@ -125,7 +125,7 @@ namespace SmartTask.BL.Services
             var allTasks = await _taskRepository.GetByProjectIdAsync(task.ProjectId);
 
             var taskdepn = (await _taskDependencyRepository.GetAllAsync()).ToList()
-                .Where(x => x.Predecessor.ProjectId == task.ProjectId).ToList();
+                .Where(x => x.Predecessor.ProjectId == task.ProjectId).ToList();//brings all pre that are in the same proj but doesnt have to be pre of task
 
             taskdepn.ForEach(t =>
                 {
