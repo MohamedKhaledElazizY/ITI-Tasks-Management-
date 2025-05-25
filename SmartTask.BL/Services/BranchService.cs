@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SmartTask.Bl.Helpers;
 using SmartTask.Bl.IServices;
@@ -16,19 +17,22 @@ namespace SmartTask.Bl.Services
     {
         private readonly IBranchRepository branchRepository;
         private readonly IPaginatedService<Branch> paginatedService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public BranchService(IBranchRepository branchRepository, IPaginatedService<Branch> paginatedService,
-            IDepartmentRepository departmentRepository
+            IDepartmentRepository departmentRepository,
+            UserManager<ApplicationUser> userManager
             )
         {
             this.branchRepository = branchRepository;
             this.paginatedService = paginatedService;
+            _userManager = userManager;
         }
 
-        public PaginatedList<Branch> GetAllBranchAsync(int page, int pageSize)
+        public async Task<PaginatedList<Branch>> GetAllBranchAsync(int page, int pageSize)
         {
             var query = branchRepository.GetQueryable();
-            return PaginatedList<Branch>.Create(query,page, pageSize);
+            return await PaginatedList<Branch>.CreateAsync(query,page, pageSize);
         }
 
         public async Task<Branch> GetBranchAsync(int id)
@@ -37,6 +41,10 @@ namespace SmartTask.Bl.Services
         }
         public async Task<Branch> AddAsync(Branch branch)
         {
+            if (branch.BranchDepartments == null || !branch.BranchDepartments.Any())
+            {
+                branch.BranchDepartments = new List<BranchDepartment>();
+            }
             return await branchRepository.AddAsync(branch);
         }
 
@@ -74,19 +82,37 @@ namespace SmartTask.Bl.Services
         }
 
 
+        //public async Task<PaginatedList<Branch>> GetFiltered(string searchString, string? managerId, int page, int pageSize)
+        //{
+        //    var query = branchRepository.GetQueryable()
+        //        .Include(b => b.Manager) 
+        //        .Include(b => b.BranchDepartments) 
+        //        .ThenInclude(bd => bd.Department);
+
+        //    Expression<Func<Branch, bool>> filter = b =>
+        //        (string.IsNullOrEmpty(searchString) || b.Name.Contains(searchString)) &&
+        //        (string.IsNullOrEmpty(managerId) || b.ManagerId == managerId);
+
+        //    return await paginatedService.GetFiltered(filter, page, pageSize);
+        //}
+
         public async Task<PaginatedList<Branch>> GetFiltered(string searchString, string? managerId, int page, int pageSize)
         {
-            var query = branchRepository.GetQueryable()
-                .Include(b => b.Manager) 
-                .Include(b => b.BranchDepartments) 
-                .ThenInclude(bd => bd.Department);
+            var query = branchRepository.GetQueryable();
 
-            Expression<Func<Branch, bool>> filter = b =>
-                (string.IsNullOrEmpty(searchString) || b.Name.Contains(searchString)) &&
-                (string.IsNullOrEmpty(managerId) || b.ManagerId == managerId);
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(b => b.Name.Contains(searchString));
+            }
 
-            return await paginatedService.GetFiltered(filter, page, pageSize);
+            if (!string.IsNullOrEmpty(managerId))
+            {
+                query = query.Where(b => b.ManagerId == managerId);
+            }
+
+            return await paginatedService.GetFilteredAsync(query, page, pageSize);
         }
+
 
         public async Task<Branch> GetBranchWithDetailsAsync(int id)
         {
