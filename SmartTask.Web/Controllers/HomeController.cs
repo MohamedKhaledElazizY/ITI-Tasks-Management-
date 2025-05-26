@@ -46,17 +46,11 @@ namespace SmartTask.Web.Controllers
             return View(new Core.Models.ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [Authorize]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         /// <summary>
         /// Returns the current user's project dashboard with task statistics and details
         /// </summary>
         [Authorize]
-        public async Task<IActionResult> UserProjects()
+        public async Task<IActionResult> Index()
         {
             try
             {

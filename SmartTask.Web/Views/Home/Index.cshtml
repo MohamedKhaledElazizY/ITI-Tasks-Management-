@@ -1,8 +1,325 @@
-﻿@{
+﻿@using SmartTask.Core.Models.Enums
+@using SmartTask.Web.ViewModels
+@model UserProjectsViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
+<link rel="stylesheet" href="~/css/home.css" />
+<div class="wrapper">
+    <section class="hero container">
+        <!-- Floating Task Elements -->
+        <div class="floating-elements">
+            <div class="floating-task">
+                <div class="task-icon"></div>
+                <div class="task-text">Team Work</div>
+            </div>
+            <div class="floating-task">
+                <div class="task-icon"></div>
+                <div class="task-text">Manage Tasks</div>
+            </div>
+        </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+        <div class="hero-content">
+            <h1>Smart Task Management</h1>
+        </div>
+        <div class="hero-image">
+            <img src="https://projectsly.com/images/task-management-system-screenshot-1.png?v=1691124479409199525" alt="Task Management Dashboard" />
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            <!-- Projects Section -->
+            @if (Model.Projects == null || !Model.Projects.Any())
+            {
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <h3>No Projects Found</h3>
+                    <p>You don't have any projects yet. Create your first project to get started!</p>
+                </div>
+            }
+            else
+            {
+                <!-- Show first project by default -->
+                <section class="project-overview" id="project-0">
+                    @{
+                        var firstProject = Model.Projects.First();
+                    }
+                    <div class="project-header">
+                        <div class="project-info">
+                            <h2>@firstProject.ProjectName</h2>
+                            <div class="project-meta">
+                                <div class="meta-item">
+                                    <div class="meta-icon"></div>
+                                    <span>Started: @firstProject.StartDate?.ToString("MMM dd, yyyy")</span>
+                                </div>
+                                <div class="meta-item">
+                                    <div class="meta-icon"></div>
+                                    <span>Deadline: @firstProject.EndDate?.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="project-description">
+                        @firstProject.Description
+                    </p>
+
+                    <div class="project-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">@firstProject.TotalTasksAssignedToUser</span>
+                            <span class="stat-label">Total Tasks</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">@firstProject.CompletedTasksByUser</span>
+                            <span class="stat-label">Completed</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">@firstProject.InProgressTasksByUser</span>
+                            <span class="stat-label">In Progress</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">@firstProject.CompletionPercentage%</span>
+                            <span class="stat-label">Progress</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Hidden additional projects -->
+                <div class="collapsible-content hidden project-overview" id="additional-projects" data-project-count="@(Model.Projects.Count() - 1)">
+                    @for (int i = 1; i < Model.Projects.Count(); i++)
+                    {
+                        var project = Model.Projects.ElementAt(i);
+                        <div class="project-header">
+                            <div class="project-info">
+                                <h2>@project.ProjectName</h2>
+                                <div class="project-meta">
+                                    <div class="meta-item">
+                                        <div class="meta-icon"></div>
+                                        <span>Started: @project.StartDate?.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <div class="meta-icon"></div>
+                                        <span>Deadline: @project.EndDate?.ToString("MMM dd, yyyy")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="project-description">
+                            @project.Description
+                        </p>
+
+                        <div class="project-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">@project.TotalTasksAssignedToUser</span>
+                                <span class="stat-label">Total Tasks</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@project.CompletedTasksByUser</span>
+                                <span class="stat-label">Completed</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@project.InProgressTasksByUser</span>
+                                <span class="stat-label">In Progress</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@project.CompletionPercentage%</span>
+                                <span class="stat-label">Progress</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Show more/less projects button -->
+                @if (Model.Projects.Count() > 1)
+                {
+                    <button class="show-more-btn" id="show-more-projects">
+                        <span>Show More Projects (@(Model.Projects.Count() - 1))</span>
+                        <span style="margin-left: 0.5rem;">▼</span>
+                    </button>
+                }
+            }
+
+            <!-- Tasks in Progress -->
+            <section>
+                <h2 class="section-title" style="margin-top:2em !important;">Tasks in Progress</h2>
+
+                @{
+                    var allInProgressTasks = Model.Projects?.SelectMany(p => p.InProgressTasks ?? new List<InProgressTaskViewModel>()).ToList() ?? new List<InProgressTaskViewModel>();
+                }
+
+                @if (!allInProgressTasks.Any())
+                {
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚡</div>
+                        <h3>No Tasks in Progress</h3>
+                        <p>All caught up! You don't have any tasks currently in progress.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="tasks-grid" id="initial-progress-tasks">
+                        @for (int i = 0; i < Math.Min(3, allInProgressTasks.Count); i++)
+                        {
+                            var task = allInProgressTasks[i];
+                            var project = Model.Projects?.FirstOrDefault(p => p.InProgressTasks?.Contains(task) == true);
+                            string barColor = task.Priority switch
+                            {
+                                Priority.High => "priority-high",
+                                Priority.Medium => "priority-medium",
+                                Priority.Low => "priority-low",
+                                _ => "bg-secondary"
+                            };
+                            <div class="task-card">
+
+                                <div class="task-header">
+                                    <div>
+                                        @if (@task.IsDelayed)
+                                        {
+                                            <div class="delay-flag">
+                                                <span>Delayed</span>
+                                            </div>
+                                        }
+                                        <div class="project-name">@(project?.ProjectName ?? "Unknown Project")</div>
+                                        <h3 class="task-title">@task.TaskName</h3>
+                                        <span class="task-priority @barColor">@task.Priority Priority</span>
+                                    </div>
+                                </div>
+                                <p class="task-description">@task.Description</p>
+                                <div class="task-progress">
+                                    <div class="progress-label">
+                                        <span>Progress</span>
+                                        <span>50%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 50%;"></div>
+                                    </div>
+                                </div>
+                                <div class="task-meta">
+                                    <span class="task-due @(task.IsDelayed ? "task-overdue" : "")">
+                                        Due: @task.EndDate?.ToString("MMM dd")
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @if (allInProgressTasks.Count > 3)
+                    {
+                        <div class="collapsible-content hidden" id="additional-progress-tasks">
+                            <div class="tasks-grid" id="initial-progress-tasks">
+                                @for (int i = 3; i < allInProgressTasks.Count; i++)
+                                {
+                                    var task = allInProgressTasks[i];
+                                    var project = Model.Projects?.FirstOrDefault(p => p.InProgressTasks?.Contains(task) == true);
+                                    string barColor = task.Priority switch
+                                    {
+                                        Priority.High => "priority-high",
+                                        Priority.Medium => "priority-medium",
+                                        Priority.Low => "priority-low",
+                                        _ => "bg-secondary"
+                                    };
+                                    <div class="task-card">
+
+                                        <div class="task-header">
+                                            <div>
+                                                @if (@task.IsDelayed)
+                                                {
+                                                    <div class="delay-flag">
+                                                        <span>Delayed</span>
+                                                    </div>
+                                                }
+                                                <div class="project-name">@(project?.ProjectName ?? "Unknown Project")</div>
+                                                <h3 class="task-title">@task.TaskName</h3>
+                                                <span class="task-priority @barColor">@task.Priority Priority</span>
+                                            </div>
+                                        </div>
+                                        <p class="task-description">@task.Description</p>
+                                        <div class="task-progress">
+                                            <div class="progress-label">
+                                                <span>Progress</span>
+                                                <span>50%</span>
+                                            </div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 50%;"></div>
+                                            </div>
+                                        </div>
+                                        <div class="task-meta">
+                                            <span class="task-due @(task.IsDelayed ? "task-overdue" : "")">
+                                                Due: @task.EndDate?.ToString("MMM dd")
+                                            </span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <button class="show-more-btn" id="show-more-progress-tasks">
+                            <span>Show More Tasks (@(allInProgressTasks.Count - 3))</span>
+                            <span style="margin-left: 0.5rem;">▼</span>
+                        </button>
+                    }
+                }
+            </section>
+
+            <!-- Upcoming Tasks -->
+            <section class="upcoming-section">
+                <h2 class="section-title">Upcoming Tasks</h2>
+
+                @{
+                    var allUpcomingTasks = Model.Projects?.SelectMany(p => p.UpcomingTasks ?? new List<UpcomingTaskViewModel>()).ToList() ?? new List<UpcomingTaskViewModel>();
+                }
+
+                @if (!allUpcomingTasks.Any())
+                {
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <h3>No Upcoming Tasks</h3>
+                        <p>You're all set! No upcoming tasks scheduled at the moment.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="upcoming-grid" id="initial-upcoming-tasks">
+                        @for (int i = 0; i < Math.Min(3, allUpcomingTasks.Count); i++)
+                        {
+                            var task = allUpcomingTasks[i];
+                            <div class="upcoming-card">
+                                <h3 class="upcoming-title">@task.TaskName</h3>
+                                <p class="upcoming-date">@task.StartDate?.ToString("MMM dd") - @task.EndDate?.ToString("MMM dd")</p>
+                                <p class="upcoming-description">@task.Description</p>
+                            </div>
+                        }
+                    </div>
+
+                    @if (allUpcomingTasks.Count > 3)
+                    {
+                        <div class="collapsible-content hidden upcoming-grid" id="additional-upcoming-tasks">
+                            @for (int i = 3; i < allUpcomingTasks.Count; i++)
+                            {
+                                var task = allUpcomingTasks[i];
+                                <div class="upcoming-card">
+                                    <h3 class="upcoming-title">@task.TaskName</h3>
+                                    <p class="upcoming-date">
+                                        @task.StartDate?.ToString("MMM dd") - @task.EndDate?.ToString("MMM dd")
+                                    </p>
+                                    <p class="upcoming-description">@task.Description</p>
+                                </div>
+                            }
+                        </div>
+
+                        <button class="show-more-btn" id="show-more-upcoming-tasks">
+                            <span>Show More Tasks (@(allUpcomingTasks.Count - 3))</span>
+                            <span style="margin-left: 0.5rem;">▼</span>
+                        </button>
+                    }
+                }
+            </section>
+        </div>
+    </main>
 </div>
+
+<script src="~/js/home.js"></script>
