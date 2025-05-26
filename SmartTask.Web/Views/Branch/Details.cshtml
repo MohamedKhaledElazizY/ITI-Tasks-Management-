@@ -4,84 +4,65 @@
     ViewData["Title"] = "Branch Details";
 }
 
-<div class="container mt-5">
-    <h2>Branch Details</h2>
-    <hr />
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-primary">
+                <i class="fas fa-building me-2 text-primary"></i>Branch Details
+            </h5>
+            <a asp-action="Index" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Back to List
+            </a>
+        </div>
 
-    <dl class="row">
-        <dt class="col-sm-3">Branch Name:</dt>
-        <dd class="col-sm-9">@Model.Name</dd>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4 text-muted fw-semibold">Branch Name:</div>
+                <div class="col-md-8">@Model.Name</div>
+            </div>
 
-        <dt class="col-sm-3">Branch Manager:</dt>
-        <dd class="col-sm-9">
-            @if (Model.Manager != null)
-            {
-                <span>@Model.Manager.FullName (@Model.Manager.UserName)</span>
-            }
-            else
-            {
-                <span class="text-muted">No manager assigned</span>
-            }
-        </dd>
-    </dl>
-
-    <div class="mt-4">
-        <h4>Branch Departments</h4>
-        @if (Model.BranchDepartments != null && Model.BranchDepartments.Any())
-        {
-            <ul class="list-group">
-                @foreach (var bd in Model.BranchDepartments)
-                {
-                    <li class="list-group-item">@bd.Department.Name</li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p class="text-muted">No departments assigned to this branch.</p>
-        }
-    </div>
-
-    <div class="mt-4">
-        <h4>Assigned Users</h4>
-        @if (ViewBag.UsersInBranch != null && ViewBag.UsersInBranch.Count > 0)
-        {
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>User Name</th>
-                        <th>Email</th>
-                        <th>Department</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in ViewBag.UsersInBranch)
+            <div class="row mb-4">
+                <div class="col-md-4 text-muted fw-semibold">Branch Manager:</div>
+                <div class="col-md-8">
+                    @if (Model.Manager != null)
                     {
-                        <tr>
-                            <td>@user.FullName</td>
-                            <td>@user.Email</td>
-                            <td>
-                                @if (user.Department != null)
-                                {
-                                    @user.Department.Name
-                                }
-                                else
-                                {
-                                    <span class="text-muted">N/A</span>
-                                }
-                            </td>
-                        </tr>
+                        <span class="badge bg-success p-2">
+                            <i class="fas fa-user me-1"></i>
+                            @Model.Manager.FullName (@Model.Manager.UserName)
+                        </span>
                     }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p class="text-muted">No users assigned to this branch.</p>
-        }
-    </div>
+                    else
+                    {
+                        <span class="text-muted">No manager assigned</span>
+                    }
+                </div>
+            </div>
 
-    <div class="mt-4">
-        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <div class="mb-3">
+                <h6 class="text-secondary mb-3">
+                    <i class="fas fa-sitemap me-2 text-secondary"></i>Branch Departments
+                </h6>
+
+                @if (Model.BranchDepartments != null && Model.BranchDepartments.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var bd in Model.BranchDepartments)
+                        {
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-circle text-primary me-2 small"></i>
+                                @bd.Department.Name
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="alert alert-light border text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        No departments assigned to this branch.
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>

@@ -4,74 +4,66 @@
     ViewData["Title"] = "Edit Branch";
 }
 
-<h1>Edit Branch</h1>
+<div class="container mt-5">
+    <div class="card shadow border-0">
+        <div class="card-header bg-light py-3 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-primary fw-bold">
+                <i class="fas fa-edit me-2 text-primary"></i>Edit Branch
+            </h5>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Back to List
+            </a>
+        </div>
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit">
-            <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="card-body px-4">
+            <form asp-action="Edit">
 
-            <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Id" />
 
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+                <!-- Branch Name -->
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label fw-semibold">
+                        <i class="fas fa-building me-1 text-muted"></i>Branch Name
+                    </label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="ManagerId" class="control-label">Manager Name</label>
-                <select asp-for="ManagerId" asp-items="@ViewBag.Managers" class="form-control">
-                    <option value="">Select a Manager</option>
-                </select>
-                <span asp-validation-for="ManagerId" class="text-danger"></span>
-            </div>
+                <!-- Manager -->
+                <div class="mb-4">
+                    <label asp-for="ManagerId" class="form-label fw-semibold">
+                        <i class="fas fa-user-tie me-1 text-muted"></i>Manager Name
+                    </label>
+                    <select asp-for="ManagerId" asp-items="@ViewBag.Roles" class="form-select">
+                        <option value="">Select a Manager</option>
+                    </select>
+                    <span asp-validation-for="ManagerId" class="text-danger small"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="SelectedDepartmentIds" class="control-label">Departments</label>
-                <select asp-for="SelectedDepartmentIds" asp-items="@(new MultiSelectList(Model.AllDepartments, "Id", "Name", Model.SelectedDepartmentIds))" 
-                class="form-select select2" multiple="multiple" data-placeholder="-- Select Departments --">
-                </select>
-                <span asp-validation-for="SelectedDepartmentIds" class="text-danger"></span>
-            </div>
+                <!-- Departments -->
+                <div class="mb-4">
+                    <label asp-for="SelectedDepartmentIds" class="form-label fw-semibold">
+                        <i class="fas fa-sitemap me-1 text-muted"></i>Departments
+                    </label>
+                    <select asp-for="SelectedDepartmentIds"
+                            asp-items="@(new MultiSelectList(Model.AllDepartments, "Id", "Name", Model.SelectedDepartmentIds))"
+                            class="form-select"
+                            multiple>
+                    </select>
+                    <span asp-validation-for="SelectedDepartmentIds" class="text-danger small"></span>
+                </div>
 
-            <div class="form-group">
-                <label class="control-label">Assigned Users</label>
-                <select asp-for="SelectedUserIds"
-                        asp-items="@(new MultiSelectList(ViewBag.Users, "Value", "Text"))"
-                        class="form-control select2"
-                        multiple="multiple"
-                        data-placeholder="Select users...">
-                </select>
-                <small class="text-muted">Current users are pre-selected. Add/remove as needed.</small>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="fas fa-save me-1"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
-
-
-<script src="~/lib/jquery/jquery.min.js"></script>
-<script src="~/lib/select2/js/select2.min.js"></script>
-
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script>
-        $(document).ready(function () {
-            $('.select2').select2({
-                tags: true,
-                placeholder: "-- Select Departments --",
-                allowClear: true,
-                width: '100%',
-            });
-        });
-    </script>
 }
