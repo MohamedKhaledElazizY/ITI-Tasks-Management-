@@ -41,6 +41,19 @@ namespace SmartTask.Web
 
             #endregion SignalR
 
+            #region session
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddDistributedMemoryCache();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            #endregion
+
+
             #region Database & Identity
 
             builder.Services.AddDbContext<SmartTaskContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -90,6 +103,8 @@ namespace SmartTask.Web
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+            //IDashboardService
+            builder.Services.AddScoped<IDashboardService, DashboardService>();
 
             var app = builder.Build();
 
@@ -124,6 +139,7 @@ namespace SmartTask.Web
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -181,7 +197,10 @@ namespace SmartTask.Web
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IUserColumnPreferenceRepository, UserColumnPreferenceRepository>();
             services.AddScoped<IUserColumnPreferenceService, UserColumnPreferenceService>();
-           
+            //IDashboardService
+            services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IUserDashboardPreferenceRepository, UserDashboardPreferenceRepository>();
+
 
 
             services.AddScoped<INotificationRepository, NotificationRepository>();

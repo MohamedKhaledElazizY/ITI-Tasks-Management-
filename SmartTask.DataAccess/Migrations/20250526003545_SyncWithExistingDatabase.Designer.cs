@@ -12,8 +12,8 @@ using SmartTask.DataAccess.Data;
 namespace SmartTask.DataAccess.Migrations
 {
     [DbContext(typeof(SmartTaskContext))]
-    [Migration("20250524221852_smartdbcontext")]
-    partial class smartdbcontext
+    [Migration("20250526003545_SyncWithExistingDatabase")]
+    partial class SyncWithExistingDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -852,6 +852,54 @@ namespace SmartTask.DataAccess.Migrations
                     b.ToTable("UserColumnPreferences");
                 });
 
+            modelBuilder.Entity("SmartTask.Core.Models.UserDashboardPreference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastLoginDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PreferredView")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("RecentProjectsCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ShowMyTasks")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ShowProjectStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ShowRecentProjects")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ShowTasksOverview")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserDashboardPreferences");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("SmartTask.Core.Models.BasePermission.ApplicationRole", null)
@@ -1212,6 +1260,17 @@ namespace SmartTask.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SmartTask.Core.Models.UserDashboardPreference", b =>
+                {
+                    b.HasOne("SmartTask.Core.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.ApplicationUser", b =>

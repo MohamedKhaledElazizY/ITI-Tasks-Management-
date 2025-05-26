@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartTask.DataAccess.Data;
 
@@ -11,9 +12,11 @@ using SmartTask.DataAccess.Data;
 namespace SmartTask.DataAccess.Migrations
 {
     [DbContext(typeof(SmartTaskContext))]
-    partial class SmartTaskContextModelSnapshot : ModelSnapshot
+    [Migration("20250526003507_AddDashboardFeatures")]
+    partial class AddDashboardFeatures
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,7 +158,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("AISuggestions", (string)null);
+                    b.ToTable("AISuggestions");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.ApplicationUser", b =>
@@ -276,7 +279,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AssignTasks", (string)null);
+                    b.ToTable("AssignTasks");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Attachment", b =>
@@ -313,7 +316,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("UploadedById");
 
-                    b.ToTable("Attachments", (string)null);
+                    b.ToTable("Attachments");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.AuditModels.Audit", b =>
@@ -357,7 +360,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Audits", (string)null);
+                    b.ToTable("Audits");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.AuditModels.UserLoginHistory", b =>
@@ -389,7 +392,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserLoginHistories", (string)null);
+                    b.ToTable("UserLoginHistories");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.BasePermission.ApplicationRole", b =>
@@ -443,7 +446,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Branches", (string)null);
+                    b.ToTable("Branches");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.BranchDepartment", b =>
@@ -460,7 +463,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("BranchDepartments", (string)null);
+                    b.ToTable("BranchDepartments");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Comment", b =>
@@ -491,7 +494,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Department", b =>
@@ -514,7 +517,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Event", b =>
@@ -560,7 +563,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Notification.Groups", b =>
@@ -577,7 +580,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Groups", (string)null);
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Notification.Notification", b =>
@@ -617,7 +620,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Notification.UserConnection", b =>
@@ -632,7 +635,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("UserConnections", (string)null);
+                    b.ToTable("UserConnections");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Notification.UserGroups", b =>
@@ -647,7 +650,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("GroupID");
 
-                    b.ToTable("UserGroups", (string)null);
+                    b.ToTable("UserGroups");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Project", b =>
@@ -708,7 +711,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.ProjectMember", b =>
@@ -725,7 +728,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProjectMembers", (string)null);
+                    b.ToTable("ProjectMembers");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.Task", b =>
@@ -791,7 +794,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.TaskDependency", b =>
@@ -817,7 +820,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("SuccessorId");
 
-                    b.ToTable("TaskDependencies", (string)null);
+                    b.ToTable("TaskDependencies");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.UserColumnPreference", b =>
@@ -846,7 +849,7 @@ namespace SmartTask.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserColumnPreferences", (string)null);
+                    b.ToTable("UserColumnPreferences");
                 });
 
             modelBuilder.Entity("SmartTask.Core.Models.UserDashboardPreference", b =>

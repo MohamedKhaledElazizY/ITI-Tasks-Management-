@@ -45,6 +45,7 @@ namespace SmartTask.DataAccess.Data
         public virtual DbSet<UserConnection> UserConnections { get; set; }
         public virtual DbSet<Groups> Groups { get; set; }
         public DbSet<UserColumnPreference> UserColumnPreferences { get; set; }
+        public DbSet<UserDashboardPreference> UserDashboardPreferences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

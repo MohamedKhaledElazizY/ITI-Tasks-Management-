@@ -12,6 +12,7 @@ using SmartTask.Core.ViewModels;
 using System.Data.SqlTypes;
 using SmartTask.BL.Services;
 using SmartTask.Web.ViewModels;
+using SmartTask.BL.IServices;
 namespace SmartTask.Web.Controllers
 {
     public class AccountController : Controller
@@ -20,16 +21,19 @@ namespace SmartTask.Web.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly RoleManager<ApplicationRole> roleManager;
         private readonly IUserLoginHistoryRepository _userLoginHistory;
+        private readonly IDashboardService _dashboardService;
         IConfiguration _config;
         public AccountController(UserManager<ApplicationUser> _userManager,
             SignInManager<ApplicationUser> _signInManager, RoleManager<ApplicationRole> _roleManager,
-            IUserLoginHistoryRepository userLoginHistory, IConfiguration config)
+            IUserLoginHistoryRepository userLoginHistory, IConfiguration config,
+            IDashboardService dashboardService)
         {
             userManager = _userManager;
             signInManager = _signInManager;
             roleManager = _roleManager;
             _userLoginHistory = userLoginHistory;
             _config = config;
+            _dashboardService = dashboardService;
         }
 
         [HttpGet]
@@ -41,13 +45,13 @@ namespace SmartTask.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel account)
         {
-            ApplicationUser user = new ApplicationUser();   
+            ApplicationUser user = new ApplicationUser();
             //Console.WriteLine($"{account.UserName}");
             if (ModelState.IsValid)
             {
                 try
                 {
-                     user = await userManager.FindByNameAsync(account.UserName);
+                    user = await userManager.FindByNameAsync(account.UserName);
                     // ApplicationUser user = await userManager.FindByNameAsync("mohamedali");
                 }
                 catch (SqlNullValueException ex)
@@ -68,6 +72,10 @@ namespace SmartTask.Web.Controllers
                             UserAgent = HttpContext.Request.Headers["User-Agent"].ToString(),
                             UserName = user.UserName
                         });
+                        //DashboardService
+                        var preference = await _dashboardService.GetUserDashboardSettingsAsync(user.Id);
+                        preference.LastLoginDate = DateTime.Now;
+                        await _dashboardService.UpdateUserPreferenceAsync(preference);
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -95,6 +103,43 @@ namespace SmartTask.Web.Controllers
                 applicationUser.createdAt = DateTime.Now;
                 applicationUser.updatedAt = DateTime.Now;
 
+                if (register.UserImage != null && register.UserImage.Length > 0)
+                {
+                    // Check if file size exceeds 1MB (1,048,576 bytes)
+                    if (register.UserImage.Length > 1048576)
+                    {
+                        ModelState.AddModelError("UserImage", "Image size cannot exceed 1MB.");
+                        return View("Register", register);
+                    }
+
+                    try
+                    {
+                        // Process the image file
+                        var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(register.UserImage.FileName);
+                        var imagesFolder = Path.Combine("wwwroot", "assets", "img", "user-img");
+                        var imagePath = Path.Combine(Directory.GetCurrentDirectory(), imagesFolder, uniqueFileName);
+
+                        // Ensure the directory exists
+                        Directory.CreateDirectory(Path.GetDirectoryName(imagePath));
+
+                        // Save the file
+                        using (var stream = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await register.UserImage.CopyToAsync(stream);
+                        }
+
+                        // Set the image path to be saved in the database
+                        string savedPath = "/assets/img/user-img/" + uniqueFileName;
+                        register.ImagePath = savedPath;
+                        applicationUser.ImageUrl = savedPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError("", $"Error saving image: {ex.Message}");
+                        return View("Register", register);
+                    }
+                }
+
                 IdentityResult identityResult = await userManager.CreateAsync(applicationUser, register.Password);
 
                 if (identityResult.Succeeded)
@@ -109,44 +154,93 @@ namespace SmartTask.Web.Controllers
             return View("Register", register);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Add([FromForm] ApplicationUser user, [FromForm] string password, [FromForm] IFormFile userImage)
+        {
+            // Handle file upload if provided
+            if (userImage != null && userImage.Length > 0)
+            {
+                // Check if file size exceeds 1MB
+                if (userImage.Length > 1048576)
+                {
+                    return BadRequest(new { error = "Image size cannot exceed 1MB." });
+                }
+
+                try
+                {
+                    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(userImage.FileName);
+                    var imagesFolder = Path.Combine("wwwroot", "assets", "img", "user-img");
+                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), imagesFolder, uniqueFileName);
+
+                    // Ensure the directory exists
+                    Directory.CreateDirectory(Path.GetDirectoryName(imagePath));
+
+                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                    {
+                        await userImage.CopyToAsync(stream);
+                    }
+
+                    user.ImageUrl = "/assets/img/user-img/" + uniqueFileName;
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { error = $"Error saving image: {ex.Message}" });
+                }
+            }
+
+            // Set creation and update timestamps
+            user.createdAt = DateTime.Now;
+            user.updatedAt = DateTime.Now;
+
+            // Create user with UserManager
+            IdentityResult result = await userManager.CreateAsync(user, password);
+
+            if (result.Succeeded)
+            {
+                return CreatedAtAction("Get", "Users", new { id = user.Id }, user);
+            }
+
+            return BadRequest(result.Errors);
+        }
+
         [HttpGet]
         public IActionResult AddRole()
         {
             return View();
         }
-/*
-        [HttpPost]
-        public async Task<IActionResult> AddRole(string roleName)
-        {
-            if (string.IsNullOrWhiteSpace(roleName))
-            {
-                ViewBag.Message = "Role name is required";
-            }
-            else
-            {
-                var roleExists = await roleManager.RoleExistsAsync(roleName);
-                if (roleExists)
+        /*
+                [HttpPost]
+                public async Task<IActionResult> AddRole(string roleName)
                 {
-                    ViewBag.Message = "Role already exists";
-                }
-                else
-                {
-                    var newRole = new ApplicationRole
+                    if (string.IsNullOrWhiteSpace(roleName))
                     {
-                        Name = roleName.Trim(),
-                        NormalizedName = roleName.Trim().ToUpper(),
-                        ConcurrencyStamp = Guid.NewGuid().ToString()
-                    };
+                        ViewBag.Message = "Role name is required";
+                    }
+                    else
+                    {
+                        var roleExists = await roleManager.RoleExistsAsync(roleName);
+                        if (roleExists)
+                        {
+                            ViewBag.Message = "Role already exists";
+                        }
+                        else
+                        {
+                            var newRole = new ApplicationRole
+                            {
+                                Name = roleName.Trim(),
+                                NormalizedName = roleName.Trim().ToUpper(),
+                                ConcurrencyStamp = Guid.NewGuid().ToString()
+                            };
 
-                    var result = await roleManager.CreateAsync(newRole);
+                            var result = await roleManager.CreateAsync(newRole);
 
-                    ViewBag.Message = result.Succeeded ? "Role created successfully!" : "Failed to create role!";
+                            ViewBag.Message = result.Succeeded ? "Role created successfully!" : "Failed to create role!";
+                        }
+                    }
+
+                    return View();
                 }
-            }
-
-            return View();
-        }
-        */
+                */
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
