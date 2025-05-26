@@ -540,26 +540,6 @@
                         <span asp-validation-for="RecentProjectsCount" class="text-danger"></span>
                     </div>
 
-                    <div class="pref-item">
-                        <label class="pref-label" asp-for="PreferredView">Preferred View</label>
-                        <div class="radio-group">
-                            <div class="radio-option">
-                                <input type="radio" asp-for="PreferredView" value="List" id="listView" />
-                                <label for="listView">
-                                    <i class="fas fa-list"></i>
-                                    List
-                                </label>
-                            </div>
-                            <div class="radio-option">
-                                <input type="radio" asp-for="PreferredView" value="Grid" id="gridView" />
-                                <label for="gridView">
-                                    <i class="fas fa-th"></i>
-                                    Grid
-                                </label>
-                            </div>
-                        </div>
-                        <span asp-validation-for="PreferredView" class="text-danger"></span>
-                    </div>
                 </div>
             </div>
 
@@ -610,10 +590,7 @@
                     <span>Projects to show:</span>
                     <strong id="projectsCount">@(Model?.RecentProjectsCount ?? 5)</strong>
                 </div>
-                <div class="preview-item">
-                    <span>View Mode:</span>
-                    <strong id="viewMode">@(Model?.PreferredView ?? "Grid")</strong>
-                </div>
+               
             </div>
         </div>
     </div>
