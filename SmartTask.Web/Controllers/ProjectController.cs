@@ -347,6 +347,8 @@ namespace SmartTask.Web.Controllers
             public int Id { get; set; }
             public string Text { get; set; }
             public DateTime StartDate { get; set; }
+            public DateTime EndDate { get; set; }
+
             public int Duration { get; set; }
             public double Progress { get; set; }
             public string Assignee { get; set; }
@@ -365,6 +367,7 @@ namespace SmartTask.Web.Controllers
                 Duration = task.EndDate.HasValue && task.StartDate.HasValue
                     ? (int)(task.EndDate.Value - task.StartDate.Value).TotalDays
                     : 0,
+                EndDate = task.EndDate ?? DateTime.MinValue,
                 Progress = 0.0, // Default value, adjust as needed
                 //Assignee = task.AssignedTo?.FullName ?? "Unassigned",
                 Status = task.Status.ToString(), // Convert the Status enum to a string
@@ -374,7 +377,7 @@ namespace SmartTask.Web.Controllers
             var links = _taskRepository.GetByProjectIdAsync(id).Result.Select(l => new
             {
                 id = l.Id,
-                source = l.ParentTaskId,
+                source = l.ParentTaskId ?? 0,
                 target = l.Id,
                 type = "0" // Finish-to-Start
             }).ToList();
