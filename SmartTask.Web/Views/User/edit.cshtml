@@ -1,34 +1,159 @@
 ﻿@model SmartTask.Core.Models.ApplicationUser
 
+
+
+
+
+
+<!-- Custom CSS styles -->
+<style>
+    /* Main container styling */
+    .user-edit-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Page header styling */
+    .page-header {
+        color: #d9534f; /* Red color */
+        margin-bottom: 2rem;
+        font-weight: 600;
+        /* Removed text-align: center */
+    }
+
+    .icon-wrapper {
+        background-color: #d9534f;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    /* Form styling */
+    .user-edit-form {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 6px;
+    }
+
+    /* Input field styling */
+    .input-field {
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        padding: 0.6rem;
+    }
+
+        .input-field:focus {
+            border-color: #d9534f; /* Red color */
+            box-shadow: 0 0 0 0.2rem rgba(217, 83, 79, 0.25); /* Red shadow */
+        }
+
+    /* Form label styling */
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Validation message styling */
+    .validation-message {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Button styling */
+    .btn-save {
+        background-color: #d9534f; /* Red color */
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-save:hover {
+            background-color: #c9302c; /* Darker red */
+            color: #fefae0 !important;
+        }
+
+    .btn-cancel {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        margin-left: 1rem;
+        transition: background-color 0.3s;
+    }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+
+    /* Form actions container */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 2rem;
+    }
+</style>
+
+
+
+
+
+
 @{
     ViewData["Title"] = "Edit User";
 }
 
-<h2>Edit User</h2>
+<!-- Main container with custom styling -->
+<div class="container mt-4 user-edit-container">
+    <h2 class="page-header d-flex align-items-center justify-content-start">
+        <span class="icon-wrapper me-3">
+            <i class="fas fa-user-edit"></i>
+        </span>
+        Edit User
+    </h2>
+    <!-- Form with improved layout and styling -->
+    <form asp-action="Edit" method="post" class="user-edit-form">
+        <input type="hidden" asp-for="Id" />
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
+        <!-- Form group for Full Name -->
+        <div class="form-group mb-4">
+            <label asp-for="FullName" class="form-label"></label>
+            <input asp-for="FullName" class="form-control input-field" />
+            <span asp-validation-for="FullName" class="text-danger validation-message"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
-    </div>
+        <!-- Form group for Email (readonly) -->
+        <div class="form-group mb-4">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control input-field" readonly />
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" readonly />
-    </div>
+        <!-- Form group for Department selection -->
+        <div class="form-group mb-4">
+            <label asp-for="DepartmentId" class="form-label">Department</label>
+            <select asp-for="DepartmentId" class="form-control input-field"
+                    asp-items="ViewBag.Departments">
+                <option value="">-- Select Department --</option>
+            </select>
+            <span asp-validation-for="DepartmentId" class="text-danger validation-message"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="DepartmentId">Department</label>
-        <select asp-for="DepartmentId" class="form-control"
-                asp-items="ViewBag.Departments">
-            <option value="">-- Select Department --</option>
-        </select>
-        <span asp-validation-for="DepartmentId" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-</form>
+        <!-- Action buttons with custom styling -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save">Save Changes</button>
+            <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+</div>
