@@ -85,7 +85,7 @@
     white-space: nowrap;
 }
 
-@@keyframes float {
+@keyframes float {
     0%, 100% {
         transform: translateY(0) rotate(0deg);
     }
@@ -95,7 +95,7 @@
     }
 }
 
-@@keyframes floatVertical {
+@keyframes floatVertical {
     0%, 100% {
         transform: translateY(0) translateX(0) rotate(0deg);
         opacity: 0.7;
@@ -117,7 +117,7 @@
     }
 }
 
-@@keyframes pulse {
+@keyframes pulse {
     0%, 100% {
         opacity: 0.6;
     }
@@ -127,7 +127,7 @@
     }
 }
 
-@@keyframes slideDown {
+@keyframes slideDown {
     from {
         opacity: 0;
         max-height: 0;
@@ -141,7 +141,7 @@
     }
 }
 
-@@keyframes slideUp {
+@keyframes slideUp {
     from {
         opacity: 1;
         max-height: 1000px;
@@ -474,7 +474,7 @@
     animation: pulse 2s infinite;
 }
 
-@@keyframes pulse {
+@keyframes pulse {
     0% {
         transform: scale(1);
     }
@@ -622,7 +622,7 @@
 }
 
 /* Responsive Design */
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .tasks-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
@@ -686,7 +686,7 @@
     line-height: 1.4;
 }
 
-@@media (max-width: 768px) {
+@media (max-width: 768px) {
     .hero {
         grid-template-columns: 1fr;
         text-align: center;
