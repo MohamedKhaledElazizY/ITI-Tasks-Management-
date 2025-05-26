@@ -70,6 +70,13 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/css/notification.css" />
+    <style>
+        .card-body{
+            animation: none !important;
+            transition: none !important;
+			transform: none !important;
+        }
+    </style>
 @RenderSection("Styles", required: false)
 
 </head>
@@ -446,11 +453,13 @@
                                                 </a>
                                             </li>
                                         </secure-content>
+                                    <secure-content asp-area="" asp-controller="Employee" asp-action="Index">
                                         <li>
-                                            <a href="employee-dashboard.html">
+                                            <a asp-controller="Employee" asp-action="Index" asp-route-id="@userId">
                                                 Employee Dashboard
                                             </a>
                                         </li>
+                                    </secure-content>
 
                                     </ul>
                                 </li>
@@ -535,8 +544,7 @@
 
         </div>
 
-
-    </div>
+    
     @* <header> *@
     @*     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"> *@
     @*         <div class="container-fluid"> *@
