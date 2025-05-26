@@ -1,22 +1,150 @@
 ﻿@model SmartTask.Core.Models.ApplicationUser
 
+
+<style>
+    /* Main container */
+    .user-details-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Fixed header styling */
+    .page-header {
+        color: #d9534f;
+        margin-bottom: 2rem;
+        font-weight: 600;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .icon-wrapper {
+        background-color: #d9534f;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .header-text {
+        display: inline-block;
+    }
+
+    /* Details card styling */
+    .details-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    /* Detail row styling */
+    .detail-row {
+        display: flex;
+        padding: 1rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+    .detail-label {
+        flex: 0 0 200px;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .detail-value {
+        flex: 1;
+        color: #333;
+    }
+
+    /* Button styling */
+    .btn-back {
+        background-color: #6c757d;
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .detail-row {
+            flex-direction: column;
+        }
+
+        .detail-label {
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header {
+            font-size: 1.5rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .icon-wrapper {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
 @{
     ViewData["Title"] = "User Details";
 }
 
-<h2>User Details</h2>
+<!-- Add Font Awesome if not already in your layout -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<div>
-    <dl class="row">
-        <dt class="col-sm-2">Full Name</dt>
-        <dd class="col-sm-10">@Model.FullName</dd>
+<div class="user-details-container">
+    <h2 class="page-header d-flex align-items-center justify-content-start">
+        <span class="icon-wrapper me-3">
+            <i class="fas fa-user-circle"></i>
+        </span>
+        User Details
+    </h2>
+   
 
-        <dt class="col-sm-2">Email</dt>
-        <dd class="col-sm-10">@Model.Email</dd>
+    <div class="details-card">
+        <div class="detail-row">
+            <span class="detail-label">Full Name</span>
+            <span class="detail-value">@Model.FullName</span>
+        </div>
 
-        <dt class="col-sm-2">Department</dt>
-        <dd class="col-sm-10">@Model.Department?.Name</dd>
-    </dl>
+        <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">@Model.Email</span>
+        </div>
 
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        <div class="detail-row">
+            <span class="detail-label">Department</span>
+            <span class="detail-value">@Model.Department?.Name</span>
+        </div>
+    </div>
+    <div class="actions mt-4 text-center">
+        <a asp-action="Index" class="btn btn-back">
+            <i class="fas fa-arrow-left me-2"></i>Back to List
+        </a>
+    </div>
 </div>
+
