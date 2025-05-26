@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartTask.Core.Models;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SmartTask.Web.Controllers
 {
+    [Authorize]
     public class ManagerController : Controller
     {
         private readonly SmartTaskContext _context;
