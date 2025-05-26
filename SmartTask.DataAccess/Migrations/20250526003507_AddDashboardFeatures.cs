@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SmartTask.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class smartdbcontext : Migration
+    public partial class AddDashboardFeatures : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -314,6 +314,34 @@ namespace SmartTask.DataAccess.Migrations
                     table.ForeignKey(
                         name: "FK_UserConnections_AspNetUsers_UserID",
                         column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserDashboardPreferences",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ShowRecentProjects = table.Column<bool>(type: "bit", nullable: false),
+                    ShowProjectStatus = table.Column<bool>(type: "bit", nullable: false),
+                    ShowMyTasks = table.Column<bool>(type: "bit", nullable: false),
+                    ShowTasksOverview = table.Column<bool>(type: "bit", nullable: false),
+                    RecentProjectsCount = table.Column<int>(type: "int", nullable: false),
+                    PreferredView = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserDashboardPreferences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserDashboardPreferences_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -831,6 +859,11 @@ namespace SmartTask.DataAccess.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserDashboardPreferences_UserId",
+                table: "UserDashboardPreferences",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserGroups_GroupID",
                 table: "UserGroups",
                 column: "GroupID");
@@ -945,6 +978,9 @@ namespace SmartTask.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserConnections");
+
+            migrationBuilder.DropTable(
+                name: "UserDashboardPreferences");
 
             migrationBuilder.DropTable(
                 name: "UserGroups");

@@ -6,6 +6,6 @@
         InProgress = 2,
         Done = 3,
         Cancelled = 4 , 
-        Archived = 5
+        Archieved = 5
     }
 }

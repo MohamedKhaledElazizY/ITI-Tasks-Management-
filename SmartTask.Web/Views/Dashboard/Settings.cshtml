@@ -1,0 +1,760 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model SmartTask.Core.Models.UserDashboardPreference
+@using Microsoft.AspNetCore.Identity
+@using SmartTask.Core.Models
+@using SmartTask.Core.Models.Enums
+@inject UserManager<ApplicationUser> _UserManager
+@{
+    ViewData["Title"] = "Dashboard Settings";
+    var currentUser = await _UserManager.GetUserAsync(User);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Simple Design</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .back-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            color: #475569;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+            .back-btn:hover {
+                background: #e2e8f0;
+                color: #334155;
+            }
+
+        /* Settings Form */
+        .settings-form {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+            .section:last-child {
+                border-bottom: none;
+            }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-desc {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Widget Options */
+        .widget-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .widget-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border: 1px solid #f1f5f9;
+            border-radius: 8px;
+            background: #fafbfc;
+            transition: all 0.2s;
+        }
+
+            .widget-item:hover {
+                background: #f8fafc;
+                border-color: #e2e8f0;
+            }
+
+        .widget-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .widget-icon {
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+            .widget-icon.success {
+                background: #10b981;
+            }
+
+            .widget-icon.warning {
+                background: #f59e0b;
+            }
+
+            .widget-icon.info {
+                background: #06b6d4;
+            }
+
+        .widget-text h4 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e293b;
+            margin-bottom: 0.1rem;
+        }
+
+        .widget-text p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Simple Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+            .toggle input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+            .toggle-slider:before {
+                position: absolute;
+                content: "";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: 0.3s;
+                border-radius: 50%;
+            }
+
+        .toggle input:checked + .toggle-slider {
+            background-color: #3b82f6;
+        }
+
+            .toggle input:checked + .toggle-slider:before {
+                transform: translateX(20px);
+            }
+
+        /* Preferences */
+        .pref-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .pref-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .pref-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .pref-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+            .pref-select:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            }
+
+        /* Radio Buttons for View Mode */
+        .radio-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .radio-option {
+            flex: 1;
+            position: relative;
+        }
+
+            .radio-option input {
+                position: absolute;
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .radio-option label {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.5rem;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                background: white;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 0.85rem;
+                gap: 0.4rem;
+            }
+
+            .radio-option input:checked + label {
+                background: #3b82f6;
+                color: white;
+                border-color: #3b82f6;
+            }
+
+            .radio-option label:hover {
+                border-color: #9ca3af;
+            }
+
+        /* Action Buttons */
+        .actions {
+            padding: 1.5rem;
+            background: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: #2563eb;
+            }
+
+            .btn-primary:disabled {
+                background: #94a3b8;
+                cursor: not-allowed;
+            }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+            .btn-secondary:hover {
+                background: #e2e8f0;
+            }
+
+        /* Preview Panel */
+        .preview {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+            .preview h3 {
+                font-size: 1rem;
+                font-weight: 600;
+                color: #1e293b;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+        .preview-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .preview-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.9rem;
+        }
+
+            .preview-item:last-child {
+                border-bottom: none;
+            }
+
+            .preview-item span {
+                color: #64748b;
+            }
+
+            .preview-item strong {
+                color: #1e293b;
+            }
+
+        .active-widgets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .widget-badge {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
+
+            .toast.success {
+                border-left: 4px solid #10b981;
+            }
+
+            .toast.error {
+                border-left: 4px solid #ef4444;
+            }
+
+        .text-danger {
+            color: #ef4444;
+            font-size: 0.8rem;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1>@ViewData["Title"]</h1>
+                <p>Customize your dashboard layout and preferences</p>
+            </div>
+            <a href="@Url.Action("Index", "Dashboard")" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Settings Form -->
+        <form asp-action="Settings" method="post" class="settings-form" id="settingsForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="UserId" value="@currentUser.Id" />
+
+            <!-- Widget Configuration -->
+            <div class="section">
+                <h2 class="section-title">Dashboard Widgets</h2>
+                <p class="section-desc">Choose which widgets to display on your dashboard</p>
+
+                <div class="widget-list">
+                    <div class="widget-item">
+                        <div class="widget-info">
+                            <div class="widget-icon">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="widget-text">
+                                <h4>Project Status</h4>
+                                <p>Overview of project statistics</p>
+                            </div>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" asp-for="ShowProjectStatus" id="showProjectStatus" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="widget-item">
+                        <div class="widget-info">
+                            <div class="widget-icon info">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <div class="widget-text">
+                                <h4>Recent Projects</h4>
+                                <p>Your recently updated projects</p>
+                            </div>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" asp-for="ShowRecentProjects" id="showRecentProjects" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="widget-item">
+                        <div class="widget-info">
+                            <div class="widget-icon success">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="widget-text">
+                                <h4>Tasks Overview</h4>
+                                <p>Summary of all task statuses</p>
+                            </div>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" asp-for="ShowTasksOverview" id="showTasksOverview" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="widget-item">
+                        <div class="widget-info">
+                            <div class="widget-icon warning">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="widget-text">
+                                <h4>My Tasks</h4>
+                                <p>Tasks assigned to you</p>
+                            </div>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" asp-for="ShowMyTasks" id="showMyTasks" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Preferences -->
+            <div class="section">
+                <h2 class="section-title">Display Preferences</h2>
+                <p class="section-desc">Customize how information is displayed</p>
+
+                <div class="pref-grid">
+                    <div class="pref-item">
+                        <label class="pref-label" asp-for="RecentProjectsCount">Recent Projects Count</label>
+                        <select asp-for="RecentProjectsCount" class="pref-select" id="recentProjectsCount">
+                            <option value="3">3 Projects</option>
+                            <option value="5">5 Projects</option>
+                            <option value="10">10 Projects</option>
+                        </select>
+                        <span asp-validation-for="RecentProjectsCount" class="text-danger"></span>
+                    </div>
+
+                    <div class="pref-item">
+                        <label class="pref-label" asp-for="PreferredView">Preferred View</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" asp-for="PreferredView" value="List" id="listView" />
+                                <label for="listView">
+                                    <i class="fas fa-list"></i>
+                                    List
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" asp-for="PreferredView" value="Grid" id="gridView" />
+                                <label for="gridView">
+                                    <i class="fas fa-th"></i>
+                                    Grid
+                                </label>
+                            </div>
+                        </div>
+                        <span asp-validation-for="PreferredView" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a href="@Url.Action("Index", "Dashboard")" class="btn btn-secondary" id="cancelBtn">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-check"></i>
+                    Save Settings
+                </button>
+            </div>
+        </form>
+
+        <div class="preview">
+            <h3>
+                <i class="fas fa-eye"></i>
+                Current Settings
+            </h3>
+            <div class="preview-content">
+                <div class="preview-item">
+                    <span>Active Widgets:</span>
+                    <div class="active-widgets" id="activeWidgets">
+                        @if (Model?.ShowProjectStatus == true)
+                        {
+                            <span class="widget-badge">Project Status</span>
+                        }
+                        @if (Model?.ShowRecentProjects == true)
+                        {
+                            <span class="widget-badge">Recent Projects</span>
+                        }
+                        @if (Model?.ShowTasksOverview == true)
+                        {
+                            <span class="widget-badge">Tasks Overview</span>
+                        }
+                        @if (Model?.ShowMyTasks == true)
+                        {
+                            <span class="widget-badge">My Tasks</span>
+                        }
+                        @if (Model == null || (!Model.ShowProjectStatus && !Model.ShowRecentProjects && !Model.ShowTasksOverview && !Model.ShowMyTasks))
+                        {
+                            <span style="color: #64748b; font-style: italic;">No widgets selected</span>
+                        }
+                    </div>
+                </div>
+                <div class="preview-item">
+                    <span>Projects to show:</span>
+                    <strong id="projectsCount">@(Model?.RecentProjectsCount ?? 5)</strong>
+                </div>
+                <div class="preview-item">
+                    <span>View Mode:</span>
+                    <strong id="viewMode">@(Model?.PreferredView ?? "Grid")</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Settings saved successfully!</span>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast('@TempData["SuccessMessage"]', 'success');
+            });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast('@TempData["ErrorMessage"]', 'error');
+            });
+        </script>
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const widgets = document.querySelectorAll('.widget-item input[type="checkbox"]');
+            const projectsCount = document.getElementById('recentProjectsCount');
+            const viewModeInputs = document.querySelectorAll('input[name="PreferredView"]');
+            const saveBtn = document.getElementById('saveBtn');
+            const form = document.getElementById('settingsForm');
+
+            function updatePreview() {
+                const activeWidgets = document.getElementById('activeWidgets');
+                activeWidgets.innerHTML = '';
+
+                const widgetNames = {
+                    'ShowProjectStatus': 'Project Status',
+                    'ShowRecentProjects': 'Recent Projects',
+                    'ShowTasksOverview': 'Tasks Overview',
+                    'ShowMyTasks': 'My Tasks'
+                };
+
+                let hasActiveWidgets = false;
+                widgets.forEach(widget => {
+                    if (widget.checked) {
+                        const badge = document.createElement('span');
+                        badge.className = 'widget-badge';
+                        badge.textContent = widgetNames[widget.name];
+                        activeWidgets.appendChild(badge);
+                        hasActiveWidgets = true;
+                    }
+                });
+
+                if (!hasActiveWidgets) {
+                    activeWidgets.innerHTML = '<span style="color: #64748b; font-style: italic;">No widgets selected</span>';
+                }
+
+                // Update projects count
+                document.getElementById('projectsCount').textContent = projectsCount.value;
+
+                // Update view mode
+                const selectedView = document.querySelector('input[name="PreferredView"]:checked');
+                if (selectedView) {
+                    document.getElementById('viewMode').textContent = selectedView.value;
+                }
+            }
+
+            // Add event listeners for all form elements
+            widgets.forEach(widget => {
+                widget.addEventListener('change', updatePreview);
+            });
+
+            projectsCount.addEventListener('change', updatePreview);
+
+            viewModeInputs.forEach(input => {
+                input.addEventListener('change', updatePreview);
+            });
+
+            // Form submission handler
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Validation
+                const projectsCountValue = parseInt(projectsCount.value);
+                if (isNaN(projectsCountValue) || projectsCountValue < 3 || projectsCountValue > 10) {
+                    showToast('Please select a valid projects count (3-10)', 'error');
+                    return false;
+                }
+
+                const hasSelectedView = document.querySelector('input[name="PreferredView"]:checked');
+                if (!hasSelectedView) {
+                    showToast('Please select a preferred view mode', 'error');
+                    return false;
+                }
+
+                // Show loading state
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                saveBtn.disabled = true;
+
+                // Submit form after short delay
+                setTimeout(() => {
+                    form.submit();
+                }, 500);
+            });
+
+            // Toast notification function
+            window.showToast = function(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+                const icon = toast.querySelector('i');
+
+                toastMessage.textContent = message;
+                toast.className = `toast ${type}`;
+
+                // Update icon based on type
+                if (type === 'error') {
+                    icon.className = 'fas fa-exclamation-circle';
+                } else {
+                    icon.className = 'fas fa-check-circle';
+                }
+
+                toast.style.display = 'flex';
+
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            };
+
+            // Initial preview update
+            updatePreview();
+        });
+    </script>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+</html>

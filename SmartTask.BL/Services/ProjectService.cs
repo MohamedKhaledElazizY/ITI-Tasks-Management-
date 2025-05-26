@@ -103,7 +103,7 @@ namespace SmartTask.BL.Services
                 task.Description = $"PREV_STATUS:{(int)task.Status}|{originalDescription}";
 
                 // Set status to Archived (Status code 5 as per enum)
-                task.Status = Status.Archived;
+                task.Status = Status.Archieved;
 
                 // Update the task in the database
                 await _taskRepository.UpdateAsync(task);
@@ -118,7 +118,7 @@ namespace SmartTask.BL.Services
             foreach (var task in tasks)
             {
                 // Only restore status if the task is currently archived
-                if (task.Status == Status.Archived)
+                if (task.Status == Status.Archieved)
                 {
                     string description = task.Description ?? string.Empty;
 
@@ -224,6 +224,28 @@ namespace SmartTask.BL.Services
         public Task<Project> GetProjectDetailsAsync(int projectId, string userId)
         {
             return _projectRepository.GetProjectByIdAsync(projectId, userId);
+        }
+
+        public async Task<PaginatedList<Project>> GetFilteredProjectsAsync(string searchString, int? departmentId, int page, int pageSize)
+        {
+            var query = _projectRepository.GetQueryable();
+
+            // Apply search filter
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(p =>
+                    p.Name.Contains(searchString) ||
+                    p.Description.Contains(searchString));
+            }
+
+            // Apply department filter for Dashboard filtering
+            if (departmentId.HasValue)
+            {
+                query = query.Where(p => p.DepartmentId == departmentId.Value);
+            }
+
+            return await PaginatedList<Project>.CreateAsync(query, page, pageSize);
+
         }
     }
 }

@@ -1,0 +1,949 @@
+﻿@model SmartTask.Web.ViewModels.DashboardVM.DashboardViewModel
+@using Microsoft.AspNetCore.Identity
+@using SmartTask.Core.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var currentUser = await UserManager.GetUserAsync(User);
+
+    // Get user preferences from ViewBag
+    var userPreference = ViewBag.UserPreference as SmartTask.Core.Models.UserDashboardPreference;
+    var showProjectStatus = userPreference?.ShowProjectStatus ?? true;
+    var showRecentProjects = userPreference?.ShowRecentProjects ?? true;
+    var showMyTasks = userPreference?.ShowMyTasks ?? true;
+    var showTasksOverview = userPreference?.ShowTasksOverview ?? true;
+    var preferredView = userPreference?.PreferredView ?? "grid";
+    var recentProjectsCount = userPreference?.RecentProjectsCount ?? 5;
+
+    // Pagination variables from ViewBag
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var hasPreviousPage = ViewBag.HasPreviousPage ?? false;
+    var hasNextPage = ViewBag.HasNextPage ?? false;
+
+    // Search and filter params
+    var searchString = ViewBag.SearchString ?? "";
+    var selectedDepartment = ViewBag.SelectedDepartment ?? 0;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ITI Red-based Color Palette */
+            --primary-red: #DC143C;
+            --deep-red: #B91C3C;
+            --crimson: #991B1B;
+            --burgundy: #7F1D1D;
+            --light-red: #FEF2F2;
+            --red-50: #FEF2F2;
+            --red-100: #FEE2E2;
+            --red-200: #FECACA;
+            --red-500: #EF4444;
+            --red-600: #DC2626;
+            --red-700: #B91C1C;
+            --red-800: #991B1B;
+            --red-900: #7F1D1D;
+            /* Complementary Colors */
+            --accent-gold: #F59E0B;
+            --accent-amber: #FBBf24;
+            --success-green: #059669;
+            --info-blue: #0EA5E9;
+            --warning-orange: #EA580C;
+            --neutral-100: #F5F5F5;
+            --neutral-200: #E5E5E5;
+            --neutral-300: #D4D4D4;
+            --neutral-400: #A3A3A3;
+            --neutral-500: #737373;
+            --neutral-600: #525252;
+            --neutral-700: #404040;
+            --neutral-800: #262626;
+            --neutral-900: #171717;
+            /* Design System */
+            --border-radius-sm: 8px;
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 24px;
+            --card-shadow: 0 4px 20px rgba(220, 20, 60, 0.08);
+            --card-shadow-hover: 0 8px 30px rgba(220, 20, 60, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --gradient-primary: linear-gradient(135deg, var(--primary-red), var(--deep-red));
+            --gradient-secondary: linear-gradient(135deg, var(--deep-red), var(--crimson));
+            --gradient-accent: linear-gradient(135deg, var(--accent-gold), var(--accent-amber));
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FAFAFA 0%, var(--red-50) 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--neutral-800);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 3rem 2.5rem;
+            border-radius: 0 0 var(--border-radius-xl) var(--border-radius-xl);
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.2);
+        }
+
+            .dashboard-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+                z-index: 1;
+            }
+
+            .dashboard-header::after {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -20%;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                z-index: 1;
+            }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+            .header-content h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+        .username-highlight {
+            background: linear-gradient(45deg, #FFF, rgba(255, 255, 255, 0.8));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .header-meta {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-xl);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            z-index: 3;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+            .settings-btn:hover {
+                background: rgba(255, 255, 255, 0.25);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+                color: white;
+                text-decoration: none;
+            }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+            background: white;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(220, 20, 60, 0.08);
+        }
+
+            .card:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-4px);
+                border-color: rgba(220, 20, 60, 0.15);
+            }
+
+        .card-header {
+            background: linear-gradient(135deg, #FFFFFF, #FEFEFE);
+            border-bottom: 1px solid var(--red-100);
+            padding: 1.5rem 2rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--neutral-800);
+        }
+
+            .section-title i {
+                color: var(--primary-red);
+                font-size: 1.1rem;
+                width: 20px;
+                text-align: center;
+            }
+
+        .view-all-link {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            background: var(--red-50);
+        }
+
+            .view-all-link:hover {
+                color: var(--deep-red);
+                background: var(--red-100);
+                transform: translateX(4px);
+            }
+
+        /* Summary Card */
+        .summary-card {
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: var(--border-radius-lg);
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.2);
+        }
+
+            .summary-card::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 300px;
+                height: 300px;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+                border-radius: 50%;
+                z-index: 1;
+            }
+
+            .summary-card .stats-grid {
+                position: relative;
+                z-index: 2;
+            }
+
+            .summary-card h3 {
+                font-weight: 700;
+                font-size: 1.5rem;
+                margin-bottom: 2rem;
+                position: relative;
+                z-index: 2;
+            }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--border-radius-lg);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+            .stat-item:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: translateY(-2px);
+            }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* Project Items */
+        .project-item {
+            border: 1px solid var(--red-100);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            background: white;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .project-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: var(--gradient-primary);
+                transform: scaleY(0);
+                transition: var(--transition);
+            }
+
+            .project-item:hover {
+                box-shadow: var(--card-shadow-hover);
+                transform: translateY(-2px);
+                border-color: var(--primary-red);
+            }
+
+                .project-item:hover::before {
+                    transform: scaleY(1);
+                }
+
+        .project-title {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--neutral-800);
+            font-size: 1.1rem;
+        }
+
+        .project-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        /* Badges */
+        .badge {
+            border-radius: var(--border-radius-xl);
+            padding: 0.4rem 0.9rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.025em;
+        }
+
+            .badge.bg-success {
+                background-color: var(--success-green) !important;
+            }
+
+            .badge.bg-primary {
+                background-color: var(--primary-red) !important;
+            }
+
+            .badge.bg-warning {
+                background-color: var(--warning-orange) !important;
+            }
+
+            .badge.bg-danger {
+                background-color: var(--deep-red) !important;
+            }
+
+            .badge.bg-info {
+                background-color: var(--info-blue) !important;
+            }
+
+            .badge.bg-secondary {
+                background-color: var(--neutral-500) !important;
+            }
+
+        /* Progress Bars */
+        .progress {
+            height: 8px;
+            background-color: rgba(220, 20, 60, 0.1);
+            border-radius: var(--border-radius-xl);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            border-radius: var(--border-radius-xl);
+            background: var(--gradient-primary);
+            transition: var(--transition);
+        }
+
+            .progress-bar.bg-success {
+                background: linear-gradient(135deg, var(--success-green), #047857) !important;
+            }
+
+            .progress-bar.bg-warning {
+                background: linear-gradient(135deg, var(--warning-orange), #C2410C) !important;
+            }
+
+        /* Task Items */
+        .task-item {
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary-red);
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, var(--red-50), #FFFFFF);
+            border-radius: var(--border-radius-lg);
+            transition: var(--transition);
+            border: 1px solid var(--red-100);
+        }
+
+            .task-item:hover {
+                transform: translateX(8px);
+                box-shadow: var(--card-shadow);
+                border-left-color: var(--deep-red);
+                background: linear-gradient(135deg, var(--red-100), #FFFFFF);
+            }
+
+        .task-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--neutral-800);
+            font-size: 1.05rem;
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+        }
+
+        /* Tasks Overview */
+        .tasks-overview-item {
+            padding: 2rem 1.5rem;
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            background: white;
+            box-shadow: var(--card-shadow);
+        }
+
+            .tasks-overview-item:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--card-shadow-hover);
+            }
+
+            .tasks-overview-item.todo {
+                background: linear-gradient(135deg, #FEF3C7, #FFFBEB);
+                border-color: var(--accent-amber);
+            }
+
+            .tasks-overview-item.inprogress {
+                background: linear-gradient(135deg, var(--red-50), #FEFEFE);
+                border-color: var(--primary-red);
+            }
+
+            .tasks-overview-item.completed {
+                background: linear-gradient(135deg, #D1FAE5, #F0FDF4);
+                border-color: var(--success-green);
+            }
+
+            .tasks-overview-item.overdue {
+                background: linear-gradient(135deg, #FEE2E2, #FEF2F2);
+                border-color: var(--deep-red);
+            }
+
+            .tasks-overview-item.cancelled {
+                background: linear-gradient(135deg, #F5F5F5, #FAFAFA);
+                border-color: var(--neutral-400);
+            }
+
+            .tasks-overview-item.archived {
+                background: linear-gradient(135deg, #E0E7FF, #F0F4FF);
+                border-color: var(--info-blue);
+            }
+
+        .overview-number {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .overview-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--neutral-500);
+        }
+
+            .empty-state i {
+                font-size: 4rem;
+                margin-bottom: 1.5rem;
+                opacity: 0.3;
+                color: var(--primary-red);
+            }
+
+            .empty-state h6 {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: var(--neutral-700);
+            }
+
+        /* Widget Sections */
+        .widget-section {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+            .widget-section.hidden {
+                display: none !important;
+            }
+
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="header-content">
+                <h1>
+                    <i class="fas fa-tachometer-alt me-3"></i>
+                    Welcome, <span class="username-highlight">@ViewBag.UserFullName</span>
+                </h1>
+                <p class="header-subtitle mb-0">Here's a comprehensive overview of your projects and progress</p>
+                <p class="header-meta">
+                    <i class="far fa-clock me-2"></i>
+                    Last login: @ViewBag.LastLoginDate.ToString("MMM dd, yyyy HH:mm")
+                </p>
+            </div>
+
+            <!-- Settings Button -->
+            <a href="@Url.Action("Settings", "Dashboard")" class="settings-btn">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </div>
+
+        <!-- Project Summary Widget -->
+        <div id="project-status-widget" class="widget-section" style="display: @(showProjectStatus ? "block" : "none")">
+            <div class="summary-card">
+                <h3>
+                    <i class="fas fa-chart-pie me-3"></i>
+                    Project Performance Dashboard
+                </h3>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">@Model.TotalProjects</div>
+                        <div class="stat-label">Total Projects</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">@Model.CompletedProjects</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">@Model.InProgressProjects</div>
+                        <div class="stat-label">In Progress</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">@Model.PendingProjects</div>
+                        <div class="stat-label">Pending</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">@Model.TotalTasks</div>
+                        <div class="stat-label">Total Tasks</div>
+                    </div>
+                </div>
+
+                @if (Model.TotalProjects > 0)
+                {
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar"
+                             style="width: @(Math.Round((double)Model.CompletedProjects / Model.TotalProjects * 100))%">
+                        </div>
+                    </div>
+                    <p class="mt-3 mb-0 opacity-90" style="font-weight: 600;">
+                        @Math.Round((double)Model.CompletedProjects / Model.TotalProjects * 100)% overall completion rate
+                    </p>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Recent Projects -->
+            <div class="col-lg-6 mb-4">
+                <div id="recent-projects-widget" class="widget-section" style="display: @(showRecentProjects ? "block" : "none")">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="section-title">
+                                <i class="fas fa-project-diagram"></i>
+                                Recent Projects
+                            </h5>
+                            <a href="@Url.Action("Index","Project")" class="view-all-link">
+                                View All <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            @if (!Model.Projects.Any())
+                            {
+                                <div class="empty-state">
+                                    <i class="fas fa-project-diagram"></i>
+                                    <h6>No Projects Found</h6>
+                                    <p class="mb-0">@(User.IsInRole("Admin") ? "Create a new project to get started!" : "You haven't been assigned to any projects yet.")</p>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var project in Model.Projects.Take(recentProjectsCount))
+                                {
+                                    var completedTasks = project.Tasks?.Count(t => t.Status == SmartTask.Core.Models.Enums.Status.Done) ?? 0;
+                                    var totalProjectTasks = project.Tasks?.Count() ?? 1;
+                                    var progressPercentage = (int)((completedTasks / (double)totalProjectTasks) * 100);
+                                    var statusClass = project.Status?.ToLower() switch
+                                    {
+                                        "completed" => "success",
+                                        "inprogress" => "primary",
+                                        "pending" => "warning",
+                                        _ => "secondary"
+                                    };
+
+                                    <div class="project-item" onclick="window.location.href='@Url.Action("Details", "Projects", new { id = project.Id })'">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <h6 class="project-title">@project.Name</h6>
+                                            <span class="badge bg-@statusClass">@project.Status</span>
+                                        </div>
+
+                                        @if (!string.IsNullOrEmpty(project.Description))
+                                        {
+                                            <p class="text-muted mb-3 small">
+                                                @(project.Description.Length > 80 ? project.Description.Substring(0, 80) + "..." : project.Description)
+                                            </p>
+                                        }
+
+                                        <div class="progress">
+                                            <div class="progress-bar bg-@statusClass" style="width: @progressPercentage%"></div>
+                                        </div>
+
+                                        <div class="project-meta">
+                                            <small class="text-muted fw-semibold">
+                                                <i class="fas fa-tasks me-1"></i>
+                                                @completedTasks/@totalProjectTasks Tasks
+                                            </small>
+                                            @if (project.EndDate.HasValue)
+                                            {
+                                                <small class="text-muted fw-semibold">
+                                                    <i class="far fa-calendar me-1"></i>
+                                                    Due @project.EndDate.Value.ToString("MMM dd")
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Tasks -->
+            <div class="col-lg-6 mb-4">
+                <div id="my-tasks-widget" class="widget-section" style="display: @(showMyTasks ? "block" : "none")">
+                    <div class="card h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="section-title">
+                                <i class="fas fa-clipboard-list"></i>
+                                My Active Tasks
+                            </h5>
+                            <a href="@Url.Action("MyTasks", "Dashboard")" class="view-all-link">
+                                View All <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            @if (!Model.MyTasks.Any())
+                            {
+                                <div class="empty-state">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <h6>No Tasks Assigned</h6>
+                                    <p class="mb-0">You don't have any tasks assigned to you yet.</p>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var task in Model.MyTasks.Take(5))
+                                {
+                                    var priorityClass = task.Priority.ToString().ToLower() switch
+                                    {
+                                        "high" => "danger",
+                                        "medium" => "warning",
+                                        "low" => "info",
+                                        _ => "secondary"
+                                    };
+
+                                    var statusClass = task.Status.ToString().ToLower() switch
+                                    {
+                                        "done" => "success",
+                                        "inprogress" => "primary",
+                                        "todo" => "warning",
+                                        _ => "secondary"
+                                    };
+
+                                    <div class="task-item">
+                                        <div class="task-title">@task.Title</div>
+                                        @if (!string.IsNullOrEmpty(task.Description))
+                                        {
+                                            <p class="text-muted mb-2 small">
+                                                @(task.Description.Length > 60 ? task.Description.Substring(0, 60) + "..." : task.Description)
+                                            </p>
+                                        }
+
+                                        <div class="task-meta">
+                                            <span class="badge bg-@statusClass">@task.Status</span>
+                                            <span class="badge bg-@priorityClass">@task.Priority</span>
+                                            @if (task.DueDate.HasValue)
+                                            {
+                                                <small class="text-muted fw-semibold">
+                                                    <i class="far fa-calendar me-1"></i>
+                                                    Due @task.DueDate.Value.ToString("MMM dd")
+                                                </small>
+                                            }
+                                            @if (!string.IsNullOrEmpty(task.ProjectName))
+                                            {
+                                                <small class="text-muted fw-semibold">
+                                                    <i class="fas fa-project-diagram me-1"></i>
+                                                    @task.ProjectName
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Overview -->
+        <div id="tasks-overview-widget" class="widget-section" style="display: @(showTasksOverview ? "block" : "none")">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Tasks Performance Analytics
+                    </h5>
+                    <a href="@Url.Action("TaskOverview", "Dashboard")" class="view-all-link">
+                        Detailed Analysis <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-4 col-6 mb-4">
+                            <div class="tasks-overview-item todo">
+                                <div class="overview-number text-warning">@Model.TodoTasks</div>
+                                <div class="overview-label text-muted">To Do</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-6 mb-4">
+                            <div class="tasks-overview-item inprogress">
+                                <div class="overview-number" style="color: var(--primary-red);">@Model.InProgressTasks</div>
+                                <div class="overview-label text-muted">In Progress</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-6 mb-4">
+                            <div class="tasks-overview-item completed">
+                                <div class="overview-number text-success">@Model.CompletedTasks</div>
+                                <div class="overview-label text-muted">Completed</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-6 mb-4">
+                            <div class="tasks-overview-item overdue">
+                                <div class="overview-number" style="color: var(--deep-red);">@Model.OverdueTasks</div>
+                                <div class="overview-label text-muted">Overdue</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-6 mb-4">
+                            <div class="tasks-overview-item cancelled">
+                                <div class="overview-number text-secondary">@Model.CancelledTasks</div>
+                                <div class="overview-label text-muted">Cancelled</div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 col-6 mb-4">
+                            <div class="tasks-overview-item archived">
+                                <div class="overview-number text-info">@Model.ArchievedTasks</div>
+                                <div class="overview-label text-muted">Archived</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Enhanced animations and interactions
+            $('.project-item, .task-item').hover(
+                function() {
+                    $(this).addClass('shadow-lg');
+                },
+                function() {
+                    $(this).removeClass('shadow-lg');
+                }
+            );
+
+            // Smooth scroll animations for widgets
+            $('.widget-section').each(function(index) {
+                $(this).css('animation-delay', (index * 0.1) + 's');
+            });
+
+            // Enhanced toast notifications
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                        // Create and show enhanced toast notification
+                        const toastHtml = `
+                            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
+                                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="6000">
+                                    <div class="toast-header" style="background: var(--gradient-primary); color: white; border: none;">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <strong class="me-auto">Success</strong>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                                    </div>
+                                    <div class="toast-body" style="background: white; border: 1px solid var(--red-100); border-top: none; border-radius: 0 0 12px 12px;">
+                            @TempData["SuccessMessage"]
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        $('body').append(toastHtml);
+
+                        // Auto hide after 6 seconds
+                        setTimeout(function() {
+                            $('.toast').toast('hide');
+                            setTimeout(function() {
+                                $('.toast').parent().remove();
+                            }, 300);
+                        }, 6000);
+            </text>
+        }
+
+            // Add ripple effect to clickable items
+            $('.project-item, .task-item, .tasks-overview-item').on('click', function(e) {
+                const ripple = $('<span class="ripple"></span>');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.css({
+                    width: size,
+                    height: size,
+                    left: x,
+                    top: y,
+                    position: 'absolute',
+                    borderRadius: '50%',
+                    background: 'rgba(220, 20, 60, 0.3)',
+                    transform: 'scale(0)',
+                    animation: 'ripple-animation 0.6s ease-out',
+                    pointerEvents: 'none'
+                });
+
+                $(this).css('position', 'relative').css('overflow', 'hidden').append(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+
+        //     Add CSS for ripple animation
+        //     $('<style>').prop('type', 'text/css').html(`
+        // keyframes ripple-animation {
+        //             to {
+        //                 transform: scale(2);
+        //                 opacity: 0;
+        //             }
+        //         }
+        //     `).appendTo('head');
+
+            // Intersection Observer for smooth animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            $('.widget-section').each(function() {
+                observer.observe(this);
+            });
+        });
+    </script>
+</body>
+</html>
