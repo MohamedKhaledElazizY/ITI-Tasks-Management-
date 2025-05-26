@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewData["Title"] = "ProjectTasksGantt";
+}
+<head>
+    <link rel="stylesheet" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css">
+    <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+</head>
+<body>
+    <h2>@ViewBag.ProjectName Time Line</h2>
+    <button class="btn btn-primary" onclick="zoomIn()">Zoom In</button>
+    <button class="btn btn-success" onclick="zoomOut()">Zoom Out</button>
+    <div id="gantt_here" style="width:100%; height:500px;"></div>
+    <div id="task-details-container"></div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    gantt.plugins({ critical_path: true });
+    gantt.config.xml_date = "%Y-%m-%d %H:%i";
+    gantt.config.scale_unit = "day";
+    gantt.config.date_scale = "%d %M";
+    gantt.config.highlight_critical_path = true;
+
+    gantt.templates.task_class = function(start, end, task){
+        if(task.status === "completed") return "gantt_task_green";
+        if(task.assignee === "Sara") return "gantt_task_blue";
+        return "";
+    };
+
+    gantt.init("gantt_here");
+    gantt.load("/Project/GetTasks?id="+ @ViewBag.Id) ;
+
+    var dp = new gantt.dataProcessor("/Project/SaveTask");
+    dp.init(gantt);
+    // dp.setTransactionMode("REST");
+    dp.setTransactionMode("POST", false);
+
+        // Custom AJAX handler for debugging
+      var dp = new gantt.dataProcessor("/Project/SaveTask");
+    dp.init(gantt);
+    dp.setTransactionMode("POST", false);
+
+    dp.serverProcessor = function(url, data, callback, method) {
+        var formData = new FormData();
+        for (var key in data) {
+            formData.append(key, data[key]);
+        }
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            xhrFields: { withCredentials: true },
+            success: function(response) {
+                callback(response);
+            },
+            error: function(xhr) {
+                console.error("Error saving task:", xhr.status, xhr.statusText);
+            }
+        });
+    };
+
+    // gantt.attachEvent("onTaskClick", function(id, e){
+    //     $.get("/Project/TaskDetails", { id: id }, function(html){
+    //         $("#task-details-container").html(html);
+    //     });
+    //     return true;
+    // });
+
+    function zoomIn() {
+        gantt.config.scale_unit = "day";
+        gantt.render();
+    }
+
+    function zoomOut() {
+        gantt.config.scale_unit = "month";
+        gantt.render();
+    }
+</script>
+<style>
+    .gantt_task_green .gantt_task_content {
+        background-color: #7dbf7d !important;
+    }
+
+    .gantt_task_blue .gantt_task_content {
+        background-color: #6fa8dc !important;
+    }
+</style>

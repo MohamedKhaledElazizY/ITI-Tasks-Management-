@@ -564,22 +564,29 @@
                                     </a>
                                 </secure-content>
 
-                                <secure-content asp-area="" asp-controller="Project" asp-action="AssignUser">
-                                    <a asp-action="AssignUser" asp-route-projectId="@project.Id"
-                                       class="btn btn-sm btn-outline-info btn-action"
-                                       title="Assign User">
-                                        <i class="fas fa-user-plus"></i>
-                                    </a>
-                                </secure-content>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                                    <secure-content asp-area="" asp-controller="Project" asp-action="AssignUser">
+                                        <a asp-action="AssignUser" asp-route-projectId="@project.Id"
+                                           class="btn btn-sm btn-outline-info btn-action"
+                                           title="Assign User">
+                                            <i class="fas fa-user-plus"></i>
+                                        </a>
+                                    </secure-content>
+                                    <secure-content asp-area="" asp-controller="Project" asp-action="ProjectTasksGantt">
+                                        <a asp-action="ProjectTasksGantt" asp-route-projectId="@project.Id"
+                                           class="btn btn-sm btn-outline-info btn-action"
+                                           title="Assign User">
+                                            <i class="fas fa-user-plus"></i>
+                                        </a>
+                                    </secure-content>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-    </div>
 
 @functions {
     string GetStatusBadge(string status)
