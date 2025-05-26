@@ -98,7 +98,7 @@ namespace SmartTask.Web.Controllers
 
             return RedirectToAction("WithoutDepartment");
         }
-        [Authorize(Policy = "CanEditUser")]
+        //[Authorize(Policy = "CanEditUser")]
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userService.GetByIdAsync(id);
@@ -118,7 +118,7 @@ namespace SmartTask.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "CanEditUser")]
+        //[Authorize(Policy = "CanEditUser")]
         public async Task<IActionResult> Edit(string id, EditUserViewModel model)
         {
             if (id != model.Id) return NotFound();
