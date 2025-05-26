@@ -71,9 +71,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/css/notification.css" />
     <style>
-        .apear 
-        {
-z-index:1000000;
+        .card-body{
+            animation: none !important;
+            transition: none !important;
+			transform: none !important;
         }
     </style>
 @RenderSection("Styles", required: false)
@@ -109,7 +110,7 @@ z-index:1000000;
                 </a>
 
                 <div class="header-user">
-                    <div class="nav user-menu nav-list apear">
+                    <div class="nav user-menu nav-list">
 
                         <div class="me-auto d-flex align-items-center" id="header-search">
                             <a id="toggle_btn" href="javascript:void(0);" class="btn btn-menubar me-1">
@@ -452,11 +453,13 @@ z-index:1000000;
                                                 </a>
                                             </li>
                                         </secure-content>
+                                    <secure-content asp-area="" asp-controller="Employee" asp-action="Index">
                                         <li>
-                                            <a href="employee-dashboard.html">
+                                            <a asp-controller="Employee" asp-action="Index" asp-route-id="@userId">
                                                 Employee Dashboard
                                             </a>
                                         </li>
+                                    </secure-content>
 
                                     </ul>
                                 </li>
@@ -541,8 +544,7 @@ z-index:1000000;
 
         </div>
 
-
-    </div>
+    
     @* <header> *@
     @*     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"> *@
     @*         <div class="container-fluid"> *@
