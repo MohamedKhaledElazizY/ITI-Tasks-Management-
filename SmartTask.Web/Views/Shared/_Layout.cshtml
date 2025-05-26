@@ -70,6 +70,12 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/css/notification.css" />
+    <style>
+        .apear 
+        {
+z-index:1000000;
+        }
+    </style>
 @RenderSection("Styles", required: false)
 
 </head>
@@ -103,7 +109,7 @@
                 </a>
 
                 <div class="header-user">
-                    <div class="nav user-menu nav-list">
+                    <div class="nav user-menu nav-list apear">
 
                         <div class="me-auto d-flex align-items-center" id="header-search">
                             <a id="toggle_btn" href="javascript:void(0);" class="btn btn-menubar me-1">

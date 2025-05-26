@@ -1,299 +1,290 @@
 ﻿@using System.Security.Claims
 @{
-	Layout = "_Layout";
-	var userId = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+    Layout = "_Layout";
+    var userId = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 }
-
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Admin Dashboard</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<style>
-		body {
-			background-color: #f8f9fa;
-		}
-		.row{
-			transition: none;
-			transform: none;
-			z-index: 5;
-		}
-		.arrow-btn {
-			width: 40px;
-			height: 40px;
-			padding: 0;
-			font-size: 1.5rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background-color: #343a40;
-			color: #fff;
-			border: none;
-			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-			transition: background-color 0.3s ease, transform 0.2s ease;
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-		}
+        .row {
+            transition: none;
+            transform: none;
+        }
 
-			.arrow-btn:hover {
-				background-color: #212529;
-				transform: scale(1.1);
-			}
+        .arrow-btn {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #343a40;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
 
-		.card {
-			opacity: 0;
-			transform: translateY(40px);
-			transition: all 0.6s ease-in-out;
-			border-radius: 1rem;
-			border: none;
-			
-			overflow: hidden;
-		}
+            .arrow-btn:hover {
+                background-color: #212529;
+                transform: scale(1.1);
+            }
 
-			.card.visible {
-				opacity: 1;
-				transform: translateY(0);
-			}
+        .card {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s ease-in-out;
+            border-radius: 1rem;
+            border: none;
+            z-index: 1000000000;
+            overflow: hidden;
+        }
 
-			.card:hover {
-				transform: scale(1.03);
-			}
+            .card.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
 
-		.card-img-placeholder {
-			height: 180px;
-			background-color: #e0e0e0;
-			background-size: cover;
-			background-position: center;
-			border-top-left-radius: 1rem;
-			border-top-right-radius: 1rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			overflow: hidden;
-		}
+            .card:hover {
+                transform: scale(1.03);
+            }
 
-		#card-1 .card-img-placeholder {
-			background-color: #d1ecf1;
-		}
+        .card-img-placeholder {
+            height: 180px;
+            background-color: #e0e0e0;
+            background-size: cover;
+            background-position: center;
+            border-top-left-radius: 1rem;
+            border-top-right-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
 
-		#card-2 .card-img-placeholder {
-			background-color: #c3e6cb;
-		}
+            .card-img-placeholder > div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                font-size: 3rem;
+            }
 
-		#card-3 .card-img-placeholder {
-			background-color: #f5c6cb;
-		}
+        #card-1 .card-img-placeholder {
+            background-color: #d1ecf1;
+        }
 
-		#card-4 .card-img-placeholder {
-			background-color: #ffeeba;
-		}
+        #card-2 .card-img-placeholder {
+            background-color: #c3e6cb;
+        }
 
-		#card-5 .card-img-placeholder {
-			background-color: #d6d8db;
-		}
+        #card-3 .card-img-placeholder {
+            background-color: #f5c6cb;
+        }
 
-		#card-6 .card-img-placeholder {
-			background-color: #b8daff;
-		}
+        #card-4 .card-img-placeholder {
+            background-color: #ffeeba;
+        }
 
-		#card-7 .card-img-placeholder {
-			background-color: #f8d7da;
-		}
+        #card-5 .card-img-placeholder {
+            background-color: #d6d8db;
+        }
 
-		#card-8 .card-img-placeholder {
-			background-color: #e2e3e5;
-		}
+        #card-6 .card-img-placeholder {
+            background-color: #b8daff;
+        }
 
-		#card-9 .card-img-placeholder {
-			background-color: #d4edda;
-		}
+        #card-7 .card-img-placeholder {
+            background-color: #f8d7da;
+        }
 
-		#card-10 .card-img-placeholder {
-			background-color: #fff3cd;
-		}
+        #card-8 .card-img-placeholder {
+            background-color: #e2e3e5;
+        }
 
-		.card-img-placeholder > div::before {
-			font-size: 48px;
-			display: inline-block;
-			transition: transform 0.3s ease, margin-top 0.3s ease;
-			will-change: transform;
-			overflow: hidden;
-		}
+        #card-9 .card-img-placeholder {
+            background-color: #d4edda;
+        }
 
-		.card:hover .card-img-placeholder > div::before {
-			transform: scale(1.15) translateY(-5px);
-			will-change: transform;
-			overflow: hidden;
-		}
+        #card-10 .card-img-placeholder {
+            background-color: #fff3cd;
+        }
 
-		
+        .user-icon {
+            font-size: 48px;
+            width: 100%;
+        }
 
-		
+        .users-icon::before {
+            content: '👥';
+        }
 
-		.user-icon {
-			font-size: 48px;
-			width:100%
-		}
-		.users-icon::before {
-			content: '👥';
-		}
+        .branches-icon::before {
+            content: '🏢';
+        }
 
-		.branches-icon::before {
-			content: '🏢';
-		}
+        .roles-icon::before {
+            content: '🛡';
+        }
 
-		.roles-icon::before {
-			content: '🛡️';
-		}
+        .activity-icon::before {
+            content: '📊';
+        }
 
-		.activity-icon::before {
-			content: '📊';
-		}
+        .departments-icon::before {
+            content: '🧩';
+        }
 
-		.departments-icon::before {
-			content: '🧩';
-		}
+        .notification-icon::before {
+            content: '🔔';
+        }
 
-		.notification-icon::before {
-			content: '🔔';
-		}
+        .outlook-icon::before {
+            content: '📧';
+        }
 
-		.outlook-icon::before {
-			content: '📧';
-		}
+        .projects-icon::before {
+            content: '📁';
+        }
 
-		.projects-icon::before {
-			content: '📁';
-		}
+        .progress-icon::before {
+            content: '⏳';
+        }
 
-		.progress-icon::before {
-			content: '⏳';
-		}
-
-		a.arrow-btn {
-			text-decoration: none;
-		}
-	</style>
+        a.arrow-btn {
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-	<div class="container py-5">
-		<h2 class="text-center mb-5">Admin Dashboard</h2>
-		<div class="row g-4 justify-content-center">
-			<div class="col-md-4">
-				<div class="card shadow" id="card-1">
-					<div class="card-img-placeholder user-icon">👤</div>
-					<div class="card-body">
-						<h5 class="card-title">My Account</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="User" asp-action="Details" asp-route-id="@userId"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+    <div class="container mt-5 pt-5">
+        <h2 class="text-center mb-5">Admin Dashboard</h2>
+        <div class="row g-4 justify-content-center">
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-2">
-					<div class="card-img-placeholder"><div class="users-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">All Users</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="User" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-1">
+                    <div class="card-img-placeholder user-icon">👤</div>
+                    <div class="card-body">
+                        <h5 class="card-title">My Account</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="User" asp-action="Details" asp-route-id="@userId"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-3">
-					<div class="card-img-placeholder"><div class="branches-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Branches</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="Branch" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-2">
+                    <div class="card-img-placeholder"><div class="users-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">All Users</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="User" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-4">
-					<div class="card-img-placeholder"><div class="roles-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Assign User To Roles</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="Account" asp-action="ManageUserRoles"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-3">
+                    <div class="card-img-placeholder"><div class="branches-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Branches</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="Branch" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-5">
-					<div class="card-img-placeholder"><div class="activity-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Activity Log</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="Audit" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-4">
+                    <div class="card-img-placeholder"><div class="roles-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Assign User To Roles</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="Account" asp-action="ManageUserRoles"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-6">
-					<div class="card-img-placeholder"><div class="departments-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Departments</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="Department" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-5">
+                    <div class="card-img-placeholder"><div class="activity-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Activity Log</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="Audit" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-7">
-					<div class="card-img-placeholder"><div class="notification-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Notification</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="Notification" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-6">
+                    <div class="card-img-placeholder"><div class="departments-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Departments</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="Department" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-8">
-					<div class="card-img-placeholder"><div class="outlook-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Outlook</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="Outlook" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-7">
+                    <div class="card-img-placeholder"><div class="notification-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Notification</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="Notification" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-9">
-					<div class="card-img-placeholder"><div class="projects-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Projects</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="Project" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-8">
+                    <div class="card-img-placeholder"><div class="outlook-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Outlook</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="Outlook" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-			<div class="col-md-4">
-				<div class="card shadow" id="card-10">
-					<div class="card-img-placeholder"><div class="progress-icon"></div></div>
-					<div class="card-body">
-						<h5 class="card-title">Project Progress</h5>
-						<a class="btn arrow-btn ms-auto d-block" asp-controller="ProjectProgress" asp-action="Index"> &#10148;</a>
-					</div>
-				</div>
-			</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-9">
+                    <div class="card-img-placeholder"><div class="projects-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Projects</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="Project" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-		</div>
-	</div>
+            <div class="col-md-4">
+                <div class="card shadow" id="card-10">
+                    <div class="card-img-placeholder"><div class="progress-icon"></div></div>
+                    <div class="card-body">
+                        <h5 class="card-title">Project Progress</h5>
+                        <a class="btn arrow-btn ms-auto d-block" asp-controller="ProjectProgress" asp-action="Index"> &#10148;</a>
+                    </div>
+                </div>
+            </div>
 
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<script>
-		$(document).ready(function () {
-			$(".card").each(function (index) {
-				const card = $(this);
-				setTimeout(function () {
-					card.addClass("visible");
-				}, index * 75);
-			});
-		});
-	</script>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".card").each(function (index) {
+                const card = $(this);
+                setTimeout(function () {
+                    card.addClass("visible");
+                }, index * 75);
+            });
+        });
+    </script>
 </body>
 </html>
