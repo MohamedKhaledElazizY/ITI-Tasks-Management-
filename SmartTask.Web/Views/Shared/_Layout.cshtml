@@ -3,6 +3,8 @@
 @addTagHelper *, SmartTask.Web.TagHelpers
 @{
     var userId = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+	var userName = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+	var email = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
 }
 <!DOCTYPE html>
@@ -303,11 +305,9 @@
                                                     <img src="~/assets/img/profiles/avatar-12.jpg" alt="img">
                                                 </span>
                                                 <div>
-                                                    <h5 class="mb-0">Kevin Larry</h5>
+                                                    <h5 class="mb-0">@userName</h5>
                                                     <p class="fs-12 fw-medium mb-0">
-                                                        <a href="https://smarthr.co.in/cdn-cgi/l/email-protection"
-                                                           class="__cf_email__"
-                                                           data-cfemail="2e594f5c5c4b406e4b564f435e424b004d4143">[email&#160;protected]</a>
+                                                       @email
                                                     </p>
                                                 </div>
                                             </div>

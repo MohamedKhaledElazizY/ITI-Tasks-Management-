@@ -66,7 +66,9 @@ namespace SmartTask.Web.Controllers
                             LoginTime = DateTime.Now,
                             IPAddress = HttpContext.Connection.RemoteIpAddress.ToString(),
                             UserAgent = HttpContext.Request.Headers["User-Agent"].ToString(),
-                            UserName = user.UserName
+                            UserName = user.UserName,
+                          
+
                         });
                         return RedirectToAction("Index", "Home");
                     }
