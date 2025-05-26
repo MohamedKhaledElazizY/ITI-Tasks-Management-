@@ -14,6 +14,7 @@ namespace SmartTask.Web.Controllers
 
         public ManagerController(
             SmartTaskContext context,
+
             UserManager<ApplicationUser> userManager)
         {
             _context = context;
