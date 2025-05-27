@@ -19,10 +19,10 @@ namespace SmartTask.Core.Models
         public int? BranchId { get; set; }
 
         [ForeignKey("DepartmentId")]
-        public virtual Department Department { get; set; }
+        public virtual Department? Department { get; set; }
 
         [ForeignKey("BranchId")]
-        public virtual Branch Branch { get; set; }
+        public virtual Branch? Branch { get; set; }
 
         public virtual ICollection<Branch> ManagedBranches { get; set; } = new List<Branch>();
         public virtual ICollection<Department> ManagedDepartments { get; set; } = new List<Department>();

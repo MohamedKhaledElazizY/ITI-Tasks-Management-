@@ -28,6 +28,14 @@
         </select>
         <span asp-validation-for="DepartmentId" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label asp-for="BranchId">Branch</label>
+        <select asp-for="BranchId" class="form-control"
+                asp-items="ViewBag.Branchs">
+            <option value="">-- Select branch --</option>
+        </select>
+        <span asp-validation-for="BranchId" class="text-danger"></span>
+    </div>
 
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>

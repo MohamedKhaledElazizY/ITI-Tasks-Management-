@@ -63,6 +63,11 @@ namespace SmartTask.DataAccess.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task UpdateRangeAsync(IEnumerable<Branch> branches)
+        {
+            _context.Branches.UpdateRange(branches);
+            await _context.SaveChangesAsync();
+        }
         public async Task DeleteAsync(int id)
         {
             var branch = await _context.Branches.FindAsync(id);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SmartTask.Bl.IServices;
 using SmartTask.Bl.Services;
 using SmartTask.BL.IServices;
 using SmartTask.Core.Models;
@@ -17,10 +18,12 @@ namespace SmartTask.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly IDepartmentService _departmentService;
-        public UserController(IUserService userService, IDepartmentService departmentService)
+        private readonly IBranchService _branchService;
+        public UserController(IUserService userService, IDepartmentService departmentService, IBranchService branchService)
         {
             _userService = userService;
             _departmentService = departmentService;
+            _branchService = branchService;
         }
 
         [HttpGet]
@@ -88,7 +91,9 @@ namespace SmartTask.Web.Controllers
             if (user == null) return NotFound();
 
             var departments = await _departmentService.GetAllDepartmentsAsync();
+            var branchs = await _branchService.GetAllAsync();   
             ViewBag.Departments = new SelectList(departments, "Id", "Name");
+            ViewBag.Branchs = new SelectList(branchs, "Id", "Name");
             return View(user);
         }
 
@@ -107,20 +112,22 @@ namespace SmartTask.Web.Controllers
             }
 
             var departments = await _departmentService.GetAllDepartmentsAsync();
+            var branchs = await _branchService.GetAllAsync();
             ViewBag.Departments = new SelectList(departments, "Id", "Name");
+            ViewBag.Branchs = new SelectList(branchs, "Id", "Name");
             return View(user);
         }
-        public async Task<IActionResult> Delete(string id)
-        {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null) return NotFound();
+        //public async Task<IActionResult> Delete(string id)
+        //{
+        //    var user = await _userService.GetByIdAsync(id);
+        //    if (user == null) return NotFound();
 
-            return View(user);
-        }
+        //    return View(user);
+        //}
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             await _userService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
