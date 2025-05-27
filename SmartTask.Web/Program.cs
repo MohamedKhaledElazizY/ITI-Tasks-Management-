@@ -65,7 +65,8 @@ namespace SmartTask.Web
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<SmartTaskContext>();
+            .AddEntityFrameworkStores<SmartTaskContext>()
+            .AddDefaultTokenProviders(); ;
 
             #endregion Database & Identity
 

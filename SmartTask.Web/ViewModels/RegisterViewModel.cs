@@ -31,9 +31,9 @@ namespace SmartTask.Core.ViewModels
        // [RegularExpression("^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$", ErrorMessage = "Enter a Valid Phone Number")]
         public string PhoneNumber { get; set; }
 
-        [Required]
+        //[Required]
         [Display(Name = "Profile Image")]
-        public IFormFile UserImage { get; set; }
+        public IFormFile? UserImage { get; set; }
         public string? ImagePath { get; set; }
     }
 }
