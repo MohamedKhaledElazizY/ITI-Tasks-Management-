@@ -463,7 +463,28 @@
 
                                     </ul>
                                 </li>
+                            <li class="submenu">
+                                <a href="javascript:void(0);">
+                                    <i class="bi bi-calendar"></i><span>Calendar</span><span class="badge badge-danger fs-10 fw-medium text-white p-1">Hot</span><span class="menu-arrow"></span>
+                                </a>
+                                <ul>
+                                    <secure-content asp-area="" asp-controller="Employee" asp-action="Index">
+                                        <li>
+                                            <a asp-controller="Calendar" asp-action="CalendarByUserId" asp-route-id="@userId">
+                                                My-Calendar
+                                            </a>
+                                        </li>
+                                    </secure-content>
+                                    <secure-content asp-area="" asp-controller="Admin" asp-action="Index">
+                                        <li>
+                                            <a asp-controller="Calendar" asp-action="Index">
+                                               Master Calendar
+                                            </a>
+                                        </li>
+                                    </secure-content>
 
+                                </ul>
+                            </li>
                             </ul>
                         </li>
 

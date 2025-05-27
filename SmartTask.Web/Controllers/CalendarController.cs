@@ -20,10 +20,26 @@ namespace SmartTask.Web.Controllers
         }
         public async Task<IActionResult> Index()
         {
-          
-           
-            ViewBag.Projects=await _projectRepository.GetAllAsyncWithoutInclude();
-           
+
+
+            var projects = await _projectRepository.GetAllAsyncWithoutInclude();
+
+            if (projects == null || !projects.Any())
+                return NotFound("No projects found.");
+
+            ViewBag.Projects = projects;    
+            return View();
+        }
+        public async Task<IActionResult> CalendarByUserId(string id)
+        {
+
+
+            var projects = await _projectRepository. GetUserProjectsAsync(id);
+
+            if (projects == null || !projects.Any())
+                return NotFound("No projects found.");
+
+            ViewBag.Projects = projects;
             return View();
         }
         public async Task<IActionResult> GetProjectById(int ProjectId)
