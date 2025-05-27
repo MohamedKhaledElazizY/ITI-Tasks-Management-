@@ -20,7 +20,7 @@ namespace SmartTask.Web.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IDepartmentService departmentService;
 
-        public BranchController(IBranchService branchService,RoleManager<ApplicationRole> roleManager,
+        public BranchController(IBranchService branchService, RoleManager<ApplicationRole> roleManager,
             UserManager<ApplicationUser> userManager,
             IDepartmentService departmentService
             )
@@ -166,7 +166,6 @@ namespace SmartTask.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //var managers = await userManager.GetUsersInRoleAsync("BranchManager");
                 var managers = await userManager.Users.ToListAsync();
                 var departments = await departmentService.GetAllDepartmentsAsync();
                 ViewBag.Managers = new SelectList(managers, "Id", "FullName", model.ManagerId);
@@ -174,18 +173,38 @@ namespace SmartTask.Web.Controllers
                 return View(model);
             }
 
+            var branchBeforeEdit = await branchService.GetBranchWithDetailsAsync(model.Id);
+            var oldDepartmentIds = branchBeforeEdit.BranchDepartments.Select(bd => bd.DepartmentId).ToList();
+            var newDepartmentIds = model.SelectedDepartmentIds ?? new List<int>();
+
+            var removedDepartmentIds = oldDepartmentIds.Except(newDepartmentIds).ToList();
+
             var branch = new Branch
             {
                 Id = model.Id,
                 Name = model.Name,
                 ManagerId = model.ManagerId,
-                BranchDepartments = model.SelectedDepartmentIds?.Select(id => new BranchDepartment
+                BranchDepartments = newDepartmentIds
+                    .Select(id => new BranchDepartment
                 {
                     BranchId = model.Id,
                     DepartmentId = id
                 }).ToList()
             };
             await branchService.UpdateAsync(branch);
+
+            if (removedDepartmentIds.Any())
+            {
+                var usersToRemoveDepartment = await userManager.Users
+                    .Where(u => u.BranchId == model.Id && u.DepartmentId != null && removedDepartmentIds.Contains((int)u.DepartmentId))
+                    .ToListAsync();
+
+                foreach (var user in usersToRemoveDepartment)
+                {
+                    user.DepartmentId = null;
+                    await userManager.UpdateAsync(user);
+                }
+            }
 
             var existingUsers = await userManager.Users
                 .Where(u => u.BranchId == model.Id)
@@ -196,6 +215,7 @@ namespace SmartTask.Web.Controllers
                 if (!model.SelectedUserIds.Contains(user.Id))
                 {
                     user.BranchId = null;
+                    user.DepartmentId = null;
                     await userManager.UpdateAsync(user);
                 }
             }
