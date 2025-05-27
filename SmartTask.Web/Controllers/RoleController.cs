@@ -9,6 +9,8 @@ using SmartTask.Core.ViewModels;
 
 namespace SmartTask.Web.Controllers
 {
+
+    [Authorize]
     public class RoleController : Controller
     {
         private readonly IMvcControllerDiscovery _mvcControllerDiscovery;
@@ -64,7 +66,6 @@ namespace SmartTask.Web.Controllers
 
             return View(viewModel);
         }
-        [Authorize]
         // GET: Role/Edit/5
         public async Task<ActionResult> Edit(string id)
         {

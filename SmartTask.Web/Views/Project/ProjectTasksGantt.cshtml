@@ -8,83 +8,187 @@
 </head>
 <body>
     <h2>@ViewBag.ProjectName Time Line</h2>
+   
     <button class="btn btn-primary" onclick="zoomIn()">Zoom In</button>
     <button class="btn btn-success" onclick="zoomOut()">Zoom Out</button>
     <div id="gantt_here" style="width:100%; height:500px;"></div>
     <div id="task-details-container"></div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    @* <div id="chart_div"></div> *@
+
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    gantt.plugins({ critical_path: true });
-    gantt.config.xml_date = "%Y-%m-%d %H:%i";
-    gantt.config.scale_unit = "day";
-    gantt.config.date_scale = "%d %M";
-    gantt.config.highlight_critical_path = true;
+ <script> 
+     gantt.plugins({ critical_path: true }); 
+     gantt.config.xml_date = "%Y-%m-%d %H:%i"; 
+     gantt.config.scale_unit = "day"; 
+     gantt.config.date_scale = "%d %M"; 
+     gantt.config.highlight_critical_path = true; 
 
-    gantt.templates.task_class = function(start, end, task){
-        if(task.status === "completed") return "gantt_task_green";
-        if(task.assignee === "Sara") return "gantt_task_blue";
-        return "";
-    };
+     gantt.templates.task_class = function(start, end, task){ 
+         if(task.status === "completed") return "gantt_task_green"; 
+         if(task.assignee === "Sara") return "gantt_task_blue"; 
+         return ""; 
+     }; 
 
-    gantt.init("gantt_here");
-    gantt.load("/Project/GetTasks?id="+ @ViewBag.Id) ;
+     gantt.init("gantt_here"); 
+     gantt.load("/Project/GetTasks?id="+ @ViewBag.Id) ; 
 
-    var dp = new gantt.dataProcessor("/Project/SaveTask");
-    dp.init(gantt);
-    // dp.setTransactionMode("REST");
-    dp.setTransactionMode("POST", false);
+     var dp = new gantt.dataProcessor("/Project/SaveTask"); 
+     dp.init(gantt); 
+     // dp.setTransactionMode("REST"); 
+     dp.setTransactionMode("POST", false); 
 
-        // Custom AJAX handler for debugging
-      var dp = new gantt.dataProcessor("/Project/SaveTask");
-    dp.init(gantt);
-    dp.setTransactionMode("POST", false);
+         // Custom AJAX handler for debugging 
+       var dp = new gantt.dataProcessor("/Project/SaveTask"); 
+     dp.init(gantt); 
+     dp.setTransactionMode("POST", false); 
 
-    dp.serverProcessor = function(url, data, callback, method) {
-        var formData = new FormData();
-        for (var key in data) {
-            formData.append(key, data[key]);
-        }
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-            xhrFields: { withCredentials: true },
-            success: function(response) {
-                callback(response);
-            },
-            error: function(xhr) {
-                console.error("Error saving task:", xhr.status, xhr.statusText);
-            }
-        });
-    };
+     dp.serverProcessor = function(url, data, callback, method) { 
+         var formData = new FormData(); 
+         for (var key in data) { 
+             formData.append(key, data[key]); 
+         } 
+         $.ajax({ 
+             url: url, 
+             type: "POST", 
+             data: formData, 
+             processData: false, 
+             contentType: false, 
+             headers: { "X-Requested-With": "XMLHttpRequest" }, 
+             xhrFields: { withCredentials: true }, 
+             success: function(response) { 
+                 callback(response); 
+             }, 
+             error: function(xhr) { 
+                 console.error("Error saving task:", xhr.status, xhr.statusText); 
+             } 
+         }); 
+     }; 
 
-    // gantt.attachEvent("onTaskClick", function(id, e){
-    //     $.get("/Project/TaskDetails", { id: id }, function(html){
-    //         $("#task-details-container").html(html);
-    //     });
-    //     return true;
-    // });
+     // gantt.attachEvent("onTaskClick", function(id, e){ 
+     //     $.get("/Project/TaskDetails", { id: id }, function(html){ 
+     //         $("#task-details-container").html(html); 
+     //     }); 
+     //     return true; 
+     // }); 
 
-    function zoomIn() {
-        gantt.config.scale_unit = "day";
-        gantt.render();
-    }
+     function zoomIn() { 
+         gantt.config.scale_unit = "day"; 
+         gantt.render(); 
+     } 
 
-    function zoomOut() {
-        gantt.config.scale_unit = "month";
-        gantt.render();
-    }
-</script>
-<style>
-    .gantt_task_green .gantt_task_content {
-        background-color: #7dbf7d !important;
-    }
+     function zoomOut() { 
+         gantt.config.scale_unit = "month"; 
+         gantt.render(); 
+     } 
+ </script> 
+<style> 
+     .gantt_task_green .gantt_task_content { 
+         background-color: #7dbf7d !important; 
+     } 
 
-    .gantt_task_blue .gantt_task_content {
-        background-color: #6fa8dc !important;
-    }
-</style>
+     .gantt_task_blue .gantt_task_content { 
+         background-color: #6fa8dc !important; 
+     } 
+ </style>
+
+
+@* <script> *@
+@*     google.charts.load('current', {'packages': ['gantt']}); *@
+@*     google.charts.setOnLoadCallback(fetchAndDrawChart); *@
+
+@*     function daysToMilliseconds(days) { *@
+@*         return days * 24 * 60 * 60 * 1000; *@
+@*     } *@
+
+@*         function fetchAndDrawChart() { *@
+@*         $.ajax({ *@
+@*             url: '/Project/GetTasks/1', *@
+@*             type: 'GET', *@
+@*             dataType: 'json', *@
+@*             success: function(jsonData) { *@
+@*                 try { *@
+@*                     const tasks = jsonData?.data || []; *@
+@*                     const links = jsonData?.links || []; *@
+
+@*                     console.log('Tasks:', tasks); *@
+@*                     console.log('Links:', links); *@
+
+@*                     var data = new google.visualization.DataTable(); *@
+@*                     data.addColumn('string', 'Task ID'); *@
+@*                     data.addColumn('string', 'Task Name'); *@
+@*                     data.addColumn('string', 'Resource'); *@
+@*                     data.addColumn('date', 'Start Date'); *@
+@*                     data.addColumn('date', 'End Date'); *@
+@*                     data.addColumn('number', 'Duration'); *@
+@*                     data.addColumn('number', 'Percent Complete'); *@
+@*                     data.addColumn('string', 'Dependencies'); *@
+
+@*                     const rows = tasks.map(task => { *@
+@*                         if (!task) return null; *@
+
+@*                         // Safely parse dates (fallback to today if invalid) *@
+@*                         const startDate = task.StartDate ? new Date(task.StartDate) : new Date(); *@
+@*                         let endDate = task.EndDate ? new Date(task.EndDate) : null; *@
+
+@*                         // Calculate duration if missing *@
+@*                         let duration = null; *@
+@*                         if (task.Duration) { *@
+@*                             duration = daysToMilliseconds(task.Duration); *@
+@*                         } else if (startDate && endDate) { *@
+@*                             duration = endDate - startDate; *@
+@*                         } else { *@
+@*                             duration = daysToMilliseconds(1); // Default: 1 day *@
+@*                         } *@
+
+@*                         // Ensure endDate exists (required by Google Gantt) *@
+@*                         if (!endDate && startDate && duration) { *@
+@*                             endDate = new Date(startDate.getTime() + duration); *@
+@*                         } *@
+
+@*                         // Validate dependencies *@
+@*                         const dependencies = links *@
+@*                             .filter(link => link && link.target === task.Id && link.source != null) *@
+@*                             .map(link => link.source?.toString() ?? '') *@
+@*                             .join(','); *@
+
+@*                         return [ *@
+@*                             task.Id?.toString() ?? '', *@
+@*                             task.Text || 'Unnamed Task', *@
+@*                             task.Assignee || task.Status || 'Unassigned', *@
+@*                             startDate, *@
+@*                             endDate, *@
+@*                             duration, *@
+@*                             (task.Progress ?? 0) * 100, *@
+@*                             dependencies || null *@
+@*                         ]; *@
+@*                     }).filter(row => row !== null); // Remove null entries *@
+
+@*                     data.addRows(rows); *@
+
+@*                     var options = { *@
+@*                         height: 50 + tasks.length * 45, *@
+@*                         gantt: { *@
+@*                             criticalPathEnabled: true, *@
+@*                             criticalPathStyle: { *@
+@*                                 stroke: '#e64a19', *@
+@*                                 strokeWidth: 5 *@
+@*                             } *@
+@*                         } *@
+@*                     }; *@
+
+@*                     var chart = new google.visualization.Gantt(document.getElementById('chart_div')); *@
+@*                     chart.draw(data, options); *@
+@*                 } catch (error) { *@
+@*                     console.error('Error in processing data:', error); *@
+@*                     alert('Failed to process task data. Check console for details.'); *@
+@*                 } *@
+@*             }, *@
+@*             error: function(xhr, status, error) {  // <-- This was likely the issue *@
+@*                 console.error('AJAX request failed:', error); *@
+@*                 alert('Failed to fetch tasks. Check the server connection.'); *@
+@*             } *@
+@*         }); *@
+@*     } *@
+@* </script> *@

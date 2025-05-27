@@ -147,23 +147,35 @@ namespace SmartTask.Web.Controllers
             });
         }
         [DisplayName("View Assigned Tasks Only In Project")]
-        public async Task<IActionResult> TasksForUserInProject(int projectId)
+        public async Task<IActionResult> TasksForUserInProject(int projectId , bool isPartial = false)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var tasks = await _taskService.TasksForUserInProject(projectId, userId);
+            if (isPartial)
+            {
+                return PartialView("Tasks", tasks);
+            }
             return View("Tasks", tasks);
         }
         [DisplayName("View All Tasks In Project")]
-        public async Task<IActionResult> TasksForProject(int projectId)
+        public async Task<IActionResult> TasksForProject(int projectId, bool isPartial = false)
         {
             var tasks = await _taskService.TasksForProject(projectId);
+            if (isPartial)
+            {
+                return PartialView("Tasks", tasks);
+            }
             return View("Tasks", tasks);
         }
         [DisplayName("View All Tasks Assigned To User")]
-        public async Task<IActionResult> TasksForUser()
+        public async Task<IActionResult> TasksForUser(bool isPartial = false)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var tasks = await _taskService.TasksForUser(userId);
+            if (isPartial)
+            {
+                return PartialView("Tasks", tasks);
+            }
             return View("Tasks", tasks);
         }
         [DisplayName("Know the Num Of Dependencies On A Task")]

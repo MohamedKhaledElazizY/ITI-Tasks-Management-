@@ -65,7 +65,8 @@ namespace SmartTask.Web
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<SmartTaskContext>();
+            .AddEntityFrameworkStores<SmartTaskContext>()
+            .AddDefaultTokenProviders(); ;
 
             #endregion Database & Identity
 
@@ -166,7 +167,7 @@ namespace SmartTask.Web
             services.AddSingleton<IMvcControllerDiscovery, MvcControllerDiscovery>();
             services.AddSingleton(new DynamicAuthorizationOptions
             {
-                DefaultAdminUser = "ahmedramadan.l403@gmail.com"
+                DefaultAdminUser = "mohamed.khaled200112@gmail.com"
             });
 
             // Services
