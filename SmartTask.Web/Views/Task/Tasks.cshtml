@@ -92,18 +92,24 @@
 
 								</secure-content>
 								<!-- Assign to User Button -->
-								<secure-content asp-area="" asp-controller="Task" asp-action="">
-									<button class="btn btn-warning btn-action" title="Assign Task"
-											data-bs-toggle="modal" data-bs-target="#assignModal"
-											data-id="@task.Id">
-										<i class="bi bi-person-plus"></i>
-									</button>
-								</secure-content>
-								<secure-content asp-area="" asp-controller="Task" asp-action="">
-									<button class="btn btn-primary btn-action">
+								<secure-content asp-area="" asp-controller="Task" asp-action="Edit">
+								<a href="@Url.Action("Edit", "Task", new { id = task.Id })"
+									   class="btn btn-warning btn-action">
 										<i class="bi bi-pencil"></i>
-									</button>
+								</a>
 								</secure-content>
+								@* <secure-content asp-area="" asp-controller="Task" asp-action=""> *@
+								@* 	<button class="btn btn-warning btn-action" title="Assign Task" *@
+								@* 			data-bs-toggle="modal" data-bs-target="#assignModal" *@
+								@* 			data-id="@task.Id"> *@
+								@* 		<i class="bi bi-person-plus"></i> *@
+								@* 	</button> *@
+								@* </secure-content> *@
+								@* <secure-content asp-area="" asp-controller="Task" asp-action=""> *@
+								@* 	<button class="btn btn-primary btn-action"> *@
+								@* 		<i class="bi bi-pencil"></i> *@
+								@* 	</button> *@
+								@* </secure-content> *@
 								<secure-content asp-area="" asp-controller="Task" asp-action="DeleteTask">
 									<button class="btn btn-danger btn-action" data-bs-toggle="modal" data-bs-target="#deleteModal"
 											data-id="@task.Id" onclick="numofdepend(@task.Id)">
