@@ -70,6 +70,304 @@
     <link rel="stylesheet" href="~/css/notification.css" />
 @RenderSection("Styles", required: false)
 
+<style>
+      
+      
+
+        :root {
+        
+            --red-dark: #7A0000;
+            --red-primary: #A03030;
+            --red-light: #D26969;
+            --navy-sidebar: #3B4B63; 
+            --navy-sidebar-alt: #475B75; 
+            --navy-text: #ECF0F1;
+            --navy-light: #E8ECEF; 
+            --gold-accent: #FFC107;
+            --info-blue: #5A8DAF; 
+           
+            --shadow-light: 0 4px 20px rgba(0,0,0,0.15);
+            --transition-fast: 0.2s ease-in-out;
+        }
+
+
+        .header {
+            background: var(--red-primary);
+            color: white;
+            border-bottom: 2px solid var(--red-dark);
+            box-shadow: var(--shadow-light);
+        }
+
+            .header .logo img {
+                filter: brightness(0) invert(1);
+            }
+
+            .header .btn-menubar,
+            .header a {
+                color: white !important;
+            }
+
+                .header .btn-menubar:hover {
+                    background: rgba(255,255,255,0.2) !important;
+                }
+
+        .sidebar {
+            background: var(--navy-sidebar);
+        }
+
+        .sidebar-menu ul li a {
+            color: var(--navy-text) !important;
+            transition: background var(--transition-fast), color var(--transition-fast);
+        }
+
+            .sidebar-menu ul li a:hover {
+                background: var(--navy-sidebar-alt) !important;
+                color: white !important;
+            }
+
+        .sidebar-menu ul li.active a {
+            background: var(--red-primary) !important;
+            color: white !important;
+        }
+
+        .menu-title span {
+            color: var(--red-light) !important;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: var(--red-primary);
+            border: 1px solid var(--red-dark);
+            color: white;
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+            .btn-primary:hover {
+                background: var(--red-light);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(139,0,0,0.3);
+            }
+
+        .btn-menubar {
+            background: rgba(255,255,255,0.1) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+        }
+
+            .btn-menubar:hover {
+                background: rgba(255,255,255,0.2) !important;
+            }
+
+        .card {
+            background: var(--navy-light);
+            border-radius: 12px;
+            border: 1px solid var(--navy-light);
+            box-shadow: var(--shadow-light);
+            transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+            .card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+
+        .card-header {
+            background: var(--red-primary);
+            color: white;
+            border-bottom: 1px solid var(--red-dark);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .text-primary {
+            color: var(--red-primary) !important;
+        }
+
+        .form-control {
+            border: 1px solid var(--navy-light) !important;
+            border-radius: 8px;
+            transition: border var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+            .form-control:focus {
+                border-color: var(--red-primary) !important;
+                box-shadow: 0 0 0 0.2rem rgba(160,48,48,0.25);
+            }
+
+        .badge {
+            background: var(--red-primary) !important;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .notification-status-dot {
+            background: var(--red-light) !important;
+            box-shadow: 0 0 5px var(--red-light);
+            animation: pulse 2s infinite;
+        }
+        @@keyframes pulse {
+            0%
+
+        {
+            transform: scale(0.9);
+            opacity: 0.7;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(0.9);
+            opacity: 0.7;
+        }
+
+        }
+
+        .footer {
+            background: var(--navy-sidebar);
+            color: var(--navy-text);
+            border-top: 1px solid var(--navy-light);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        a {
+            color: var(--red-primary);
+            transition: color var(--transition-fast);
+        }
+
+            a:hover {
+                color: var(--red-light);
+                text-decoration: underline;
+            }
+
+        .header .dropdown-menu {
+            background: #fff !important;
+            color: #000 !important;
+            border: 1px solid #ddd !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+            padding: 0 !important;
+            z-index: 1050 !important;
+        }
+
+            .header .dropdown-menu .card-header {
+                background: var(--red-primary) !important;
+                color: #000 !important;
+                padding: 0.75rem 1rem !important;
+                border-bottom: 1px solid var(--red-dark) !important;
+            }
+
+                .header .dropdown-menu .card-header h4,
+                .header .dropdown-menu .card-header h5 {
+                    margin: 0;
+                    font-size: 1rem;
+                    font-weight: bold;
+                    color: #000 !important;
+                }
+
+            .header .dropdown-menu .card-body a,
+            .header .dropdown-menu .noti-content a {
+                display: flex;
+                align-items: center;
+                color: #000 !important;
+                padding: 0.75rem 1rem !important;
+                border-bottom: 1px solid #eee;
+                transition: background 0.2s ease !important;
+                text-decoration: none !important;
+            }
+
+                .header .dropdown-menu .card-body a:last-child,
+                .header .dropdown-menu .noti-content a:last-child {
+                    border-bottom: none;
+                }
+
+                .header .dropdown-menu .card-body a:hover,
+                .header .dropdown-menu .noti-content a:hover {
+                    background: var(--red-light) !important;
+                    color: #000 !important;
+                }
+
+            .header .dropdown-menu .avatar i {
+                color: var(--red-primary) !important;
+            }
+
+            .header .dropdown-menu .btn-light,
+            .header .dropdown-menu .btn-primary {
+                margin: 0.5rem 0.75rem !important;
+                width: calc(50% - 0.75rem) !important;
+                text-align: center;
+            }
+
+            .header .dropdown-menu .btn-light {
+                background: #f5f5f5 !important;
+                color: #000 !important;
+                border: 1px solid #ddd !important;
+            }
+
+                .header .dropdown-menu .btn-light:hover {
+                    background: #e0e0e0 !important;
+                }
+
+            .header .dropdown-menu .btn-primary {
+                background: var(--red-primary) !important;
+                color: #fff !important;
+                border: none !important;
+            }
+
+                .header .dropdown-menu .btn-primary:hover {
+                    background: var(--red-dark) !important;
+                }
+
+        @@media (max-width: 768px) {
+            .sidebar
+
+        {
+            width: 60px;
+        }
+
+        .sidebar-menu ul li a {
+            padding: 10px;
+        }
+
+        }
+
+        .header .profile-dropdown .dropdown-menu .card-footer .dropdown-item {
+            color: var(--red-primary) !important; 
+            background: transparent !important;
+            padding: 0.5rem 1rem !important;
+        }
+
+            .header .profile-dropdown .dropdown-menu .card-footer .dropdown-item:hover {
+                background: var(--red-light) !important; 
+                color: #000000 !important; 
+            }
+
+
+        .footer {
+            background-color: #ffffff; 
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+            color: #6c757d; 
+            font-size: 0.9rem;
+        }
+
+            .footer p {
+                margin-bottom: 0;
+            }
+
+            .footer .text-primary {
+                color: #007bff; 
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .footer .text-primary:hover {
+                    color: #0056b3; 
+                    text-decoration: underline;
+                }
+
+
+    </style>
 </head>
 @RenderSection("Header", required: false)
 <body>

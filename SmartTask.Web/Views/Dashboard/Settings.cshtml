@@ -684,11 +684,7 @@
                     return false;
                 }
 
-                const hasSelectedView = document.querySelector('input[name="PreferredView"]:checked');
-                if (!hasSelectedView) {
-                    showToast('Please select a preferred view mode', 'error');
-                    return false;
-                }
+               
 
                 // Show loading state
                 saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
