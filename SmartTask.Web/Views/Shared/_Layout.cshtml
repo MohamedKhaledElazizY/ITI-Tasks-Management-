@@ -446,13 +446,13 @@
                                                 </a>
                                             </li>
                                         </secure-content>
-                                    <li>
-                                        <a asp-controller="Dashboard" asp-action="Index">
-                                            Employee Dashboard
-                                        </a>
-                                    </li>
-
-
+                                        <secure-content asp-area="" asp-controller="Dashboard" asp-action="Index">
+                                            <li>
+                                                <a asp-controller="Dashboard" asp-action="Index">
+                                                    Employee Dashboard
+                                                </a>
+                                            </li>
+                                        </secure-content>
                                     </ul>
                                 </li>
 
@@ -490,14 +490,14 @@
                         @* <li class="menu-title"><span>Administration</span></li> *@
                         <li>
                             <ul>
-                                <secure-content asp-area="" asp-controller="Account" asp-action="AddRole">
+                            <secure-content asp-area="" asp-controller="Role" asp-action="Create">
                                     <li>
-                                        <a asp-controller="Account" asp-action="AddRole">
+                                        <a asp-controller="Role" asp-action="Create">
                                             <i class="ti ti-users-group"></i><span>Add Role</span>
                                         </a>
                                     </li>
                                 </secure-content>
-                                <secure-content asp-area="" asp-controller="Account" asp-action="ManageUserRoles">
+                            <secure-content asp-area="" asp-controller="Account" asp-action="ManageUserRoles">
 
                                     <li>
                                         <a asp-controller="Account" asp-action="ManageUserRoles">

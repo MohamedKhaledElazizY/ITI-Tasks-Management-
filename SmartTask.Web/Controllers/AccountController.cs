@@ -203,44 +203,9 @@ namespace SmartTask.Web.Controllers
             return BadRequest(result.Errors);
         }
 
-        [HttpGet]
-        public IActionResult AddRole()
-        {
-            return View();
-        }
-        /*
-                [HttpPost]
-                public async Task<IActionResult> AddRole(string roleName)
-                {
-                    if (string.IsNullOrWhiteSpace(roleName))
-                    {
-                        ViewBag.Message = "Role name is required";
-                    }
-                    else
-                    {
-                        var roleExists = await roleManager.RoleExistsAsync(roleName);
-                        if (roleExists)
-                        {
-                            ViewBag.Message = "Role already exists";
-                        }
-                        else
-                        {
-                            var newRole = new ApplicationRole
-                            {
-                                Name = roleName.Trim(),
-                                NormalizedName = roleName.Trim().ToUpper(),
-                                ConcurrencyStamp = Guid.NewGuid().ToString()
-                            };
+        
 
-                            var result = await roleManager.CreateAsync(newRole);
-
-                            ViewBag.Message = result.Succeeded ? "Role created successfully!" : "Failed to create role!";
-                        }
-                    }
-
-                    return View();
-                }
-                */
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
@@ -269,6 +234,8 @@ namespace SmartTask.Web.Controllers
         }
 
         [HttpPost]
+
+        [Authorize]
         public async Task<IActionResult> ManageUserRoles(List<UserRoleAssignmentViewModel> model)
         {
             foreach (var userModel in model)
