@@ -72,7 +72,7 @@ namespace SmartTask.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        
+
         public async Task<IActionResult> AddBranch(BranchFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -187,10 +187,10 @@ namespace SmartTask.Web.Controllers
                 ManagerId = model.ManagerId,
                 BranchDepartments = newDepartmentIds
                     .Select(id => new BranchDepartment
-                {
-                    BranchId = model.Id,
-                    DepartmentId = id
-                }).ToList()
+                    {
+                        BranchId = model.Id,
+                        DepartmentId = id
+                    }).ToList()
             };
 
             await branchService.UpdateAsync(branch);
@@ -369,7 +369,7 @@ namespace SmartTask.Web.Controllers
             var branches = GetBranchs();
             int totalRecords = branches.Count();
 
-            
+
 
             //Filter(Search)
             if (!string.IsNullOrEmpty(searchValue))
@@ -440,7 +440,7 @@ namespace SmartTask.Web.Controllers
             var viewModel = new AssignUsersToBranchViewModel
             {
                 BranchId = branchId,
-                SelectedUserIds = new List<string>() 
+                SelectedUserIds = new List<string>()
             };
 
             return View(viewModel);

@@ -73,7 +73,7 @@ namespace SmartTask.Web
             #region Authentication
 
             builder.Services.AddAuthentication()
-                .AddCookie()
+                .AddCookie(options => { options.AccessDeniedPath = "/Account/AccessDenied"; })
                 .AddMicrosoftAccount("Outlook", options =>
                 {
                     options.ClientId = builder.Configuration["AzureAd:ClientId"];
