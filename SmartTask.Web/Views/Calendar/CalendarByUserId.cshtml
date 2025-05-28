@@ -1,14 +1,69 @@
 ﻿@using SmartTask.Core.Models
 @{
 	Layout = "_Layout";
+
 	ViewData["Title"] = "Calendar";
 }
 
 @section Styles {
 	<link href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css' rel='stylesheet'>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 	<style>
+		#SelectedProject {
+			padding: 12px 16px;
+			font-size: 16px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			background-color: #ffffff;
+			color: #333;
+			width: 100%;
+			max-width: 300px;
+			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			background-image: url("data:image/svg+xml;utf8,<svg fill='#333' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+			background-repeat: no-repeat;
+			background-position: right 12px top 50%;
+			background-size: 18px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+		}
+
+			#SelectedProject:hover {
+				border-color: #666;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+
+
+			#SelectedProject:focus {
+				outline: none;
+				border-color: #007bff;
+				box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+			}
+
+
+			#SelectedProject option {
+				padding: 10px;
+				background-color: #ffffff;
+				color: #333;
+			}
+
+
+			#SelectedProject:disabled {
+				background-color: #f5f5f5;
+				cursor: not-allowed;
+				opacity: 0.7;
+			}
+
+
+		@@media screen and (max-width: 600px) {
+			#SelectedProject {
+				font-size: 14px;
+				padding: 10px 14px;
+				max-width: 100%;
+			}
+		}
+
 		.calendar-container {
 			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 			min-height: 100vh;
@@ -16,225 +71,99 @@
 			font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 		}
 
-		.calendar-card {
-			background: rgba(255, 255, 255, 0.95);
-			backdrop-filter: blur(20px);
-			border-radius: 20px;
-			box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-			padding: 2rem;
-			margin: 0 auto;
-			max-width: 1200px;
-			border: 1px solid rgba(255, 255, 255, 0.2);
+		#calendarWrapper .fc-h-event {
+			color: #3788d8 !important;
+			border: 1px,solid, #3788d8 !important;
+			background-color: #3788d8 !important;
 		}
 
-		.calendar-header {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin-bottom: 2rem;
-			padding-bottom: 1.5rem;
-			border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+		#calendarWrapper .fc-toolbar-title {
+			font-weight: bold !important;
+			font-size: 1.25rem !important;
 		}
 
-		.calendar-title {
-			color: #2d3748;
-			font-size: 2rem;
-			font-weight: 700;
-			margin: 0;
-			display: flex;
-			align-items: center;
-			gap: 0.75rem;
+		.fc-event.fc-event-draggable, .fc-event[href] {
+			cursor: pointer !important;
+			transition: ease-in-out 0.1s;
 		}
 
-			.calendar-title::before {
-				content: "📅";
-				font-size: 1.5rem;
-			}
-
-		.project-selector-container {
-			position: relative;
+		.fc .fc-scrollgrid {
+			border-collapse: separate !important;
 		}
 
-		.project-selector-label {
-			display: block;
-			font-size: 0.875rem;
-			font-weight: 600;
-			color: #4a5568;
-			margin-bottom: 0.5rem;
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
+		.fc-event-resizing {
+			transition: ease-in-out 0.1s !important;
+			z-index: 9999 !important;
 		}
-
-		#SelectedProject {
-			appearance: none;
-			background: linear-gradient(135deg, #667eea, #764ba2);
-			color: white;
-			border: none;
-			border-radius: 12px;
-			padding: 0.75rem 3rem 0.75rem 1rem;
-			font-size: 1rem;
-			font-weight: 500;
-			min-width: 200px;
-			cursor: pointer;
-			transition: all 0.3s ease;
-			box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-		}
-
-			#SelectedProject:hover {
-				transform: translateY(-2px);
-				box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-			}
-
-			#SelectedProject:focus {
-				outline: none;
-				box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
-			}
-
-		.project-selector-container::after {
-			content: "▼";
-			position: absolute;
-			right: 1rem;
-			top: 50%;
-			transform: translateY(-50%);
-			color: white;
-			pointer-events: none;
-			font-size: 0.75rem;
-			margin-top: 0.75rem;
-		}
-
-		#calendarWrapper {
-			background: white;
-			border-radius: 15px;
-			padding: 1.5rem;
-			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-			border: 1px solid rgba(102, 126, 234, 0.1);
-		
-		}
-
-			#calendarWrapper .fc {
-				font-family: 'Inter', sans-serif;
-			}
-
-			#calendarWrapper .fc-toolbar-title {
-				font-weight: 700 !important;
-				font-size: 1.5rem !important;
-				color: #2d3748 !important;
-				text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-			}
-
-			#calendarWrapper .fc-button-primary {
-				background: linear-gradient(135deg, #667eea, #764ba2) !important;
-				border: none !important;
-				border-radius: 8px !important;
-				padding: 0.5rem 1rem !important;
-				font-weight: 500 !important;
-				transition: all 0.3s ease !important;
-				box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
-			}
-
-				#calendarWrapper .fc-button-primary:hover {
-					transform: translateY(-1px) !important;
-					box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
-				}
-
-				#calendarWrapper .fc-button-primary:not(:disabled):active,
-				#calendarWrapper .fc-button-primary:not(:disabled).fc-button-active {
-					background: linear-gradient(135deg, #5a67d8, #6b46c1) !important;
-					box-shadow: 0 2px 8px rgba(90, 103, 216, 0.4) !important;
-				}
-
-			#calendarWrapper .fc-h-event {
-				background: linear-gradient(135deg, #667eea, #764ba2) !important;
-				border: none !important;
-				border-radius: 8px !important;
-				padding: 0.25rem 0.5rem !important;
-				font-weight: 500 !important;
-				box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
-			
-			}
-
-			#calendarWrapper .fc-event-title {
-				font-weight: 500 !important;
-				color: white !important;
-			}
-
-		
-
-		
 
 		.fc-event-resizable::after {
 			content: "";
 			position: absolute;
-			right: 2px;
-			bottom: 2px;
-			width: 8px;
-			height: 8px;
-			background: white;
-			border: 2px solid #667eea;
-			border-radius: 50%;
-	
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-		}
-
-		.loading-overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
 			right: 0;
 			bottom: 0;
-			background: rgba(255, 255, 255, 0.9);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: 15px;
-			z-index: 1000;
+			width: 10px;
+			height: 10px;
+			background: #fff;
+			border: 2px solid #3788d8;
+			border-radius: 2px;
+			cursor: se-resize;
 		}
 
-		.loading-spinner {
-			width: 40px;
-			height: 40px;
-			border: 4px solid #e2e8f0;
-			border-left: 4px solid #667eea;
-			border-radius: 50%;
-			animation: spin 1s linear infinite;
+		.fc-event {
+			transition: transform 0.2s ease-in-out, width 0.2s ease-in-out, height 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 		}
 
-		
+		a.fc-event {
+			color: #fff !important;
+		}
+
+		.fc-event-resizing {
+			box-shadow: 0 0 10px rgba(55, 136, 216, 0.6);
+			opacity: 0.9;
+			z-index: 9999 !important;
+		}
+
+		.fc-h-event {
+			transition: all 0.2s ease-in-out;
+		}
 	</style>
 }
 
-<div class="calendar-container">
-	<div class="calendar-card">
-		<div class="calendar-header">
-			<h1 class="calendar-title">Project Calendar</h1>
-			<div class="project-selector-container">
-				<label class="project-selector-label">Select Project</label>
-				<select id="SelectedProject" onchange="OnSelection()">
-					@foreach (Project project in ViewBag.Projects)
-					{
-						@if (project.Id == 1)
-						{
-							<option style="background-color=grey;" value="@project.Id" selected>@project.Name</option>
-						}
-						else
-						{
-							<option style="background-color=grey;" value="@project.Id">@project.Name</option>
-						}
-					}
-				</select>
-			</div>
-		</div>
-
-		<div id="calendarWrapper">
-			<div id="calendar"></div>
-		</div>
-	</div>
+<select id="SelectedProject" onchange="OnSelection()">
+	@foreach (Project project in ViewBag.Projects)
+	{
+		@if (project.Id == 1)
+		{
+			<option value="@project.Id" selected>@project.Name</option>
+		}
+		else
+		{
+			<option value="@project.Id">@project.Name</option>
+		}
+	}
+</select>
+<div id="calendarWrapper">
+	<div id="calendar"></div>
 </div>
-
 <div class="modal fade" id="taskDetailsModal" tabindex="-1">
 	<div class="modal-dialog modal-lg modal-dialog-centered">
 		<div class="modal-content shadow" id="taskDetailsContent">
-			<!-- Content will be loaded here -->
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="updateTaskModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content shadow">
+			<div class="modal-header">
+				<h5 class="modal-title" id="updateTaskModalTitle">Task Update</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p id="updateTaskMessage"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -247,7 +176,6 @@
 
 		$(document).ready(function () {
 			var projectId = document.getElementById("SelectedProject").value;
-			showLoading();
 			$.ajax({
 				url: '@Url.Action("GetTasksForProject", "Calendar")',
 				method: 'GET',
@@ -255,10 +183,8 @@
 				success: function (Tasks) {
 					data = Tasks;
 					initializeCalendar();
-					hideLoading();
 				},
 				error: function () {
-					hideLoading();
 					alert("Failed to load tasks.");
 					$('#taskTable').slideDown(200);
 				}
@@ -267,7 +193,6 @@
 
 		function OnSelection() {
 			var projectId = document.getElementById("SelectedProject").value;
-			showLoading();
 			$.ajax({
 				url: '@Url.Action("GetTasksForProject", "Calendar")',
 				method: 'GET',
@@ -275,11 +200,9 @@
 				success: function (Tasks) {
 					data = Tasks;
 					initializeCalendar();
-					hideLoading();
 					console.log(data);
 				},
 				error: function () {
-					hideLoading();
 					alert("Failed to load tasks.");
 					$('#taskTable').slideDown(200);
 				}
@@ -288,7 +211,6 @@
 
 		function asyncAjax() {
 			var projectId = document.getElementById("SelectedProject").value;
-
 			return new Promise((resolve, reject) => {
 				$.ajax({
 					url: '@Url.Action("GetProjectById", "Calendar")',
@@ -308,11 +230,9 @@
 
 		async function initializeCalendar() {
 			var calendarEl = document.getElementById('calendar');
-
 			let project = await asyncAjax();
 			console.log(project);
 			const now = new Date();
-
 			const projectStart = new Date(project.startDate);
 			const projectEnd = new Date(project.endDate);
 
@@ -330,29 +250,24 @@
 				weekNumbers: true,
 				weekNumberCalculation: 'ISO',
 				editable: true,
+				durationEditable: true,
+				eventResizableFromStart: true,
 				selectable: true,
 				dayMaxEvents: true,
 				events: data,
-
 				eventAllow: function (dropInfo, draggedEvent) {
 					const start = dropInfo.start;
 					const end = dropInfo.end || dropInfo.start;
-
 					const isWithinProject = start >= projectStart && end <= projectEnd;
-
 					const taskStart = draggedEvent.extendedProps.taskStart
 						? new Date(draggedEvent.extendedProps.taskStart)
 						: projectStart;
-
 					const taskEnd = draggedEvent.extendedProps.taskEnd
 						? new Date(draggedEvent.extendedProps.taskEnd)
 						: projectEnd;
-
 					const isWithinTask = start >= taskStart && end <= taskEnd;
-
 					return isWithinProject && isWithinTask;
 				},
-
 				eventClick: function (info) {
 					loadTaskDetails(info.event.id);
 				},
@@ -364,18 +279,20 @@
 						start: startDate,
 						end: endDate,
 					};
+					console.log(taskVM.start);
+					console.log(taskVM.end);
 					UpdateTask(taskVM);
 				},
-			
 				eventResize: function (info) {
 					let startDate = info.event.start.toISOString().split('T')[0];
 					let endDate = info.event.end.toISOString().split('T')[0];
-					console.log(startDate);
 					const taskVM = {
 						id: info.event.id,
 						start: startDate,
 						end: endDate,
 					};
+					console.log(taskVM.start);
+					console.log(taskVM.end);
 					UpdateTask(taskVM);
 				}
 			});
@@ -404,24 +321,19 @@
 				url: '@Url.Action("UpdateTask", "Calendar")',
 				method: 'Post',
 				data: { TaskVM: taskVM },
-				success: function () {
-					console.log("Task updated successfully.");
+				success: function (res) {
+					$('#updateTaskMessage').text(res);
+					var updateModal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
+					updateModal.show();
 				},
 				error: function (xhr) {
 					const errorMsg = xhr.responseJSON?.message || "Failed to increase task status. Please try again.";
-					alert(errorMsg);
+					$('#updateTaskMessage').text(errorMsg);
+					var updateModal = new bootstrap.Modal(document.getElementById('updateTaskModal'));
+					updateModal.show();
+					OnSelection();
 				}
 			});
-		}
-
-		function showLoading() {
-			if (!$('#calendarWrapper .loading-overlay').length) {
-				$('#calendarWrapper').append('<div class="loading-overlay"><div class="loading-spinner"></div></div>');
-			}
-		}
-
-		function hideLoading() {
-			$('#calendarWrapper .loading-overlay').remove();
 		}
 	</script>
 }
