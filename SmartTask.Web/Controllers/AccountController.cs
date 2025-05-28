@@ -199,6 +199,16 @@ namespace SmartTask.Web.Controllers
             TempData["Message"] = "Roles updated successfully!";
             return RedirectToAction("ManageUserRoles");
         }
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+        public async new Task<IActionResult> SignOut()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login));
+        }
+
     }
     public class OAuthResponse
     {

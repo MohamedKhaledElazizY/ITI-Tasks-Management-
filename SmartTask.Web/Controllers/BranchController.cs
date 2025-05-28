@@ -110,7 +110,7 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var branch = await branchService.GetBranchAsync(id);
-            if(branch == null) return View("NotFound");
+            if (branch == null) return NotFound();                           
 
             await branchService.DeleteAsync(id);
             return RedirectToAction("Index");
@@ -122,7 +122,7 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var branch = await branchService.GetBranchWithDetailsAsync(id);
-            if (branch == null) return View("NotFound");
+            if (branch == null) return NotFound();
 
             var managers = await userManager.GetUsersInRoleAsync("BranchManager");
 
@@ -210,7 +210,7 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var branch = await branchService.GetBranchWithDetailsAsync(id);
-            if (branch == null) return View("NotFound");
+            if (branch == null) return NotFound();
 
             var usersInBranch = await userManager.Users
                                     .Where(u => u.BranchId == id)
@@ -400,7 +400,7 @@ namespace SmartTask.Web.Controllers
         {
             var branch = await branchService.GetBranchWithDetailsAsync(branchId);
             if (branch == null)
-                return View("NotFound");
+                return NotFound();
 
             var usersWithOutBranch = await userManager.Users
                 .Where(u => u.BranchId == null)
@@ -423,7 +423,7 @@ namespace SmartTask.Web.Controllers
         {
             var branch = await branchService.GetBranchWithDetailsAsync(model.BranchId);
             if (branch == null)
-                return View("NotFound");
+                return NotFound();
 
             var selectedUsers = await userManager.Users
                 .Where(u => model.SelectedUserIds.Contains(u.Id))

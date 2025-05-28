@@ -108,7 +108,7 @@ namespace SmartTask.Web.Controllers
             var department = await _departmentService.GetDepartmentWithDetailsAsync(id);
             if (department == null)
             {
-                return View("NotFound");
+                return NotFound();
             }
 
             var model = new DepartmentDetailsViewModel
@@ -139,7 +139,7 @@ namespace SmartTask.Web.Controllers
             var department = await _departmentService.GetDepartmentWithDetailsAsync(id);
             if (department == null)
             {
-                return View("NotFound");
+                return NotFound();
             }
 
             var managers = await _userManager.GetUsersInRoleAsync("DepartmentManager");
@@ -175,7 +175,7 @@ namespace SmartTask.Web.Controllers
             var existingDepartment = await _departmentService.GetDepartmentWithDetailsAsync(model.Id);
             if (existingDepartment == null)
             {
-                return View("NotFound");
+                return NotFound();
             }
 
             existingDepartment.Name = model.Name;
@@ -223,7 +223,7 @@ namespace SmartTask.Web.Controllers
             var department = await _departmentService.GetDepartmentByIdAsync(id);
             if (department == null)
             {
-                return View("NotFound");
+                return NotFound();
             }
 
             foreach (var project in department.Projects)
