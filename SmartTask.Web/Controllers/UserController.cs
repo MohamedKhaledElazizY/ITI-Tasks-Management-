@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SmartTask.Bl.IServices;
 using SmartTask.Bl.Services;
 using SmartTask.BL.IServices;
 using SmartTask.Core.Models;
@@ -17,23 +18,17 @@ namespace SmartTask.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly IDepartmentService _departmentService;
-        private readonly UserManager<ApplicationUser> _userManager;
-        public UserController(IUserService userService, IDepartmentService departmentService, UserManager<ApplicationUser> userManager)
+        private readonly IBranchService _branchService;
+        public UserController(IUserService userService, IDepartmentService departmentService, IBranchService branchService)
         {
             _userService = userService;
             _departmentService = departmentService;
-            _userManager = userManager;
+            _branchService = branchService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(string? searchString = null, int page = 1 , int pageSize = 10)
         {
-            Expression<Func<ApplicationUser, bool>>? filter = null;
-
-            if (!string.IsNullOrWhiteSpace(searchString))
-            {
-                filter = u => u.FullName.Contains(searchString) || u.Email.Contains(searchString);
-            }
             var users = await _userService.GetFilteredAsync(searchString, page, pageSize);
 
             var viewModel = new UsersViewModel
@@ -47,12 +42,8 @@ namespace SmartTask.Web.Controllers
 
         public async Task<IActionResult> WithoutDepartment(int page = 1, int pageSize = 10)
         {
-            Expression<Func<ApplicationUser, bool>> filter = u => u.DepartmentId == null;
 
-            //var users = await _userService.GetFilteredAsync(filter, page, pageSize);
-
-
-            var  users = await _userService.GetUsersWithoutDepartemnt(page,pageSize);
+            var users = await _userService.GetUsersWithoutDepartemnt(page,pageSize);
 
             var departments = await _departmentService.GetAllDepartmentsAsync();
             ViewBag.Departments = departments;
@@ -81,9 +72,6 @@ namespace SmartTask.Web.Controllers
             return View(user);
         }
 
-
-
-
         [HttpPost]
         public async Task<IActionResult> AssignToDepartment(string userId, int departmentId)
         {
@@ -98,7 +86,6 @@ namespace SmartTask.Web.Controllers
 
             return RedirectToAction("WithoutDepartment");
         }
-        //[Authorize(Policy = "CanEditUser")]
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userService.GetByIdAsync(id);
@@ -111,6 +98,8 @@ namespace SmartTask.Web.Controllers
                 ExistingImagePath = user.ImageUrl,
             };
             var departments = await _departmentService.GetAllDepartmentsAsync();
+            var branchs = await _branchService.GetAllAsync();
+            ViewBag.Branchs = new SelectList(branchs, "Id", "Name",user.BranchId);
             ViewBag.Departments = new SelectList(departments, "Id", "Name", user.DepartmentId);
             return View(viewModel);
         }
@@ -121,9 +110,15 @@ namespace SmartTask.Web.Controllers
         //[Authorize(Policy = "CanEditUser")]
         public async Task<IActionResult> Edit(string id, EditUserViewModel model)
         {
+            var departments = await _departmentService.GetAllDepartmentsAsync();
+            var branchs = await _branchService.GetAllAsync();
+            ViewBag.Departments = new SelectList(departments, "Id", "Name", model.DepartmentId);
+            ViewBag.Branchs = new SelectList(branchs, "Id", "Name", model.BranchId);
             if (id != model.Id) return NotFound();
-            if (!ModelState.IsValid) return View(model);
-
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
             var user = await _userService.GetByIdAsync(model.Id);
             if (user == null) return NotFound();
 

@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
 <h1>Edit Department</h1>
 
+<div asp-validation-summary="All"></div>
 <form asp-action="Edit">
     <input type="hidden" asp-for="Id" />
 
@@ -50,35 +51,35 @@
 
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
-
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         $(document).ready(function () {
             $('.select2-multiple').select2({
-                placeholder: $(this).data('placeholder'),
+                placeholder: function () {
+                    return $(this).data('placeholder');
+                },
                 allowClear: true,
                 width: '100%'
             });
 
-            // تحديد الفروع الحالية عند التحميل
             var initialBranchIds = @Html.Raw(Json.Serialize(Model.SelectedBranchIds ?? new List<int>()));
+            var initialUserIds = @Html.Raw(Json.Serialize(Model.SelectedUserIds ?? new List<string>()));
+
             $('#branchesDropdown').val(initialBranchIds).trigger('change');
 
-            // تحميل المستخدمين عند تغيير الفروع
+            loadUsers(initialBranchIds, initialUserIds);
+
             $('#branchesDropdown').on('change', function () {
                 var branchIds = $(this).val();
-                loadUsers(branchIds);
+                var selectedUserIds = $('#usersDropdown').val() || [];
+                loadUsers(branchIds, selectedUserIds);
             });
-
-            // تحميل المستخدمين الحاليين عند فتح الصفحة
-            var initialUserIds = @Html.Raw(Json.Serialize(Model.SelectedUserIds ?? new List<string>()));
-            loadUsers(initialBranchIds, initialUserIds);
 
             function loadUsers(branchIds, selectedUserIds = []) {
                 if (!branchIds || branchIds.length === 0) {
-                    $('#usersDropdown').empty().trigger('change');
+                    $('#usersDropdown').empty().val([]).trigger('change.select2');
                     return;
                 }
                 $.ajax({
@@ -86,22 +87,30 @@
                     type: 'GET',
                     data: {
                         branchIds: branchIds,
-                        departmentId: @Model.Id
+                        departmentId: @Model.Id,
+                        selectedUserIds: selectedUserIds
                     },
                     traditional: true,
                     success: function (users) {
                         var $userDropdown = $('#usersDropdown');
                         $userDropdown.empty();
+
+                        var validUserIds = users.map(function (u) { return u.id; });
+
+                        var filteredSelectedUserIds = (selectedUserIds || []).filter(function (uid) {
+                            return validUserIds.includes(uid);
+                        });
+
                         $.each(users, function (i, user) {
                             $userDropdown.append(
                                 $('<option>', {
                                     value: user.id,
-                                    text: user.fullName + ' (' + user.email + ')',
-                                    selected: selectedUserIds.includes(user.id)
+                                    text: user.fullName + ' (' + user.email + ')'
                                 })
                             );
                         });
-                        $userDropdown.trigger('change');
+
+                        $userDropdown.val(filteredSelectedUserIds).trigger('change.select2');
                     }
                 });
             }

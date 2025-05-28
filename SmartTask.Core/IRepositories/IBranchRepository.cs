@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Branch = SmartTask.Core.Models.Branch;
@@ -12,6 +13,7 @@ namespace SmartTask.Core.IRepositories
         Task<IEnumerable<Branch>> GetByManagerIdAsync(string managerId);
         Task<Branch> AddAsync(Branch branch);
         Task UpdateAsync(Branch branch);
+        Task UpdateRangeAsync(IEnumerable<Branch> branches);        
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
 

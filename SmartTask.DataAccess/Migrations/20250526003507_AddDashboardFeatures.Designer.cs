@@ -12,8 +12,13 @@ using SmartTask.DataAccess.Data;
 namespace SmartTask.DataAccess.Migrations
 {
     [DbContext(typeof(SmartTaskContext))]
+<<<<<<<< HEAD:SmartTask.DataAccess/Migrations/20250526003507_AddDashboardFeatures.Designer.cs
     [Migration("20250526003507_AddDashboardFeatures")]
     partial class AddDashboardFeatures
+========
+    [Migration("20250524234331_SmartContext")]
+    partial class SmartContext
+>>>>>>>> origin/LA:SmartTask.DataAccess/Migrations/20250524234331_SmartContext.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

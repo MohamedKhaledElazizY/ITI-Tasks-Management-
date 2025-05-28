@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph.Models;
 using SmartTask.Bl.Helpers;
 using SmartTask.Bl.IServices;
 using SmartTask.Bl.Services;
@@ -19,16 +20,19 @@ namespace SmartTask.BL.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDepartmentRepository _departmentRepository;
+        private readonly IBranchRepository _branchRepository;
         private readonly IPaginatedService<ApplicationUser> _paginatedService;
 
         public UserService(
             UserManager<ApplicationUser> userManager,
             IPaginatedService<ApplicationUser> paginatedService,
-            IDepartmentRepository departmentRepository)
+            IDepartmentRepository departmentRepository,
+            IBranchRepository branchRepository)
         {
             _userManager = userManager;
             _paginatedService = paginatedService;
             _departmentRepository = departmentRepository;
+            _branchRepository = branchRepository;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllAsync()
@@ -53,6 +57,7 @@ namespace SmartTask.BL.Services
 
             user.FullName = updatedUser.FullName;
             user.DepartmentId = updatedUser.DepartmentId;
+            user.BranchId = updatedUser.BranchId;
             user.updatedAt = DateTime.UtcNow;
 
             var result = await _userManager.UpdateAsync(user);
@@ -63,6 +68,17 @@ namespace SmartTask.BL.Services
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return false;
+
+            var branches = await _branchRepository.GetAllAsync();
+
+            var relatedBranches =  branches.Where(b => b.ManagerId  == user.Id).ToList();
+
+            foreach (var branch in relatedBranches)
+            {
+                branch.ManagerId = null;
+            }
+
+            await _branchRepository.UpdateRangeAsync(relatedBranches);
 
             var result = await _userManager.DeleteAsync(user);
             return result.Succeeded;
