@@ -556,7 +556,7 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script>
 		$(document).ready(function () {
-			// Staggered card animation
+	
 			$(".card.dashboard").each(function (index) {
 				const card = $(this);
 				setTimeout(function () {
@@ -564,7 +564,7 @@
 				}, index * 150);
 			});
 
-			// Dynamic particle generation
+
 			function createParticle() {
 				const particle = $('<div class="particle"></div>');
 				const startPos = Math.random() * 100;
@@ -583,10 +583,10 @@
 				}, animationDuration * 1000);
 			}
 
-			// Generate particles periodically
+	
 			setInterval(createParticle, 2000);
 
-			// Add smooth scroll behavior
+			
 			$('a[href^="#"]').on('click', function(event) {
 				var target = $(this.getAttribute('href'));
 				if( target.length ) {
@@ -597,7 +597,7 @@
 				}
 			});
 
-			// Enhanced hover effects
+		
 			$('.card.dashboard').hover(
 				function() {
 					$(this).find('.card-icon').addClass('animate__pulse');

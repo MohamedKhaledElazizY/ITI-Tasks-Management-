@@ -314,7 +314,7 @@
 			}
 		}
 
-		/* Staggered animation delay for cards */
+	
 		.card.dashboard:nth-child(1) {
 			animation-delay: 0.1s;
 		}
@@ -339,7 +339,7 @@
 			animation-delay: 0.6s;
 		}
 
-		/* Responsive adjustments */
+
 		@@media (max-width: 768px) {
 			.card-icon {
 				font-size: 3rem;
@@ -349,7 +349,7 @@
 			}
 		}
 
-		/* Loading shimmer effect */
+		
 		.card.dashboard:not(.visible) {
 			background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
 			background-size: 200% 100%;
@@ -367,7 +367,7 @@
 	</style>
 </head>
 <body>
-	<!-- Floating particles -->
+
 	<div class="particles">
 		<div class="particle" style="left: 10%; animation-delay: 0s;"></div>
 		<div class="particle" style="left: 20%; animation-delay: 1s;"></div>
@@ -549,7 +549,7 @@
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script>
 		$(document).ready(function () {
-			// Staggered card animation
+	
 			$(".card.dashboard").each(function (index) {
 				const card = $(this);
 				setTimeout(function () {
@@ -557,7 +557,7 @@
 				}, index * 150);
 			});
 
-			// Dynamic particle generation
+		
 			function createParticle() {
 				const particle = $('<div class="particle"></div>');
 				const startPos = Math.random() * 100;
@@ -576,10 +576,8 @@
 				}, animationDuration * 1000);
 			}
 
-			// Generate particles periodically
 			setInterval(createParticle, 2000);
 
-			// Add smooth scroll behavior
 			$('a[href^="#"]').on('click', function(event) {
 				var target = $(this.getAttribute('href'));
 				if( target.length ) {
@@ -590,7 +588,7 @@
 				}
 			});
 
-			// Enhanced hover effects
+
 			$('.card.dashboard').hover(
 				function() {
 					$(this).find('.card-icon').addClass('animate__pulse');
