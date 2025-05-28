@@ -115,49 +115,7 @@
                         <div class="me-auto d-flex align-items-center" id="header-search">
                             <a id="toggle_btn" href="javascript:void(0);" class="btn btn-menubar me-1">
                                 <i class="ti ti-arrow-bar-to-left"></i>
-                            </a>
-                            
-                            @* <div class="dropdown-menu dropdown-menu-end"> *@
-                            @*     <div class="card mb-0 border-0 shadow-none"> *@
-                            @*         <div class="card-header"> *@
-                            @*             <h4>Smart Task</h4> *@
-                            @*         </div> *@
-                            @*         <div class="card-body"> *@
-                            @*             <a class="d-block pb-2 btn btn-primary" *@
-                            @*                asp-controller="Notification" *@
-                            @*                asp-action="Index"> *@
-                            @*                 <span class="avatar avatar-md bg-transparent-dark me-2"> *@
-                            @*                     <i class="ti ti-calendar text-gray-9"></i> *@
-                            @*                 </span>Calendar *@
-                            @*             </a> *@
-                            @*             <a href="todo.html" class="d-block py-2"> *@
-                            @*                 <span class="avatar avatar-md bg-transparent-dark me-2"> *@
-                            @*                     <i class="ti ti-subtask text-gray-9"></i> *@
-                            @*                 </span>To Do *@
-                            @*             </a> *@
-                            @*             <a href="notes.html" class="d-block py-2"> *@
-                            @*                 <span class="avatar avatar-md bg-transparent-dark me-2"> *@
-                            @*                     <i class="ti ti-notes text-gray-9"></i> *@
-                            @*                 </span>Notes *@
-                            @*             </a> *@
-                            @*             <a href="file-manager.html" class="d-block py-2"> *@
-                            @*                 <span class="avatar avatar-md bg-transparent-dark me-2"> *@
-                            @*                     <i class="ti ti-folder text-gray-9"></i> *@
-                            @*                 </span>File Manager *@
-                            @*             </a> *@
-                            @*             <a href="kanban-view.html" class="d-block py-2"> *@
-                            @*                 <span class="avatar avatar-md bg-transparent-dark me-2"> *@
-                            @*                     <i class="ti ti-layout-kanban text-gray-9"></i> *@
-                            @*                 </span>Kanban *@
-                            @*             </a> *@
-                            @*             <a href="invoices.html" class="d-block py-2 pb-0"> *@
-                            @*                 <span class="avatar avatar-md bg-transparent-dark me-2"> *@
-                            @*                     <i class="ti ti-file-invoice text-gray-9"></i> *@
-                            @*                 </span>Invoices *@
-                            @*             </a> *@
-                            @*         </div> *@
-                            @*     </div> *@
-                            @* </div> *@
+                            </a>           
                         </div>
 
 
@@ -460,7 +418,19 @@
                                             </a>
                                         </li>
                                     </secure-content>
+                                    @* <secure-content asp-area="" asp-controller="Manager" asp-action="DepartmentManagerProjects"> *@
+                                        <li>
+                                            <a asp-controller="Manager" asp-action="DepartmentManagerProjects" asp-route-id="@userId">
+                                                Department Manager Dashboard
+                                            </a>
+                                        </li>
+                                    @* </secure-content> *@
 
+                                    <li>
+                                        <a asp-controller="Manager" asp-action="BranchManagerProjects" asp-route-id="@userId">
+                                            Branch Manager Dashboard
+                                        </a>
+                                    </li>
                                     </ul>
                                 </li>
 
