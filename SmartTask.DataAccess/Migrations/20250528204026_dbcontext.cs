@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SmartTask.DataAccess.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:SmartTask.DataAccess/Migrations/20250526003507_AddDashboardFeatures.cs
-    public partial class AddDashboardFeatures : Migration
-========
-    public partial class SmartContext : Migration
->>>>>>>> origin/LA:SmartTask.DataAccess/Migrations/20250524234331_SmartContext.cs
+    public partial class dbcontext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

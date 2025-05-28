@@ -19,11 +19,13 @@ namespace SmartTask.Web.Controllers
         private readonly IUserService _userService;
         private readonly IDepartmentService _departmentService;
         private readonly IBranchService _branchService;
-        public UserController(IUserService userService, IDepartmentService departmentService, IBranchService branchService)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public UserController(IUserService userService, IDepartmentService departmentService, IBranchService branchService,UserManager<ApplicationUser> uusermanager)
         {
             _userService = userService;
             _departmentService = departmentService;
             _branchService = branchService;
+            _userManager = uusermanager;
         }
 
         [HttpGet]

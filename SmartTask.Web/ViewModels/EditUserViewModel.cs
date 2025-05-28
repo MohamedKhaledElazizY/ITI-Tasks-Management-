@@ -11,6 +11,8 @@ namespace SmartTask.Web.ViewModels
 
         [Display(Name = "Department")]
         public int? DepartmentId { get; set; }
+        [Display(Name = "Branch")]
+        public int? BranchId { get; set; }
 
         [Display(Name = "Email Address")]
         public string Email { get; set; }

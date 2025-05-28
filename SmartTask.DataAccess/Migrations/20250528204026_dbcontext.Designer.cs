@@ -12,8 +12,8 @@ using SmartTask.DataAccess.Data;
 namespace SmartTask.DataAccess.Migrations
 {
     [DbContext(typeof(SmartTaskContext))]
-    [Migration("20250526003545_SyncWithExistingDatabase")]
-    partial class SyncWithExistingDatabase
+    [Migration("20250528204026_dbcontext")]
+    partial class dbcontext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
