@@ -111,10 +111,14 @@ namespace SmartTask.BL.Services
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
         }
-
         public async Task<PaginatedList<ApplicationUser>> GetUsersWithoutDepartemnt(int page, int pageSize)
         {
-            var query = _userManager.Users.Where(u => u.DepartmentId == null);
+            var query = _userManager.Users
+        .Where(u => u.DepartmentId == null)
+        .Include(u => u.Branch)
+            .ThenInclude(b => b.BranchDepartments)
+                .ThenInclude(bd => bd.Department)
+        .AsQueryable();
             return await PaginatedList<ApplicationUser>.CreateAsync(query, page, pageSize);
         }
     }

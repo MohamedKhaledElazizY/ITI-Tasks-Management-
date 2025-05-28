@@ -45,10 +45,13 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> WithoutDepartment(int page = 1, int pageSize = 10)
         {
 
-            var users = await _userService.GetUsersWithoutDepartemnt(page,pageSize);
+            var users = await _userService.GetUsersWithoutDepartemnt(page, pageSize);
 
-            var departments = await _departmentService.GetAllDepartmentsAsync();
-            ViewBag.Departments = departments;
+            //var departments = await _departmentService.GetAllDepartmentsAsync();
+            //ViewBag.Departments = departments;
+
+            var branches = await _branchService.GetAllAsync();
+            ViewBag.Branches = branches;
 
             var viewModel = new UsersViewModel
             {
@@ -88,6 +91,37 @@ namespace SmartTask.Web.Controllers
 
             return RedirectToAction("WithoutDepartment");
         }
+        [HttpPost]
+        public async Task<IActionResult> AssignToBranch(string userId, int branchId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.BranchId = branchId;
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Failed to add user in branch");
+            }
+
+            return RedirectToAction("WithoutDepartment");
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetDepartmentsByBranch(int branchId)
+        {
+            // Get departments that belong to this branch
+            var branchDepartments = await _departmentService.GetAllDepartmentsAsync();
+            var result = branchDepartments
+                .Where(dep => dep.BranchDepartments.Any(bd => bd.BranchId == branchId))
+                .Select(dep => new { id = dep.Id, name = dep.Name })
+                .ToList();
+            return Json(result);
+        }
+
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userService.GetByIdAsync(id);
@@ -125,6 +159,7 @@ namespace SmartTask.Web.Controllers
             if (user == null) return NotFound();
 
             user.FullName = model.FullName;
+            user.BranchId = model.BranchId;
             user.DepartmentId = model.DepartmentId;
             user.updatedAt = DateTime.UtcNow;
 

@@ -23,6 +23,7 @@ namespace SmartTask.DataAccess.Repositories
         {
             return await _context.Departments
                 .Include(d => d.Manager)
+                .Include(d => d.BranchDepartments)
                 .ToListAsync();
         }
 

@@ -18,7 +18,7 @@
     </div>
 
     <!-- Department -->
-    <div class="form-group">
+    @*<div class="form-group">
         <label asp-for="DepartmentId">Department</label>
         <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.Departments">
             <option value="">-- Select Department --</option>
@@ -32,6 +32,23 @@
             <option value="">-- Select branch --</option>
         </select>
         <span asp-validation-for="BranchId" class="text-danger"></span>
+    </div>*@
+    <div class="form-group">
+        <label asp-for="BranchId">Branch</label>
+        <select asp-for="BranchId" class="form-control"
+                asp-items="ViewBag.Branchs" id="branchSelect">
+            <option value="">-- Select branch --</option>
+        </select>
+        <span asp-validation-for="BranchId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DepartmentId">Department</label>
+        <select asp-for="DepartmentId" class="form-control"
+                asp-items="ViewBag.Departments" id="departmentSelect" disabled>
+            <option value="">-- Select Department --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
     </div>
 
     <!-- Current Image -->
@@ -75,3 +92,40 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="GetAll" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#branchSelect').change(function () {
+                var branchId = $(this).val();
+                console.log(branchId);
+                if (branchId) {
+                    $.ajax({
+                        url: '/User/GetDepartmentsByBranch',
+                        type: 'GET',
+                        data: { branchId: branchId },
+                        success: function (departments) {
+                            var departmentSelect = $('#departmentSelect');
+                            departmentSelect.empty(); // Clear old options
+                            departmentSelect.append('<option value="">-- Select Department --</option>');
+
+                            $.each(departments, function (i, department) {
+                                    console.log(department.id+""+department.name);
+                                departmentSelect.append(`<option value="${department.id}">${department.name}</option>`);
+                            });
+
+                            departmentSelect.prop('disabled', false);
+                        },
+                        error: function () {
+                            alert("There is an error when loading depts.");
+                        }
+                    });
+                } else {
+                    $('#departmentSelect').empty().append('<option value="">-- Select Department --</option>').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+}
