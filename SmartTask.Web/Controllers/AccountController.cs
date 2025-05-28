@@ -35,7 +35,11 @@ namespace SmartTask.Web.Controllers
             _config = config;
             _dashboardService = dashboardService;
         }
-
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
         [HttpGet]
         public IActionResult Login()
         {
@@ -257,6 +261,14 @@ namespace SmartTask.Web.Controllers
 
             TempData["Message"] = "Roles updated successfully!";
             return RedirectToAction("ManageUserRoles");
+        }
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            HttpContext.Session.Clear();
+            await signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Login", "Account");
         }
     }
     public class OAuthResponse
