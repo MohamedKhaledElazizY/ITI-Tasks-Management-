@@ -167,7 +167,7 @@ namespace SmartTask.Web
             services.AddSingleton<IMvcControllerDiscovery, MvcControllerDiscovery>();
             services.AddSingleton(new DynamicAuthorizationOptions
             {
-                DefaultAdminUser = "mohamed.khaled200112@gmail.com"
+                DefaultAdminUser = "mkelazizy"
             });
 
             // Services
