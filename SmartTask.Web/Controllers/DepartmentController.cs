@@ -138,11 +138,10 @@ namespace SmartTask.Web.Controllers
         {
             var department = await _departmentService.GetDepartmentWithDetailsAsync(id);
             if (department == null)
-            {
                 return View("NotFound");
-            }
 
-            var managers = await _userManager.GetUsersInRoleAsync("DepartmentManager");
+            //var managers = await _userManager.GetUsersInRoleAsync("DepartmentManager");
+            var managers = await _userManager.Users.ToListAsync();
             var allBranches = await _branchService.GetAllAsync();
 
             ViewBag.Managers = new SelectList(managers, "Id", "FullName", department.ManagerId);
@@ -172,39 +171,28 @@ namespace SmartTask.Web.Controllers
                 return View(model);
             }
 
-            var existingDepartment = await _departmentService.GetDepartmentWithDetailsAsync(model.Id);
-            if (existingDepartment == null)
-            {
-                return View("NotFound");
-            }
-
-            existingDepartment.Name = model.Name;
-            existingDepartment.ManagerId = model.ManagerId;
-
-            var existingBranchIds = existingDepartment.BranchDepartments.Select(bd => bd.BranchId).ToList();
-            var newBranchIds = model.SelectedBranchIds ?? new List<int>();
-
-            foreach (var bd in existingDepartment.BranchDepartments.ToList())
-            {
-                if (!newBranchIds.Contains(bd.BranchId))
-                    existingDepartment.BranchDepartments.Remove(bd);
-            }
-
-            foreach (var branchId in newBranchIds)
-            {
-                if (!existingBranchIds.Contains(branchId))
-                    existingDepartment.BranchDepartments.Add(new BranchDepartment { BranchId = branchId, DepartmentId = existingDepartment.Id });
-            }
-
+            var selectedBranchIds = model.SelectedBranchIds ?? new List<int>();
             var selectedUserIds = model.SelectedUserIds ?? new List<string>();
 
-            existingDepartment.Users = await _userManager.Users
-                .Where(u => selectedUserIds.Contains(u.Id) && u.BranchId.HasValue && newBranchIds.Contains(u.BranchId.Value))
-                .ToListAsync();
+            var departmentToUpdate = new Department
+            {
+                Id = model.Id,
+                Name = model.Name,
+                ManagerId = model.ManagerId,
+                BranchDepartments = selectedBranchIds
+                    .Select(branchId => new BranchDepartment
+                    {
+                        BranchId = branchId,
+                        DepartmentId = model.Id
+                    }).ToList(),
+                Users = selectedUserIds
+                    .Select(userId => new ApplicationUser { Id = userId })
+                    .ToList()
+            };
 
             try
             {
-                await _departmentService.UpdateDepartmentAsync(existingDepartment);
+                await _departmentService.UpdateDepartmentAsync(departmentToUpdate);
             }
             catch (Exception ex)
             {
@@ -237,7 +225,8 @@ namespace SmartTask.Web.Controllers
 
         private async Task PopulateViewBagsForDepartment(string selectedManagerId = null, Department department = null)
         {
-            var managers = await _userManager.GetUsersInRoleAsync("DepartmentManager");
+            //var managers = await _userManager.GetUsersInRoleAsync("DepartmentManager");
+            var managers = await _userManager.Users.ToListAsync();
             var allUsers = await _userManager.Users.ToListAsync();
 
             ViewBag.Managers = new SelectList(managers, "Id", "FullName", selectedManagerId);
@@ -347,28 +336,32 @@ namespace SmartTask.Web.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetUsersByBranches([FromQuery] List<int> branchIds, [FromQuery] int? departmentId = null)
+        public async Task<IActionResult> GetUsersByBranches(
+                    [FromQuery] List<int> branchIds,
+                    [FromQuery] int? departmentId = null,
+                    [FromQuery] List<string> selectedUserIds = null)
         {
             var usersQuery = _userManager.Users
-                .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value));
+                .Where(u => u.BranchId.HasValue && branchIds.Contains(u.BranchId.Value))
+                .Where(u => u.DepartmentId == null || (departmentId.HasValue && u.DepartmentId == departmentId.Value));
 
-            if (departmentId.HasValue)
+            if (selectedUserIds != null && selectedUserIds.Count > 0)
             {
-                usersQuery = usersQuery.Where(u => u.DepartmentId == null || u.DepartmentId == departmentId.Value);
-            }
-            else
-            {
-                usersQuery = usersQuery.Where(u => u.DepartmentId == null);
+                usersQuery = usersQuery
+                    .Union(_userManager.Users
+                        .Where(u => selectedUserIds.Contains(u.Id) && u.BranchId.HasValue
+                        && branchIds.Contains(u.BranchId.Value)));
             }
 
             var users = await usersQuery
                 .Select(u => new { id = u.Id, fullName = u.FullName, email = u.Email })
+                .Distinct()
                 .ToListAsync();
 
             return Json(users);
         }
+
     }
 }
 
 
-  
