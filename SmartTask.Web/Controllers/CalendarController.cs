@@ -10,11 +10,13 @@ namespace SmartTask.Web.Controllers
     {
         private readonly ITaskRepository _taskRepository;
         private readonly IProjectRepository _projectRepository;
+        private readonly ITaskDependencyRepository _taskDependencyRepository;
 
-        public CalendarController(ITaskRepository taskRepository,IProjectRepository projectRepository)
+        public CalendarController(ITaskRepository taskRepository,IProjectRepository projectRepository,ITaskDependencyRepository  taskDependencyRepository)
         {
             _taskRepository = taskRepository;
             _projectRepository = projectRepository;
+            _taskDependencyRepository = taskDependencyRepository;
         }
         public async Task<IActionResult> Index()
         {
@@ -48,6 +50,24 @@ namespace SmartTask.Web.Controllers
                 CalendarViewModels.Add(taskVM);
             }
             return Json(CalendarViewModels);
+        }
+        public async Task<IActionResult> UpdateTask(TaskCalendarUpdateVM TaskVM)
+        {
+            var taskDependancies = await _taskDependencyRepository.GetBySuccessorIdAsync(TaskVM.Id);
+            if (taskDependancies == null)
+                return NotFound("Couldnt Find Task");
+            foreach (var Pretask in taskDependancies)
+            {
+                if (DateOnly.Parse(Pretask.Predecessor.StartDate.ToString().Split(' ')[0]) > TaskVM.Start)
+                {
+                    return BadRequest(new { messege = $"the start Date of this task cannot precede its predecessor task{Pretask.Predecessor.Title}" });
+                }
+
+            }
+            
+            await _taskRepository.UpdateTaskDates(TaskVM.Id, TaskVM.Start, TaskVM.End);
+
+            return Ok("Task Updated Successfully!");
         }
     }
 }

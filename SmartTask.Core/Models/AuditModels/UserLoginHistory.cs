@@ -16,5 +16,6 @@ namespace SmartTask.Core.Models.AuditModels
 
         public string IPAddress { get; set; }
         public string UserAgent { get; set; }
+   
     }
 }

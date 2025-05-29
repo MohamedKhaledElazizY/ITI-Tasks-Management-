@@ -214,12 +214,30 @@
 				eventClick: function (info) {
 					loadTaskDetails(info.event.id);
 				},
-				// eventDrop: function (info) {
-				//     updateEvent(info.event);
-				// },
-				// eventResize: function (info) {
-				//     updateEvent(info.event);
-				// }
+				eventDrop: function (info) {
+					let startDate = info.event.start.toISOString().split('T')[0];
+					let endDate = info.event.end.toISOString().split('T')[0];
+					const taskVM = {
+					id: info.event.id,
+					start: startDate,
+					end: endDate,
+					};
+
+						UpdateTask(taskVM);
+				   
+				},
+				eventResize: function (info) {
+				  let startDate = info.event.start.toISOString().split('T')[0];
+					let endDate = info.event.end.toISOString().split('T')[0];
+					console.log(startDate);
+					const taskVM = {
+					id: info.event.id,
+					start: startDate,
+					end: endDate,
+					};
+
+						UpdateTask(taskVM);
+				}
 			});
 
 			calendar.render();
@@ -239,6 +257,20 @@
 					alert('Failed to load task details. Please try again.');
 				}
 			});
+		}
+		function UpdateTask(taskVM) {
+			$.ajax({
+					url: '@Url.Action("UpdateTask", "Calendar")',
+					method: 'Post',
+					data: { TaskVM: taskVM },
+					success: function () {
+						  console.log("Task updated successfully.");
+					},
+					error: function (xhr) {
+						const errorMsg = xhr.responseJSON?.message || "Failed to increase task status. Please try again.";
+					alert(errorMsg);
+					}
+				});
 		}
 	</script>
 

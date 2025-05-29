@@ -97,6 +97,57 @@
         justify-content: center;
     }
 
+
+
+    /* Base button styling */
+    .btn-edit-action,
+    .btn-details-action,
+    .btn-delete-action {
+        border-width: 1px;
+        border-style: solid;
+        transition: all 0.3s ease;
+        color: #fff; /* White text/icons */
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+
+    /* Edit Button - Yellow */
+    .btn-edit-action {
+        background-color: #ffc107;
+        border-color: #ffc107;
+    }
+
+        .btn-edit-action:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+
+    /* Details Button - Blue */
+    .btn-details-action {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+        .btn-details-action:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+
+    /* Delete Button - Red */
+    .btn-delete-action {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+        .btn-delete-action:hover {
+            background-color: #bb2d3b;
+            border-color: #b02a37;
+        }
+
     .text-muted {
         color: #6c757d !important;
     }
@@ -175,6 +226,11 @@
                             </td>
                             <td>
                                 <div class="d-flex">
+                                    <secure-content asp-area="" asp-controller="User" asp-action="Details">
+                                        <a asp-action="Details" asp-route-id="@user?.Id" class="btn btn-sm btn-outline-info me-2">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </secure-content>
                                     <secure-content asp-area="" asp-controller="User" asp-action="Edit">
                                         <a asp-action="Edit" asp-route-id="@user?.Id" class="btn btn-sm btn-outline-warning me-2">
                                             <i class="fas fa-edit"></i>
@@ -188,11 +244,12 @@
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                           </form>
-                                     @*   <a asp-action="Delete" asp-route-id="@user?.Id" class="btn btn-sm btn-outline-danger"
+                                        <a asp-action="Delete" asp-route-id="@user?.Id" class="btn btn-sm btn-outline-danger"
                                            onclick="return confirm('Are you sure you want to delete this user?')">
-                                            <i class="fas fa-trash-alt"></i> 
-                                        </a>*@
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
                                     </secure-content>
+                                    
                                 </div>
                             </td>
                         </tr>
