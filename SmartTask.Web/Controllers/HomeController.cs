@@ -46,6 +46,13 @@ namespace SmartTask.Web.Controllers
             return View(new Core.Models.ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+       
+
+        public IActionResult NotFound()
+        {
+            return View();
+        }
+
         /// <summary>
         /// Returns the current user's project dashboard with task statistics and details
         /// </summary>

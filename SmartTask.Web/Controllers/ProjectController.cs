@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SmartTask.Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
    
     public class ProjectController : Controller
     {
@@ -176,7 +176,7 @@ namespace SmartTask.Web.Controllers
             var project = await _projectService.GetProjectByIdAsync(id);
             if (project == null)
             {
-                return View("NotFound");
+                return RedirectToAction("NotFound", "Home");
             }
 
             //SignalR Part
@@ -197,7 +197,7 @@ namespace SmartTask.Web.Controllers
             var project = await _projectService.GetProjectByIdAsync(id);
             if (project == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Home");
             }
             return View(project);
         }
@@ -214,7 +214,7 @@ namespace SmartTask.Web.Controllers
 
             if (project == null)
             {
-                return NotFound();
+                return RedirectToAction("NotFound", "Home");
             }
 
             var currentUserIds = project.ProjectMembers.Select(pm => pm.UserId).ToList();
