@@ -74,27 +74,45 @@
     }
 
 
+    /* .table thead { */
+    /*     background-color: #f8f9fa; */
+    /* } */
+
+    /* .table td, .table th { */
+    /*     vertical-align: middle; */
+    /* } */
+
+    /* .table th { */
+    /*     font-weight: 600; */
+    /* } */
+
+    /* .dataTables_filter input { */
+    /*     border-radius: 6px !important; */
+    /*     border: 1px solid #ced4da !important; */
+    /*     padding: 5px 10px !important; */
+    /* } */
+
+    /* .btn-outline-secondary { */
+    /*     border-radius: 6px; */
+    /* } */
     .table thead {
-        background-color: #f8f9fa;
+        background: linear-gradient(90deg, #0d6efd 60%, #6f42c1 100%);
+        color: #fff;
     }
 
-    .table td, .table th {
-        vertical-align: middle;
+    /* .table-striped > tbody > tr:nth-of-type(odd) { */
+    /*     background-color: #e3f2fd; */
+    /* } */
+
+    /* .table-striped > tbody > tr:nth-of-type(even) { */
+    /*     background-color: #fce4ec; */
+    /* } */
+
+    .table-hover > tbody > tr:hover {
+        background-color: #ffe082 !important;
+        transition: background 0.2s;
     }
 
-    .table th {
-        font-weight: 600;
-    }
-
-    .dataTables_filter input {
-        border-radius: 6px !important;
-        border: 1px solid #ced4da !important;
-        padding: 5px 10px !important;
-    }
-
-    .btn-outline-secondary {
-        border-radius: 6px;
-    }
 </style>
 
 
@@ -138,7 +156,7 @@
 
        
         <div class="table-responsive">
-            <div class="d-flex justify-content-center mb-3">
+            <div class="d-flex justify-content-start mb-3">
                 <a href="/branch/AddBranch" class="btn btn-success">
                     <i class="fas fa-plus me-1"></i> Create Branch
                 </a>
@@ -146,7 +164,9 @@
             </div>
 
 
-            <table id="tblBranches" class="table table-bordered table-striped dt-responsive nowrap w-100">
+            @* <table id="tblBranches" class="table table-bordered table-striped dt-responsive nowrap w-100"> *@
+            <table id="tblBranches" class="table table-bordered table-striped table-hover dt-responsive nowrap w-100">
+
                 <thead>
                     <tr>
 

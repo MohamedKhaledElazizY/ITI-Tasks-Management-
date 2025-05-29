@@ -76,6 +76,7 @@
             transition: none !important;
 			transform: none !important;
         }
+
     </style>
 @RenderSection("Styles", required: false)
 
@@ -89,7 +90,7 @@
     <div class="main-wrapper">
 
         <!-- Header -->
-        <div class="header">
+        <div class="header custom-navbar">
             <div class="main-header">
 
                 <div class="header-left">
@@ -318,7 +319,7 @@
         </div>
         <!-- /Header -->
         <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
+    <div class="sidebar custom-sidebar" id="sidebar">
             <!-- Logo -->
             <div class="sidebar-logo">
                 <a asp-controller="Home" asp-action="Index" class="logo logo-normal">
@@ -435,6 +436,20 @@
                                     </secure-content>
                                     </ul>
                                 </li>
+                            @* <secure-content asp-area="" asp-controller="Role" asp-action="Index"> *@
+                                <li>
+                                    <a asp-controller="Role" asp-action="Index" asp-route-id="@userId">
+                                       Manage Roles
+                                    </a>
+                                </li>
+                            @* </secure-content> *@
+                            @* <secure-content asp-area="" asp-controller="Calendar" asp-action="Index"> *@
+                                <li>
+                                    <a asp-controller="Calendar" asp-action="Index" asp-route-id="@userId">
+                                        Calendar 
+                                    </a>
+                                </li>
+                            @* </secure-content> *@
 
                             </ul>
                         </li>

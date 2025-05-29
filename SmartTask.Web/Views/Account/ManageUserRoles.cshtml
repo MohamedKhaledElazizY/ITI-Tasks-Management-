@@ -1,13 +1,23 @@
 ﻿@model List<UserRoleAssignmentViewModel>
-@{
-    ViewData["Title"] = "Manage User Roles";
-}
+@* @{ *@
+@*     ViewData["Title"] = "Manage User Roles"; *@
+@* } *@
+<style>
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #f8f9fa;
+    }
+
+    .table-hover > tbody > tr:hover {
+        background-color: #e9ecef;
+    }
+</style>
 
 <div class="container mt-5">
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4 class="text-center">Manage User Roles</h4>
+        <div class="card-header bg-white">
+            <h4 class="text-center text-primary">Manage User Roles</h4>
         </div>
+
         <div class="card-body">
             <form asp-action="ManageUserRoles" method="post">
 
@@ -21,7 +31,7 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="userTable">
+                    <table class="table table-bordered table-striped table-hover" id="userTable">
                         <thead class="thead-dark">
                             <tr>
                                 <th>User</th>
