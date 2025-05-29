@@ -1,9 +1,9 @@
 ﻿@model SmartTask.Web.ViewModels.BranchVM.BranchIndexViewModel
 
 
-@{
-    ViewData["Title"] = "Branches Table";
-}
+@* @{ *@
+@*     ViewData["Title"] = "Branches Table"; *@
+@* } *@
 
 <!-- ====== CDN CSS Links ====== -->
 <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
@@ -113,9 +113,9 @@
 
 <!-- ====== Card with Table ====== -->
 <div class="card mt-4">
-    <div class="card-header">
-        <h5 class="mb-0"><i class="fas fa-table me-2"></i>Branches List</h5>
-    </div>
+    @* <div class="card-header"> *@
+    @*     <h5 class="mb-0"><i class="fas fa-table me-2"></i>Branches List</h5> *@
+    @* </div> *@
     <div class="card-body">
         <!-- ====== Advanced Filter ====== -->
         <div class="card shadow-sm p-3 mb-4 rounded">
@@ -136,9 +136,9 @@
         </div>
 
 
-        @@
+       
         <div class="table-responsive">
-            <div class="d-flex justify-content-end mb-3">
+            <div class="d-flex justify-content-center mb-3">
                 <a href="/branch/AddBranch" class="btn btn-success">
                     <i class="fas fa-plus me-1"></i> Create Branch
                 </a>

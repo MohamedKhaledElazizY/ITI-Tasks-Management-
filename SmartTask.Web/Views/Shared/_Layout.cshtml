@@ -163,7 +163,7 @@
                                                 </span>Departments
                                             </a>
                                             <a asp-controller="Outlook"
-                                               asp-action="Index" class="d-block py-2">
+                                               asp-action="Cal" class="d-block py-2">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-subtask text-gray-9"></i>
                                                 </span>Outlook
@@ -418,19 +418,21 @@
                                             </a>
                                         </li>
                                     </secure-content>
-                                    @* <secure-content asp-area="" asp-controller="Manager" asp-action="DepartmentManagerProjects"> *@
+                                    <secure-content asp-area="" asp-controller="Manager" asp-action="DepartmentManagerProjects">
                                         <li>
                                             <a asp-controller="Manager" asp-action="DepartmentManagerProjects" asp-route-id="@userId">
                                                 Department Manager Dashboard
                                             </a>
                                         </li>
-                                    @* </secure-content> *@
+                                    </secure-content>
 
+                                    <secure-content asp-area="" asp-controller="Manager" asp-action="BranchManagerProjects">
                                     <li>
                                         <a asp-controller="Manager" asp-action="BranchManagerProjects" asp-route-id="@userId">
                                             Branch Manager Dashboard
                                         </a>
                                     </li>
+                                    </secure-content>
                                     </ul>
                                 </li>
 
