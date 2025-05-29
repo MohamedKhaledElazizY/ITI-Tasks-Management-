@@ -52,6 +52,11 @@ namespace SmartTask.Web.Controllers
             return View();
         }
 
+        public IActionResult NotFound()
+        {
+            return View();
+        }
+
         /// <summary>
         /// Returns the current user's project dashboard with task statistics and details
         /// </summary>
