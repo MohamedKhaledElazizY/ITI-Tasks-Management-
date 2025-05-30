@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SmartTask.Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
    
     public class ProjectController : Controller
     {

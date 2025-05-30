@@ -139,5 +139,10 @@ namespace SmartTask.DataAccess.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id &&
                     (p.ProjectMembers.Any(pm => pm.UserId == userId)));
         }
+
+        public async Task<bool> IsUserOwnerAsync(string userId)
+        {
+            return await _context.Projects.AnyAsync(p => p.OwnerId == userId);
+        }
     }
 }

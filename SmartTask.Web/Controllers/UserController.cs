@@ -226,21 +226,39 @@ namespace SmartTask.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //public async Task<IActionResult> Delete(string id)
+        //{
+        //    var user = await _userService.GetByIdAsync(id);
+        //    if (user == null) return NotFound();
 
+        //    return View(user);
+        //}
+
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(string id)
+        //{
+        //    await _userService.DeleteAsync(id);
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null) return NotFound();
+            try
+            {
+                var result = await _userService.DeleteAsync(id);
+                if (!result)
+                {
+                    return Json(new { success = false, message = "حدث خطأ أثناء حذف المستخدم." });
+                }
 
-            return View(user);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            await _userService.DeleteAsync(id);
-            return RedirectToAction(nameof(Index));
+                return Json(new { success = true, message = "تم حذف المستخدم بنجاح." });
+            }
+            catch (InvalidOperationException ex)
+            {                
+                return Json(new { success = false, message = ex.Message });
+            }
         }
         public async Task<IActionResult> DashBoard(string id)
         {

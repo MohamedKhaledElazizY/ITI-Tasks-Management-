@@ -26,5 +26,6 @@ namespace SmartTask.Core.IRepositories
         //To Diplay Details of a specific project for a specific user
         Task<Project> GetProjectByIdAsync(int id, string userId);
         List<ApplicationUser> GetMembers(int id);
+        Task<bool> IsUserOwnerAsync(string userId);
     }
 }
