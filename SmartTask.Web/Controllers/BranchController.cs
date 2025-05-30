@@ -452,7 +452,7 @@ namespace SmartTask.Web.Controllers
         {
             var branch = await branchService.GetBranchWithDetailsAsync(model.BranchId);
             if (branch == null)
-                return RedirectToAction("NotFound", "Home");
+              return RedirectToAction("NotFound", "Home");
 
             var selectedUsers = await userManager.Users
                 .Where(u => model.SelectedUserIds.Contains(u.Id))
