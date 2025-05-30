@@ -119,7 +119,7 @@ namespace SmartTask.Web.Controllers
             }
             catch (Exception ex)
             {
-                return View("NotFound");
+                return RedirectToAction("NotFound", "Home");
             }
 
         }
@@ -129,7 +129,7 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var branch = await branchService.GetBranchWithDetailsAsync(id);
-            if (branch == null) return View("NotFound");
+            if (branch == null) return RedirectToAction("NotFound", "Home");
 
             //var managers = await userManager.GetUsersInRoleAsync("BranchManager");
             var managers = await userManager.Users.ToListAsync();
@@ -239,7 +239,7 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var branch = await branchService.GetBranchWithDetailsAsync(id);
-            if (branch == null) return View("NotFound");
+            if (branch == null) return RedirectToAction("NotFound", "Home");
 
             var usersInBranch = await userManager.Users
                                     .Where(u => u.BranchId == id)
@@ -429,7 +429,7 @@ namespace SmartTask.Web.Controllers
         {
             var branch = await branchService.GetBranchWithDetailsAsync(branchId);
             if (branch == null)
-                return View("NotFound");
+                return RedirectToAction("NotFound", "Home"); ;
 
             var usersWithOutBranch = await userManager.Users
                 .Where(u => u.BranchId == null)
@@ -452,7 +452,7 @@ namespace SmartTask.Web.Controllers
         {
             var branch = await branchService.GetBranchWithDetailsAsync(model.BranchId);
             if (branch == null)
-                return View("NotFound");
+                return RedirectToAction("NotFound", "Home");
 
             var selectedUsers = await userManager.Users
                 .Where(u => model.SelectedUserIds.Contains(u.Id))

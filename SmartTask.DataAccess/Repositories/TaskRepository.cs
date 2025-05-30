@@ -174,5 +174,21 @@ namespace SmartTask.DataAccess.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public Task UpdateTaskDates(int id, DateOnly? start, DateOnly? End)
+        {
+            var task = _context.Tasks.Find(id);
+            if (task != null)
+            {
+                task.StartDate =Convert.ToDateTime(start);
+                task.EndDate = Convert.ToDateTime(End);
+                _context.Entry(task).State = EntityState.Modified;
+                return _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Task with ID {id} not found.");
+            }
+        }
     }
 }

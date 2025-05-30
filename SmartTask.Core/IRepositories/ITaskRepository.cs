@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using SmartTask.Core.Models.Enums;
 using ModelTask = SmartTask.Core.Models.Task;
 
@@ -28,5 +29,6 @@ namespace SmartTask.Core.IRepositories
         Task<IEnumerable<ModelTask>> GetTasksOverviewAsync();
 
         Task SaveChangesAsync();
+        Task UpdateTaskDates(int id, DateOnly? start, DateOnly? End);
     }
 }

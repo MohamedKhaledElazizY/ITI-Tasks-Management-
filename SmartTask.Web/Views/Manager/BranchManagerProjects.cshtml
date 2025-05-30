@@ -1,0 +1,514 @@
+@model IEnumerable<SmartTask.Core.Models.Project>
+@{
+    ViewData["Title"] = "Branch Manager - Projects";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --primary-color: #8e44ad;
+        --primary-hover: #9b59b6;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+        --info-color: #3498db;
+    }
+
+    .branch-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(142, 68, 173, 0.3);
+    }
+
+    .department-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-left: 4px solid var(--primary-color);
+    }
+
+        .department-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+    .department-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+        }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        color: white;
+        font-size: 1.2rem;
+    }
+
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .project-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .project-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .project-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .task-summary {
+        background: #f8f9fa;
+        padding: 0.8rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+
+    .task-count {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 1rem;
+        font-size: 0.9rem;
+    }
+
+        .task-count i {
+            margin-right: 0.3rem;
+        }
+
+    .progress-circle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .filter-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .department-badge {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .status-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: white;
+    }
+
+    .status-active {
+        background-color: var(--success-color);
+    }
+
+    .status-pending {
+        background-color: var(--warning-color);
+        color: #212529;
+    }
+
+    .status-completed {
+        background-color: var(--info-color);
+    }
+
+    .status-cancelled {
+        background-color: var(--danger-color);
+    }
+
+    .owner-info {
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .btn-action {
+        padding: 0.5rem;
+        margin: 0.1rem;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+    }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="branch-header text-center">
+        <div class="container">
+            <h1 class="display-4 mb-2">
+                <i class="fas fa-building me-3"></i>
+                Branch Manager Dashboard
+            </h1>
+            <p class="lead mb-0">Oversee all department projects within your branch</p>
+        </div>
+    </div>
+
+    <!-- Overall Statistics -->
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-icon" style="background-color: var(--info-color);">
+                <i class="fas fa-project-diagram"></i>
+            </div>
+            <h3 class="mb-1">@Model.Count()</h3>
+            <p class="text-muted mb-0">Total Projects</p>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon" style="background-color: var(--success-color);">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            <h3 class="mb-1">@Model.Count(p => p.Status == "Active")</h3>
+            <p class="text-muted mb-0">Active Projects</p>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon" style="background-color: var(--warning-color);">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="mb-1">@Model.Count(p => p.Status == "Pending")</h3>
+            <p class="text-muted mb-0">Pending Projects</p>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon" style="background-color: var(--primary-color);">
+                <i class="fas fa-sitemap"></i>
+            </div>
+            <h3 class="mb-1">@Model.GroupBy(p => p.DepartmentId).Count()</h3>
+            <p class="text-muted mb-0">Departments</p>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h5 class="mb-3">
+            <i class="fas fa-filter me-2"></i>
+            Filter Projects
+        </h5>
+        <div class="row">
+            <div class="col-md-4">
+                <select id="departmentFilter" class="form-select">
+                    <option value="">All Departments</option>
+                    @foreach (var dept in Model.Where(p => p.Department != null).GroupBy(p => p.Department.Name).Select(g => g.Key))
+                    {
+                        <option value="@dept">@dept</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select id="statusFilter" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="text" id="searchFilter" class="form-control" placeholder="Search projects...">
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects by Department -->
+    @foreach (var departmentGroup in Model.Where(p => p.Department != null).GroupBy(p => p.Department))
+    {
+        var department = departmentGroup.Key;
+        var projects = departmentGroup.ToList();
+
+        <div class="department-card" data-department="@department.Name">
+            <div class="department-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1">
+                            <i class="fas fa-building-user me-2"></i>
+                            @department.Name
+                        </h4>
+                        <p class="text-muted mb-0">@projects.Count projects</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="department-badge">@department.Name</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="projects-grid">
+                @foreach (var project in projects)
+                {
+                    var taskCount = project.Tasks?.Count ?? 0;
+                    var completedTasks = project.Tasks?.Count(t => t.Status == SmartTask.Core.Models.Enums.Status.Done) ?? 0;
+                    var progress = taskCount > 0 ? (int)((double)completedTasks / taskCount * 100) : 0;
+                    var progressColor = progress >= 80 ? "var(--success-color)" : progress >= 50 ? "var(--warning-color)" : "var(--danger-color)";
+
+                    <div class="project-card" data-status="@project.Status" data-name="@project.Name.ToLower()">
+                        <div class="project-header">
+                            <div class="flex-grow-1">
+                                <h5 class="project-title">@project.Name</h5>
+                                <p class="text-muted mb-0">@(project.Description?.Length > 80 ? project.Description.Substring(0, 80) + "..." : project.Description)</p>
+                            </div>
+                            <div class="progress-circle" style="background-color: @progressColor;">
+                                @progress%
+                            </div>
+                        </div>
+
+                        <div class="task-summary">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="task-count text-primary">
+                                        <i class="fas fa-tasks"></i>
+                                        @taskCount Tasks
+                                    </span>
+                                    <span class="task-count text-success">
+                                        <i class="fas fa-check-circle"></i>
+                                        @completedTasks Done
+                                    </span>
+                                </div>
+                                <span class="status-badge status-@project.Status?.ToLower()">
+                                    @project.Status
+                                </span>
+                            </div>
+                        </div>
+
+                        @if (project.Owner != null)
+                        {
+                            <div class="owner-info">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-circle text-primary me-2"></i>
+                                    <small class="text-muted">
+                                        <strong>Owner:</strong> @project.Owner.FullName
+                                    </small>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="project-meta">
+                            <div>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    @(project.StartDate?.ToString("MMM dd") ?? "No date")
+                                    -
+                                    @(project.EndDate?.ToString("MMM dd, yyyy") ?? "No end date")
+                                </small>
+                            </div>
+                            <div>
+                                <a asp-controller="Project" asp-action="Details" asp-route-id="@project.Id"
+                                   class="btn btn-outline-primary btn-action" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a asp-controller="Project" asp-action="Edit" asp-route-id="@project.Id"
+                                   class="btn btn-outline-secondary btn-action" title="Edit Project">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-controller="Task" asp-action="Index" asp-route-projectId="@project.Id"
+                                   class="btn btn-outline-success btn-action" title="View Tasks">
+                                    <i class="fas fa-tasks"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-folder-open text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h3 class="text-muted">No Projects Found</h3>
+            <p class="text-muted">There are no projects in your branch departments yet.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Filter functionality
+            function filterProjects() {
+                var departmentFilter = $('#departmentFilter').val().toLowerCase();
+                var statusFilter = $('#statusFilter').val().toLowerCase();
+                var searchFilter = $('#searchFilter').val().toLowerCase();
+
+                $('.department-card').each(function() {
+                    var departmentCard = $(this);
+                    var departmentName = departmentCard.data('department').toLowerCase();
+                    var showDepartment = !departmentFilter || departmentName === departmentFilter;
+
+                    if (!showDepartment) {
+                        departmentCard.hide();
+                        return;
+                    }
+
+                    var hasVisibleProjects = false;
+
+                    departmentCard.find('.project-card').each(function() {
+                        var projectCard = $(this);
+                        var projectStatus = projectCard.data('status').toLowerCase();
+                        var projectName = projectCard.data('name');
+                        var projectText = projectCard.text().toLowerCase();
+
+                        var matchesStatus = !statusFilter || projectStatus === statusFilter;
+                        var matchesSearch = !searchFilter || projectText.includes(searchFilter);
+
+                        if (matchesStatus && matchesSearch) {
+                            projectCard.show();
+                            hasVisibleProjects = true;
+                        } else {
+                            projectCard.hide();
+                        }
+                    });
+
+                    if (hasVisibleProjects) {
+                        departmentCard.show();
+                    } else {
+                        departmentCard.hide();
+                    }
+                });
+            }
+
+            // Bind filter events
+            $('#departmentFilter, #statusFilter').on('change', filterProjects);
+            $('#searchFilter').on('keyup', filterProjects);
+
+            // Add smooth animations
+            $('.project-card').hover(
+                function() {
+                    $(this).addClass('shadow-lg');
+                },
+                function() {
+                    $(this).removeClass('shadow-lg');
+                }
+            );
+
+            // Add loading animation to buttons
+            $('.btn-action').on('click', function() {
+                var btn = $(this);
+                var originalContent = btn.html();
+                btn.html('<i class="fas fa-spinner fa-spin"></i>');
+
+                setTimeout(function() {
+                    btn.html(originalContent);
+                }, 1000);
+            });
+
+            // Initialize tooltips if Bootstrap is available
+            if (typeof bootstrap !== 'undefined') {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }
+        });
+    </script>
+}

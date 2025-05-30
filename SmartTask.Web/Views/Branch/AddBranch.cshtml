@@ -1,37 +1,32 @@
 ﻿@model SmartTask.Web.ViewModels.BranchVM.BranchFormViewModel
 
 @{
-    ViewData["Title"] = "AddBranch";
+    ViewData["Title"] = "Add Branch";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-@* <h1>AddBranch</h1> *@
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-plus-circle fa-2x text-success me-2"></i>
+            <h3 class="mb-0">Add New Branch</h3>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to List
+        </a>
+    </div>
 
-<style>
-    .select2-container--default .select2-selection--single .select2-selection__clear {
-        position: absolute;
-        right: 1.5rem;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        font-size: 1.2rem;
-        color: #dc3545;
-    }
-</style>
-
-<hr />
-<div asp-validation-summary="All"></div>
-<div class="row">
-    <div class="col-md-4">
+    <div class="card shadow-sm p-4">
         <form asp-action="AddBranch" method="post">
-            <div class="form-group">
-                <label asp-for="Name"></label>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="ManagerId">Manager</label>
-                <select asp-for="ManagerId" class="form-control select2" asp-items="ViewBag.Managers">
+            <div class="mb-3">
+                <label asp-for="ManagerId" class="form-label">Manager</label>
+                <select asp-for="ManagerId" class="form-select select2" asp-items="ViewBag.Managers">
                     <option value="">Select a Manager</option>
                 </select>
                 <span asp-validation-for="ManagerId" class="text-danger"></span>
@@ -42,20 +37,17 @@
                 <select asp-for="SelectedDepartmentIds" asp-items="ViewBag.Departments" class="form-select select2" multiple="multiple"
                         data-placeholder="-- Select Departments --">
                 </select>
+
+
+                <span asp-validation-for="SelectedDepartmentIds" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Add Branch</button>
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-save me-1"></i> Save Branch
+            </button>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<script src="~/lib/jquery/jquery.min.js"></script>
-<script src="~/lib/select2/js/select2.min.js"></script>
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
