@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SmartTask.DataAccess.Data;
 using SmartTask.Core.IRepositories;
 using Department = SmartTask.Core.Models.Department;
+using SmartTask.Core.Models;
 
 
 namespace SmartTask.DataAccess.Repositories
@@ -67,13 +68,13 @@ namespace SmartTask.DataAccess.Repositories
             return department;
         }
 
-        public async Task UpdateAsync(Department department)
+        public async System.Threading.Tasks.Task UpdateAsync(Department department)
         {
             _context.Entry(department).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-
-        public async Task DeleteAsync(int id)
+      
+        public async System.Threading.Tasks.Task DeleteAsync(int id)
         {
           
             var department = await _context.Departments
@@ -107,6 +108,13 @@ namespace SmartTask.DataAccess.Repositories
                 .Include(d => d.Users)
                 .AsQueryable();
         }
+     
+        public async System.Threading.Tasks.Task UpdateRangeAsync(IEnumerable<Department> departments)
+        {            
+            _context.Departments.UpdateRange(departments);
+            await _context.SaveChangesAsync();        
+        }
 
+     
     }
 }

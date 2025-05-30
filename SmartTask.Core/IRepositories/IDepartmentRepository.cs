@@ -13,6 +13,7 @@ namespace SmartTask.Core.IRepositories
         Task<IEnumerable<Department>> GetByBranchIdAsync(int branchId);
         Task<Department> AddAsync(Department department);
         Task UpdateAsync(Department department);
+        Task UpdateRangeAsync(IEnumerable<Department> departments);
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         IQueryable<Department> GetQueryable();

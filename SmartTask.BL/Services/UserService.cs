@@ -7,6 +7,7 @@ using SmartTask.Bl.Services;
 using SmartTask.BL.IServices;
 using SmartTask.Core.IRepositories;
 using SmartTask.Core.Models;
+using SmartTask.DataAccess.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,18 +22,21 @@ namespace SmartTask.BL.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IBranchRepository _branchRepository;
+        private readonly IProjectRepository _projectRepository;
         private readonly IPaginatedService<ApplicationUser> _paginatedService;
 
         public UserService(
             UserManager<ApplicationUser> userManager,
             IPaginatedService<ApplicationUser> paginatedService,
             IDepartmentRepository departmentRepository,
-            IBranchRepository branchRepository)
+            IBranchRepository branchRepository,
+            IProjectRepository projectRepository)
         {
             _userManager = userManager;
             _paginatedService = paginatedService;
             _departmentRepository = departmentRepository;
             _branchRepository = branchRepository;
+            _projectRepository = projectRepository;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllAsync()
@@ -70,16 +74,25 @@ namespace SmartTask.BL.Services
             if (user == null) return false;
 
             var branches = await _branchRepository.GetAllAsync();
-
             var relatedBranches =  branches.Where(b => b.ManagerId  == user.Id).ToList();
-
             foreach (var branch in relatedBranches)
             {
                 branch.ManagerId = null;
             }
 
-            await _branchRepository.UpdateRangeAsync(relatedBranches);
+            var departments = await _departmentRepository.GetAllAsync();
+            var relatedDepartments = departments.Where(d => d.ManagerId == user.Id).ToList();
+            foreach (var department in relatedDepartments)
+            {
+                department.ManagerId = null;
+            }
 
+            var isOwner = await _projectRepository.IsUserOwnerAsync(id);
+            if (isOwner)
+                throw new InvalidOperationException("لا يمكن حذف المستخدم لأنه مالك لمشروع. يرجى نقل الملكية أولاً.");
+
+            await _branchRepository.UpdateRangeAsync(relatedBranches);
+            await _departmentRepository.UpdateRangeAsync(relatedDepartments);
             var result = await _userManager.DeleteAsync(user);
             return result.Succeeded;
         }
