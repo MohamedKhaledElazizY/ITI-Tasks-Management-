@@ -100,7 +100,6 @@
         $(document).ready(function () {
             $('#branchSelect').change(function () {
                 var branchId = $(this).val();
-                console.log(branchId);
                 if (branchId) {
                     $.ajax({
                         url: '/User/GetDepartmentsByBranch',
@@ -112,7 +111,6 @@
                             departmentSelect.append('<option value="">-- Select Department --</option>');
 
                             $.each(departments, function (i, department) {
-                                    console.log(department.id+""+department.name);
                                 departmentSelect.append(`<option value="${department.id}">${department.name}</option>`);
                             });
 

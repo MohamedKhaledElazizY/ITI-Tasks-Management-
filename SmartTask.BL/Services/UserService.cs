@@ -89,7 +89,7 @@ namespace SmartTask.BL.Services
 
             var isOwner = await _projectRepository.IsUserOwnerAsync(id);
             if (isOwner)
-                throw new InvalidOperationException("لا يمكن حذف المستخدم لأنه مالك لمشروع. يرجى نقل الملكية أولاً.");
+                throw new InvalidOperationException("The user cannot be deleted because he is the project owner. Please transfer the ownership to public. ");
 
             await _branchRepository.UpdateRangeAsync(relatedBranches);
             await _departmentRepository.UpdateRangeAsync(relatedDepartments);

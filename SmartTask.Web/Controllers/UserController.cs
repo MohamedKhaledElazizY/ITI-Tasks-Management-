@@ -250,10 +250,10 @@ namespace SmartTask.Web.Controllers
                 var result = await _userService.DeleteAsync(id);
                 if (!result)
                 {
-                    return Json(new { success = false, message = "حدث خطأ أثناء حذف المستخدم." });
+                    return Json(new { success = false, message = "There's an Error happened" });
                 }
 
-                return Json(new { success = true, message = "تم حذف المستخدم بنجاح." });
+                return Json(new { success = true, message = "User Deleted Successfully" });
             }
             catch (InvalidOperationException ex)
             {                
