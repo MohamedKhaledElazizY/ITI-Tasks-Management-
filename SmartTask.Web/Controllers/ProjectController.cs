@@ -315,7 +315,7 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> AssignUser(int projectId)
         {
             var project = await _projectService.GetProjectByIdAsync(projectId);
-            if (project == null) return NotFound();
+            if (project == null) return RedirectToAction("NotFound", "Home");
 
             var projectMemberIds = project.ProjectMembers.Select(pm => pm.UserId).ToList();
 
