@@ -21,6 +21,7 @@ namespace SmartTask.Web.Controllers
         }
 
         // GET: Role
+        [Authorize]
         public async Task<ActionResult> Index()
         {
             var roles = await _roleManager.Roles.ToListAsync();
@@ -29,6 +30,7 @@ namespace SmartTask.Web.Controllers
         }
 
         // GET: Role/Create
+        [Authorize]
         public ActionResult Create()
         {
             ViewData["Controllers"] = _mvcControllerDiscovery.GetControllers();
