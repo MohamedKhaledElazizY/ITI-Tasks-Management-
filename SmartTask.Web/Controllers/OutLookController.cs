@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace SmartTask.Web.Controllers
 {
+    [Authorize]
     public class OutLookController : Controller
     {
         IConfiguration _config;
@@ -34,7 +35,7 @@ namespace SmartTask.Web.Controllers
             _taskRepository=taskRepository;
             _assignTaskRepository=assignTaskRepository;
         }
-        //[Authorize]
+        [Authorize]
         public IActionResult Index()
         {
             var props = new AuthenticationProperties
@@ -69,7 +70,7 @@ namespace SmartTask.Web.Controllers
         }
 
 
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> Cal(int size=100,int page=0)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -77,7 +78,7 @@ namespace SmartTask.Web.Controllers
             var s = (await eventRepository.GetByImportedByIdAsync(userId)).Skip(page*size).Take(size).ToList();
             return View(s);
         }
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> syncoutlook()
         {
             var accessToken = HttpContext.Session.GetString("access_token");

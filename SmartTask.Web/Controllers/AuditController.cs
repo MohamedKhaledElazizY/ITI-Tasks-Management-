@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartTask.Core.IRepositories;
@@ -7,6 +8,7 @@ using SmartTask.Core.ViewModels;
 
 namespace SmartTask.Web.Controllers
 {
+    [Authorize]
     public class AuditController : Controller
     {
         private readonly IAuditRepository _auditRepository;
@@ -21,6 +23,7 @@ namespace SmartTask.Web.Controllers
            
             _userManager = userManager;
         }
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             ViewBag.Users = await _userManager.Users.ToListAsync();

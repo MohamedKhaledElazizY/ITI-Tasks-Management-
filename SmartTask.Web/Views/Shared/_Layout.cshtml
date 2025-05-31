@@ -180,7 +180,9 @@
 
                                              <secure-content asp-area="" asp-controller="ProjectProgress" asp-action="Index">
                                                 <li>
-                                                    <a asp-controller="ProjectProgress" asp-action="Index" asp-route-id="@userId class="d-block py-2">
+                                                    <a class="d-block py-2" 
+                                                    asp-controller="ProjectProgress"
+                                                      asp-action="Index" asp-route-id="@userId">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-folder text-gray-9"></i>
                                                 </span>Project Progress
@@ -191,7 +193,8 @@
                                             <secure-content asp-area="" asp-controller="Branch" asp-action="Index">
                                                 <li>
                                             <a class="d-block"
-                                               asp-controller="Branch" asp-action="Index" asp-route-id="@userId>
+                                               asp-controller="Branch"
+                                                asp-action="Index" asp-route-id="@userId">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-calendar text-gray-9"></i>
                                                 </span>Branches
@@ -203,7 +206,7 @@
                                                 <li>
                                             <a class="d-block"
                                                asp-controller="Department"
-                                                       asp-action="Index" asp-route-id="@userId>
+                                                    asp-action="Index" asp-route-id="@userId">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-calendar text-gray-9"></i>
                                                 </span>Departments
@@ -211,10 +214,11 @@
                                              </li>
                                             </secure-content>
 
-                                            <secure-content asp-area="" asp-controller="Outlook" asp-action="Cal">
+                                            <secure-content asp-area="" asp-controller="OutLook" asp-action="Cal">
                                                 <li>
-                                            <a asp-controller="Outlook"
-                                                       asp-action="Cal" class="d-block py-2" asp-route-id="@userId>
+                                              <a class="d-block"
+                                                       asp-controller="OutLook"
+                                                       asp-action="Cal" asp-route-id="@userId">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-subtask text-gray-9"></i>
                                                 </span>Outlook
@@ -241,7 +245,7 @@
                                                 <li>
                                             <a class="d-block"
                                                asp-controller="User"
-                                                       asp-action="Index" asp-route-id="@userId>
+                                                       asp-action="Index" asp-route-id="@userId">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-calendar text-gray-9"></i>
                                                 </span>All Users
@@ -252,7 +256,7 @@
                                             <secure-content asp-area="" asp-controller="Account" asp-action="ManageUserRoles">
                                                 <li>
                                             <a asp-controller="Account"
-                                                       asp-action="ManageUserRoles" asp-route-id="@userId class="d-block py-2">
+                                                    asp-action="ManageUserRoles" asp-route-id="@userId" class="d-block py-2">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-subtask text-gray-9"></i>
                                                 </span>Assign User To Roles
@@ -260,10 +264,10 @@
                                               </li>
                                             </secure-content>
 
-                                            <secure-content asp-area="" asp-controller="Audit" asp-action="index">
+                                            <secure-content asp-area="" asp-controller="Audit" asp-action="Index">
                                                 <li>
-                                            <a asp-controller="Audit"
-                                                       asp-action="index" asp-route-id="@userId class="d-block py-2">
+                                                    <a asp-controller="Audit"
+                                                       asp-action="Index" asp-route-id="@userId" class="d-block py-2">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-notes text-gray-9"></i>
                                                 </span>Activity Log
@@ -553,13 +557,13 @@
                         @* <li class="menu-title"><span>Administration</span></li> *@
                         <li>
                             <ul>
-                                <secure-content asp-area="" asp-controller="Account" asp-action="AddRole">
-                                    <li>
-                                        <a asp-controller="Account" asp-action="AddRole">
-                                            <i class="ti ti-users-group"></i><span>Add Role</span>
-                                        </a>
-                                    </li>
-                                </secure-content>
+                                @* <secure-content asp-area="" asp-controller="Account" asp-action="AddRole"> *@
+                                @*     <li> *@
+                                @*         <a asp-controller="Account" asp-action="AddRole"> *@
+                                @*             <i class="ti ti-users-group"></i><span>Add Role</span> *@
+                                @*         </a> *@
+                                @*     </li> *@
+                                @* </secure-content> *@
                                 <secure-content asp-area="" asp-controller="Account" asp-action="ManageUserRoles">
 
                                     <li>
