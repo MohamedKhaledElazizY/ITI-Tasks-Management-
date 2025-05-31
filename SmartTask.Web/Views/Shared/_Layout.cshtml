@@ -166,38 +166,61 @@
                                             <h4>Project Manager</h4>
                                         </div>
                                        
-                                        <div class="card-body">
+                                        <div class="card-body">   
+                                            <secure-content asp-area="" asp-controller="Project" asp-action="Index">
+                                                <li>
                                             <a asp-controller="Project"
-                                               asp-action="Index" class="d-block py-2">
+                                               asp-action="Index" asp-route-id="@userId" class="d-block py-2">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-notes text-gray-9"></i>
                                                 </span>Projects
                                             </a>
-                                            <a asp-controller="ProjectProgress" asp-action="Index" class="d-block py-2">
+                                                </li>
+                                            </secure-content>
+
+                                             <secure-content asp-area="" asp-controller="ProjectProgress" asp-action="Index">
+                                                <li>
+                                                    <a asp-controller="ProjectProgress" asp-action="Index" asp-route-id="@userId class="d-block py-2">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-folder text-gray-9"></i>
                                                 </span>Project Progress
                                             </a>
+                                                </li>
+                                            </secure-content>
+
+                                            <secure-content asp-area="" asp-controller="Branch" asp-action="Index">
+                                                <li>
                                             <a class="d-block"
-                                               asp-controller="Branch"
-                                               asp-action="Index">
+                                               asp-controller="Branch" asp-action="Index" asp-route-id="@userId>
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-calendar text-gray-9"></i>
                                                 </span>Branches
                                             </a>
+                                                </li>
+                                            </secure-content>
+
+                                            <secure-content asp-area="" asp-controller="Department" asp-action="Index">
+                                                <li>
                                             <a class="d-block"
                                                asp-controller="Department"
-                                               asp-action="Index">
+                                                       asp-action="Index" asp-route-id="@userId>
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-calendar text-gray-9"></i>
                                                 </span>Departments
                                             </a>
+                                             </li>
+                                            </secure-content>
+
+                                            <secure-content asp-area="" asp-controller="Outlook" asp-action="Cal">
+                                                <li>
                                             <a asp-controller="Outlook"
-                                               asp-action="Cal" class="d-block py-2">
+                                                       asp-action="Cal" class="d-block py-2" asp-route-id="@userId>
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-subtask text-gray-9"></i>
                                                 </span>Outlook
                                             </a>
+                                                </li>
+                                            </secure-content>
                                             
                                         </div>
                                     </div>
@@ -213,25 +236,40 @@
                                             <h4>User Manager</h4>
                                         </div>
                                         <div class="card-body">
+
+                                            <secure-content asp-area="" asp-controller="User" asp-action="Index">
+                                                <li>
                                             <a class="d-block"
                                                asp-controller="User"
-                                               asp-action="Index">
+                                                       asp-action="Index" asp-route-id="@userId>
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-calendar text-gray-9"></i>
                                                 </span>All Users
                                             </a>
+                                                </li>
+                                            </secure-content>
+
+                                            <secure-content asp-area="" asp-controller="Account" asp-action="ManageUserRoles">
+                                                <li>
                                             <a asp-controller="Account"
-                                               asp-action="ManageUserRoles" class="d-block py-2">
+                                                       asp-action="ManageUserRoles" asp-route-id="@userId class="d-block py-2">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-subtask text-gray-9"></i>
                                                 </span>Assign User To Roles
                                             </a>
+                                              </li>
+                                            </secure-content>
+
+                                            <secure-content asp-area="" asp-controller="Audit" asp-action="index">
+                                                <li>
                                             <a asp-controller="Audit"
-                                               asp-action="index" class="d-block py-2">
+                                                       asp-action="index" asp-route-id="@userId class="d-block py-2">
                                                 <span class="avatar avatar-md bg-transparent-dark me-2">
                                                     <i class="ti ti-notes text-gray-9"></i>
                                                 </span>Activity Log
                                             </a>
+                                                </li>
+                                            </secure-content>
                                         </div>
                                     </div>
                                 </div>
