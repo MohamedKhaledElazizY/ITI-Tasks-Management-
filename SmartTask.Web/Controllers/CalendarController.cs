@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Graph.Security.Labels.Categories.Item.Subcategories.Item;
 using SmartTask.Core.IRepositories;
 using SmartTask.Web.ViewModels;
@@ -18,6 +19,7 @@ namespace SmartTask.Web.Controllers
             _projectRepository = projectRepository;
             _taskDependencyRepository = taskDependencyRepository;
         }
+        [Authorize]
         public async Task<IActionResult> Index()
         {
           

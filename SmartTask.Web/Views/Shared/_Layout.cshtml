@@ -76,6 +76,36 @@
             transition: none !important;
 			transform: none !important;
         }
+
+        .custom-navbar {
+            background-color: crimson !important; /* Dark Red */
+            color: #fff;
+        }
+
+            .custom-navbar .main-header {
+                background-color: transparent !important;
+            }
+
+            .custom-navbar .header-user,
+            .custom-navbar .header-left {
+                color: #fff;
+            }
+
+            .custom-navbar a,
+            .custom-navbar i {
+                color: black !important;
+            }
+
+        .custom-sidebar {
+            background-color: #e0f7fa !important; /* Baby Blue */
+        }
+
+            .custom-sidebar .sidebar-logo,
+            .custom-sidebar .sidebar-header,
+            .custom-sidebar .sidebar-inner {
+                background-color: transparent !important;
+            }
+
     </style>
 @RenderSection("Styles", required: false)
 
@@ -89,7 +119,7 @@
     <div class="main-wrapper">
 
         <!-- Header -->
-        <div class="header">
+        <div class="header custom-navbar">
             <div class="main-header">
 
                 <div class="header-left">
@@ -122,13 +152,13 @@
 
                         <div class="d-flex align-items-center">
                             <div class="me-1">
-                                <a href="#" class="btn btn-menubar btnFullscreen">
+                                <a href="#" class="btn btn-menubar btnFullscreen" style="width:50px; height:50px;">
                                     <i class="ti ti-maximize"></i>
                                 </a>
                             </div>
                             <div class="dropdown me-1">
-                                <a href="#" class="btn btn-menubar" data-bs-toggle="dropdown">
-                                    <i class="ti ti-layout-grid-remove"></i>
+                                <a href="#" class="btn btn-menubar" data-bs-toggle="dropdown" style="width:50px; height:50px;">
+                                    <img src="~/assets/img/images/project-management.png" style="width:20px; height:20px;"/>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <div class="card mb-0 border-0 shadow-none">
@@ -174,8 +204,8 @@
                                 </div>
                             </div>
                             <div class="dropdown me-1">
-                                <a href="#" class="btn btn-menubar" data-bs-toggle="dropdown">
-                                    <i class="ti ti-layout-grid-remove"></i>
+                                <a href="#" class="btn btn-menubar" data-bs-toggle="dropdown" style="width:50px; height:50px;">
+                                    <img src="~/assets/img/images/settings_.png" style="width:20px; height:20px;" />
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <div class="card mb-0 border-0 shadow-none">
@@ -209,8 +239,8 @@
                             </div>
                             <div class="me-1 notification_item">
                                 <a href="#" class="btn btn-menubar position-relative me-1" id="notification_popup"
-                                   data-bs-toggle="dropdown">
-                                    <i class="ti ti-bell"></i>
+                               data-bs-toggle="dropdown" style="width:50px; height:50px;">
+                                <img src="~/assets/img/images/bell.png" style="width:30px; height:30px;" />
                                     <span class="notification-status-dot"></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end notification-dropdown p-4">
@@ -256,9 +286,9 @@
                             </div>
                             <div class="dropdown profile-dropdown">
                                 <a href="javascript:void(0);" class="dropdown-toggle d-flex align-items-center"
-                                   data-bs-toggle="dropdown">
+                               data-bs-toggle="dropdown" style="width:50px; height:50px;">
                                     <span class="avatar avatar-sm online">
-                                        <img src="~/assets/img/profiles/avatar-12.jpg" alt="Img"
+                                    <img src="~/assets/img/images/user.png" alt="Img"
                                              class="img-fluid rounded-circle">
                                     </span>
                                 </a>
@@ -267,7 +297,7 @@
                                         <div class="card-header">
                                             <div class="d-flex align-items-center">
                                                 <span class="avatar avatar-lg me-2 avatar-rounded">
-                                                    <img src="~/assets/img/profiles/avatar-12.jpg" alt="img">
+                                                <img src="~/assets/img/images/user.png" alt="img">
                                                 </span>
                                                 <div>
                                                     <h5 class="mb-0">@userName</h5>
@@ -319,7 +349,7 @@
         </div>
         <!-- /Header -->
         <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
+    <div class="sidebar custom-sidebar" id="sidebar">
             <!-- Logo -->
             <div class="sidebar-logo">
                 <a asp-controller="Home" asp-action="Index" class="logo logo-normal">
@@ -436,6 +466,20 @@
                                     </secure-content>
                                     </ul>
                                 </li>
+                            <secure-content asp-area="" asp-controller="Role" asp-action="Index">
+                                <li>
+                                    <a asp-controller="Role" asp-action="Index" asp-route-id="@userId">
+                                       Manage Roles
+                                    </a>
+                                </li>
+                            </secure-content>
+                            <secure-content asp-area="" asp-controller="Calendar" asp-action="Index">
+                                <li>
+                                    <a asp-controller="Calendar" asp-action="Index" asp-route-id="@userId">
+                                        Calendar 
+                                    </a>
+                                </li>
+                            </secure-content>
 
                             </ul>
                         </li>
