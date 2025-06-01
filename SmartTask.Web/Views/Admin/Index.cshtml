@@ -393,22 +393,25 @@
 		</a>
 
 		<h2 class="text-center mb-5 dashboard-title">Admin Dashboard</h2>
+			<div class="row dashboard g-4 justify-content-center">
 
-		<div class="row dashboard g-4 justify-content-center">
+			<secure-content asp-area="" asp-controller="User" asp-action="Details">
 			<div class="col-md-4">
 				<div class="card shadow dashboard" id="card-1">
 					<div class="card-img-placeholder">
 						<i class="bi bi-person-circle card-icon"></i>
-					</div>
+					</div>	
 					<div class="card-body">
 						<h5 class="card-title">My Account</h5>
 						<a class="btn arrow-btn ms-auto d-block" asp-controller="User" asp-action="Details" asp-route-id="@userId">
 							<i class="bi bi-arrow-right"></i>
-						</a>
+						</a>	
 					</div>
 				</div>
 			</div>
+		</secure-content>
 
+			<secure-content asp-area="" asp-controller="User" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow" id="card-2">
 					<div class="card-img-placeholder">
@@ -422,7 +425,9 @@
 					</div>
 				</div>
 			</div>
+			</secure-content>
 
+			<secure-content asp-area="" asp-controller="Branch" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow" id="card-3">
 					<div class="card-img-placeholder">
@@ -436,7 +441,9 @@
 					</div>
 				</div>
 			</div>
+			</secure-content>
 
+			<secure-content asp-area="" asp-controller="Account" asp-action="ManageUserRoles">
 			<div class="col-md-4">
 				<div class="card dashboard shadow" id="card-4">
 					<div class="card-img-placeholder">
@@ -450,7 +457,8 @@
 					</div>
 				</div>
 			</div>
-
+			</secure-content>
+			<secure-content asp-area="" asp-controller="Audit" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow" id="card-5">
 					<div class="card-img-placeholder">
@@ -464,7 +472,8 @@
 					</div>
 				</div>
 			</div>
-
+			</secure-content>
+			<secure-content asp-area="" asp-controller="Department" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow" id="card-6">
 					<div class="card-img-placeholder">
@@ -478,7 +487,7 @@
 					</div>
 				</div>
 			</div>
-
+			</secure-content>
 			@* <div class="col-md-4"> *@
 			@* 	<div class="card dashboard shadow" id="card-7"> *@
 			@* 		<div class="card-img-placeholder"> *@
@@ -492,7 +501,7 @@
 			@* 		</div> *@
 			@* 	</div> *@
 			@* </div> *@
-
+			<secure-content asp-area="" asp-controller="Outlook" asp-action="Cal">
 			<div class="col-md-4">
 				<div class="card dashboard shadow" id="card-8">
 					<div class="card-img-placeholder">
@@ -506,7 +515,7 @@
 					</div>
 				</div>
 			</div>
-
+			</secure-content>
 			<secure-content asp-area="" asp-action="Index" asp-controller="Task">
 				<div class="col-md-4">
 					<div class="card dashboard shadow" id="card-9">
@@ -522,7 +531,7 @@
 					</div>
 				</div>
 			</secure-content>
-
+			<secure-content asp-area="" asp-controller="Project" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow" id="card-10">
 					<div class="card-img-placeholder">
@@ -536,7 +545,8 @@
 					</div>
 				</div>
 			</div>
-
+			</secure-content>
+			<secure-content asp-area="" asp-controller="ProjectProgress" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow"id="card-11">
 					<div class="card-img-placeholder">
@@ -550,6 +560,7 @@
 					</div>
 				</div>
 			</div>
+			</secure-content>
 		</div>
 	</div>
 
