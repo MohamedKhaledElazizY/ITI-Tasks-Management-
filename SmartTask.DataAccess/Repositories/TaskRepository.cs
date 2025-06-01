@@ -180,9 +180,10 @@ namespace SmartTask.DataAccess.Repositories
             var task = _context.Tasks.Find(id);
             if (task != null)
             {
-                task.StartDate =Convert.ToDateTime(start);
-                task.EndDate = Convert.ToDateTime(End);
-                _context.Entry(task).State = EntityState.Modified;
+                task.StartDate =start.HasValue?start.Value.ToDateTime(TimeOnly.MinValue):null;
+                task.EndDate = End.HasValue ? End.Value.ToDateTime(TimeOnly.MinValue) : null;
+
+               _context.Entry(task).State = EntityState.Modified;
                 return _context.SaveChangesAsync();
             }
             else

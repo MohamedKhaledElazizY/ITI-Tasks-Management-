@@ -22,10 +22,26 @@ namespace SmartTask.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-          
-           
-            ViewBag.Projects=await _projectRepository.GetAllAsyncWithoutInclude();
-           
+
+
+            var projects = await _projectRepository.GetAllAsyncWithoutInclude();
+
+            if (projects == null || !projects.Any())
+                return NotFound("No projects found.");
+
+            ViewBag.Projects = projects;    
+            return View();
+        }
+        public async Task<IActionResult> CalendarByUserId(string id)
+        {
+
+
+            var projects = await _projectRepository. GetUserProjectsAsync(id);
+
+            if (projects == null || !projects.Any())
+                return NotFound("No projects found.");
+
+            ViewBag.Projects = projects;
             return View();
         }
         public async Task<IActionResult> GetProjectById(int ProjectId)
@@ -62,7 +78,7 @@ namespace SmartTask.Web.Controllers
             {
                 if (DateOnly.Parse(Pretask.Predecessor.StartDate.ToString().Split(' ')[0]) > TaskVM.Start)
                 {
-                    return BadRequest(new { messege = $"the start Date of this task cannot precede its predecessor task{Pretask.Predecessor.Title}" });
+                    return BadRequest(new { message = $"the start Date of this task cannot precede its predecessor task{Pretask.Predecessor.Title}" });
                 }
 
             }

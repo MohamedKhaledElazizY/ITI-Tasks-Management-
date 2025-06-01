@@ -12,13 +12,16 @@ namespace SmartTask.Web.ViewModels
     {
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Project is required.")]
         public int ProjectId { get; set; }
         public int? ParentTaskId { get; set; }
 
-        [Required]
         [StringLength(255)]
+        [Required(ErrorMessage = "Title is required.")]
         public string Title { get; set; }
 
+        [Display(Name = "Description")]
+        [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
 
         [Display(Name = "Start Date")]
