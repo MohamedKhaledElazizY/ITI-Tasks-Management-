@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SmartTask.Web.Models;
 using System.Globalization;
 
 namespace SmartTask.Web.Controllers
 {
+    [Authorize]
     public class DataTableController : Controller
     {
         public IActionResult Index()

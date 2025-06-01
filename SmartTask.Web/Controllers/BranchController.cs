@@ -14,6 +14,7 @@ using SmartTask.Web.ViewModels.BranchVM;
 
 namespace SmartTask.Web.Controllers
 {
+    [Authorize]
     public class BranchController : Controller
     {
         private readonly IBranchService branchService;

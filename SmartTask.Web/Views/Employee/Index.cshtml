@@ -467,7 +467,7 @@
 					</div>
 				</div>
 			</secure-content>
-
+			<secure-content asp-area="" asp-action="KanbanForUser" asp-controller="Task">
 			<div class="col-md-4">
 				<div class="card dashboard shadow">
 					<div class="card-img-placeholder" data-tasks>
@@ -481,7 +481,7 @@
 					</div>
 				</div>
 			</div>
-
+			</secure-content>
 			@* <div class="col-md-4"> *@
 			@* 	<div class="card dashboard shadow"> *@
 			@* 		<div class="card-img-placeholder" data-notification> *@
@@ -495,7 +495,7 @@
 			@* 		</div> *@
 			@* 	</div> *@
 			@* </div> *@
-
+			<secure-content asp-area="" asp-action="Cal" asp-controller="Outlook">
 			<div class="col-md-4">
 				<div class="card dashboard shadow">
 					<div class="card-img-placeholder" data-outlook>
@@ -509,11 +509,27 @@
 					</div>
 				</div>
 			</div>
-
+			</secure-content>
+			<secure-content asp-area="" asp-controller="DataTable" asp-action="Index">
+				<div class="col-md-4">
+					<div class="card dashboard shadow" id="card-2">
+						<div class="card-img-placeholder">
+							<i class="bi bi-people-fill card-icon"></i>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">All Users</h5>
+							<a class="btn arrow-btn ms-auto d-block" asp-controller="DataTable" asp-action="Index">
+								<i class="bi bi-arrow-right"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</secure-content>
 			@if (Model.ProjectMemberships is not null)
 			{
 				@foreach (var proj in Model.ProjectMemberships)
 				{
+					<secure-content asp-area="" asp-controller="Project" asp-action="Details">
 					<div class="col-md-4">
 						<div class="card dashboard shadow">
 							<div class="card-img-placeholder" data-project>
@@ -527,9 +543,10 @@
 							</div>
 						</div>
 					</div>
+					</secure-content>
 				}
 			}
-
+			<secure-content asp-area="" asp-controller="ProjectProgress" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow">
 					<div class="card-img-placeholder" data-progress>
@@ -543,6 +560,7 @@
 					</div>
 				</div>
 			</div>
+			</secure-content>
 		</div>
 	</div>
 

@@ -156,13 +156,14 @@
 
        
         <div class="table-responsive">
+            <secure-content asp-area="" asp-controller="Branch" asp-action="AddBranch">
             <div class="d-flex justify-content-start mb-3">
-                <a href="/branch/AddBranch" class="btn btn-success">
+                <a href="/branch/AddBranch" class="btn btn-danger">
                     <i class="fas fa-plus me-1"></i> Create Branch
                 </a>
 
             </div>
-
+            </secure-content>
 
             @* <table id="tblBranches" class="table table-bordered table-striped dt-responsive nowrap w-100"> *@
             <table id="tblBranches" class="table table-bordered table-striped table-hover dt-responsive nowrap w-100">
@@ -187,23 +188,28 @@
                             <td>@branch.Manager?.FullName</td>
                             <td>
                                 <!-- View Button -->
+                                <secure-content asp-area="" asp-controller="Branch" asp-action="Details">
                                 <a href="/branch/Details/@branch.Id" class="action-btn view-btn me-1 text-white">
                                     <i class="fas fa-eye"></i>
                                 </a>
-
+                                </secure-content>
                                 <!-- Edit Button -->
+                                <secure-content asp-area="" asp-controller="Branch" asp-action="Edit">
                                 <a href="/branch/Edit/@branch.Id" class="action-btn edit-btn me-1 text-white">
                                     <i class="fas fa-edit"></i>
                                 </a>
-
+                                </secure-content>
                                 <!-- Delete Button -->
+                                <secure-content asp-area="" asp-controller="Branch" asp-action="Delete">
                                 <a href="/branch/Delete/@branch.Id" onclick="return confirm('Are you sure?')" class="action-btn delete-btn text-white">
                                     <i class="fas fa-trash"></i>
                                 </a>
-                                 <secure-content asp-area="" asp-controller="Branch" asp-action="AssignUsers">
+                                </secure-content>
 
-     <td><a asp-action="AssignUsers" asp-route-branchId="@branch.Id" class="btn btn-primary">AssignUsers</a></td>
- </secure-content>
+                                 <secure-content asp-area="" asp-controller="Branch" asp-action="AssignUsers">
+                                   <td><a asp-action="AssignUsers" asp-route-branchId="@branch.Id" 
+                                       class="btn btn-primary">AssignUsers</a></td>
+                                 </secure-content>
                             </td>
 
                         </tr>
