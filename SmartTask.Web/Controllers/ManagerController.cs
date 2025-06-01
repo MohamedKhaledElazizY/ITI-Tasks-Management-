@@ -39,7 +39,7 @@ namespace SmartTask.Web.Controllers
                 return NotFound("You are not a manager of any department");
             }
 
-            var projects = await _context.Projects.Where(p => p.Department.ManagerId == currentUser.Id).ToListAsync();
+            var projects = await _context.Projects.Where(p => p.DepartmentId == currentUser.DepartmentId).ToListAsync();
 
             return View(projects);
         }
@@ -60,9 +60,9 @@ namespace SmartTask.Web.Controllers
                 return NotFound("You are not a manager of any branch");
             }
 
-            var departmentIds = await _context.BranchDepartments.Where(bd => bd.BranchId == branch.Id).Select(bd => bd.DepartmentId).ToListAsync();
+            //var departmentIds = await _context.BranchDepartments.Where(bd => bd.BranchId == branch.Id).Select(bd => bd.DepartmentId).ToListAsync();
 
-            var projects = await _context.Projects.Where(p => p.DepartmentId.HasValue && departmentIds.Contains(p.DepartmentId.Value)).Include(C => C.Department).Include(T => T.Tasks).ToListAsync();
+            var projects = await _context.Projects.Where(p => p.BranchId==currentUser.BranchId ).Include(C => C.Department).Include(T => T.Tasks).ToListAsync();
 
             return View(projects);
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SmartTask.BL.IServices;
 using SmartTask.Core.Models;
@@ -7,6 +8,7 @@ using Task = SmartTask.Core.Models.Task;
 
 namespace SmartTask.Web.Controllers
 {
+    [Authorize]
     public class ProjectProgressController : Controller
     {
         private readonly IProjectService _projectService;
@@ -19,7 +21,7 @@ namespace SmartTask.Web.Controllers
         }
 
 
-        //مسئول عن عرض المشاريع الخاصة ب مستخدم معين 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var currentUserId = _userManager.GetUserId(User);
