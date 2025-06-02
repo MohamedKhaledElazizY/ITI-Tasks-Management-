@@ -16,6 +16,6 @@ namespace SmartTask.Web.ViewModels
         public DateTime EndDateTime { get; set; }
 
         public string Location { get; set; }
-        public string AttendeeEmails { get; set; }
+        public List<string> AttendeeEmails { get; set; }
     }
 }
