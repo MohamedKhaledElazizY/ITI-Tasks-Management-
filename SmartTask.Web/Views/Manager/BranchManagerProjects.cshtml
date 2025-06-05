@@ -7,17 +7,22 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
 
 <style>
     :root {
-        --primary-color: #8e44ad;
-        --primary-hover: #9b59b6;
+        --primary-color: #c1272c;
+        --primary-hover: #ee3633;
+        --secondary-color: #d9d9d8;
         --success-color: #27ae60;
-        --warning-color: #f39c12;
+        --warning-color: #febe2d;
         --danger-color: #e74c3c;
-        --info-color: #3498db;
+        --info-color: #007dc2;
     }
 
+    h1 {
+        color: #f4d58d !important;
+    }
     .branch-header {
         background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
         color: white;
@@ -239,6 +244,45 @@
         border-color: #6c757d;
         color: white;
     }
+
+    /* Date range picker styles */
+    .date-range-container {
+        display: flex;
+        gap: 10px;
+    }
+
+    .date-range-input {
+        flex: 1;
+    }
+
+    .daterangepicker {
+        font-family: inherit;
+        box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        border: none;
+    }
+
+        .daterangepicker td.active, .daterangepicker td.active:hover {
+            background-color: var(--primary-color);
+        }
+
+        .daterangepicker .drp-buttons .btn {
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+
+        .daterangepicker .drp-buttons .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+    .filter-btn {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 
 <div class="container-fluid">
@@ -284,15 +328,18 @@
             <p class="text-muted mb-0">Departments</p>
         </div>
     </div>
-
     <!-- Filter Section -->
-    <div class="filter-section">
+    <div class="filter-section mb-4">
         <h5 class="mb-3">
             <i class="fas fa-filter me-2"></i>
             Filter Projects
         </h5>
-        <div class="row">
-            <div class="col-md-4">
+        <div class="row g-3 align-items-end">
+            <!-- Department Filter -->
+            <div class="col-md-3">
+                <label for="departmentFilter" class="form-label fw-bold small text-muted">
+                    <i class="fas fa-building me-1"></i> Department
+                </label>
                 <select id="departmentFilter" class="form-select">
                     <option value="">All Departments</option>
                     @foreach (var dept in Model.Where(p => p.Department != null).GroupBy(p => p.Department.Name).Select(g => g.Key))
@@ -301,7 +348,12 @@
                     }
                 </select>
             </div>
-            <div class="col-md-4">
+
+            <!-- Status Filter -->
+            <div class="col-md-2">
+                <label for="statusFilter" class="form-label fw-bold small text-muted">
+                    <i class="fas fa-tasks me-1"></i> Status
+                </label>
                 <select id="statusFilter" class="form-select">
                     <option value="">All Statuses</option>
                     <option value="Active">Active</option>
@@ -310,11 +362,36 @@
                     <option value="Cancelled">Cancelled</option>
                 </select>
             </div>
-            <div class="col-md-4">
+
+            <!-- Date Range Filter -->
+            <div class="col-md-3">
+                <label for="dateRangeFilter" class="form-label fw-bold small text-muted">
+                    <i class="far fa-calendar-alt me-1"></i> Date Range
+                </label>
+                <div class="input-group">
+                    <input type="text" id="dateRangeFilter" class="form-control" placeholder="Select date range">
+                    <span class="input-group-text bg-white"><i class="fas fa-calendar-alt"></i></span>
+                </div>
+            </div>
+
+            <!-- Search Filter -->
+            <div class="col-md-2">
+                <label for="searchFilter" class="form-label fw-bold small text-muted">
+                    <i class="fas fa-search me-1"></i> Search
+                </label>
                 <input type="text" id="searchFilter" class="form-control" placeholder="Search projects...">
+            </div>
+
+            <!-- Reset Button -->
+            <div class="col-md-2">
+                <label class="form-label d-block opacity-0">Reset</label> <!-- Invisible label to align button -->
+                <button id="resetFilters" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-sync-alt me-1"></i> Reset
+                </button>
             </div>
         </div>
     </div>
+
 
     <!-- Projects by Department -->
     @foreach (var departmentGroup in Model.Where(p => p.Department != null).GroupBy(p => p.Department))
@@ -346,7 +423,11 @@
                     var progress = taskCount > 0 ? (int)((double)completedTasks / taskCount * 100) : 0;
                     var progressColor = progress >= 80 ? "var(--success-color)" : progress >= 50 ? "var(--warning-color)" : "var(--danger-color)";
 
-                    <div class="project-card" data-status="@project.Status" data-name="@project.Name.ToLower()">
+                    <div class="project-card"
+                         data-status="@project.Status"
+                         data-name="@project.Name.ToLower()"
+                         data-start-date="@(project.StartDate?.ToString("yyyy-MM-dd"))"
+                         data-end-date="@(project.EndDate?.ToString("yyyy-MM-dd"))">
                         <div class="project-header">
                             <div class="flex-grow-1">
                                 <h5 class="project-title">@project.Name</h5>
@@ -431,14 +512,56 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script>
         $(document).ready(function() {
+            // Initialize date range picker
+            $('#dateRangeFilter').daterangepicker({
+                opens: 'left',
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear',
+                    format: 'MMM D, YYYY'
+                }
+            });
+
+            // Update the input when dates are selected
+            $('#dateRangeFilter').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('MMM D, YYYY') + ' - ' + picker.endDate.format('MMM D, YYYY'));
+                filterProjects();
+            });
+
+            // Clear the input when dates are cleared
+            $('#dateRangeFilter').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+                filterProjects();
+            });
+
+            // Reset all filters
+            $('#resetFilters').on('click', function() {
+                $('#departmentFilter').val('');
+                $('#statusFilter').val('');
+                $('#searchFilter').val('');
+                $('#dateRangeFilter').val('');
+                filterProjects();
+            });
+
             // Filter functionality
             function filterProjects() {
                 var departmentFilter = $('#departmentFilter').val().toLowerCase();
                 var statusFilter = $('#statusFilter').val().toLowerCase();
                 var searchFilter = $('#searchFilter').val().toLowerCase();
+                var dateRange = $('#dateRangeFilter').val();
+                var startDate, endDate;
+
+                // Parse date range if selected
+                if (dateRange) {
+                    var dates = dateRange.split(' - ');
+                    startDate = moment(dates[0], 'MMM D, YYYY');
+                    endDate = moment(dates[1], 'MMM D, YYYY');
+                }
 
                 $('.department-card').each(function() {
                     var departmentCard = $(this);
@@ -457,11 +580,33 @@
                         var projectStatus = projectCard.data('status').toLowerCase();
                         var projectName = projectCard.data('name');
                         var projectText = projectCard.text().toLowerCase();
+                        var projectStartDate = projectCard.data('start-date');
+                        var projectEndDate = projectCard.data('end-date');
 
+                        // Basic filters
                         var matchesStatus = !statusFilter || projectStatus === statusFilter;
                         var matchesSearch = !searchFilter || projectText.includes(searchFilter);
 
-                        if (matchesStatus && matchesSearch) {
+                        // Date range filter
+                        var matchesDateRange = true;
+                        if (dateRange) {
+                            matchesDateRange = false;
+
+                            // Check if project has dates
+                            if (projectStartDate && projectEndDate) {
+                                var projStart = moment(projectStartDate);
+                                var projEnd = moment(projectEndDate);
+
+                                // Check if project dates overlap with selected range
+                                if ((projStart.isSameOrBefore(endDate) && projEnd.isSameOrAfter(startDate)) ||
+                                    (projStart.isSameOrAfter(startDate) && projStart.isSameOrBefore(endDate)) ||
+                                    (projEnd.isSameOrAfter(startDate) && projEnd.isSameOrBefore(endDate))) {
+                                    matchesDateRange = true;
+                                }
+                            }
+                        }
+
+                        if (matchesStatus && matchesSearch && matchesDateRange) {
                             projectCard.show();
                             hasVisibleProjects = true;
                         } else {

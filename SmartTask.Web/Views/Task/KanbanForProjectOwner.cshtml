@@ -1,0 +1,111 @@
+﻿@model SmartTask.Web.ViewModels.KanbanVM.KanbanViewModel
+
+@{
+    ViewData["Title"] = "Project Owner Kanban";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Project Owner Kanban</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="form-group">
+                <label>Select Project:</label>
+                <select id="projectSelect" class="form-control">
+                    <option value="">-- Choose Project --</option> 
+                    @foreach (var project in ViewBag.Projects)
+                    {
+                        <option value="@project.Value" selected="@(project.Value == Model?.SelectedProjectId?.ToString())">
+                            @project.Text
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    @if (Model != null)
+    {
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <select id="priorityFilter" class="form-select">
+                    <option value="All" selected>All Priorities</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <select id="statusFilter" class="form-control">
+                    <option value="All">All Status</option>
+                    <option value="Todo">Todo</option>
+                    <option value="InProgress">In Progress</option>
+                    <option value="Done">Done</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row" id="kanban-board">
+            @foreach (var column in Model.Columns.OrderBy(c => c.Order))
+            {
+                <div class="col-md-4">
+                    <div class="kanban-column"
+                         data-status="@column.Status"
+                         data-column-id="@column.Id">
+                        <div class="kanban-header bg-secondary text-white p-2">
+                            <h5 class="text-center">
+                                <span class="display-name">@column.DisplayName</span>
+                                <button class="btn btn-sm btn-light edit-column-name"
+                                        data-status="@column.Status">
+                                    Edit
+                                </button>
+                            </h5>
+                        </div>
+                        <div class="kanban-tasks p-2" id="column-@column.Status">
+                            @foreach (var task in Model.Tasks.Where(t => t.Status == column.Status))
+                            {
+                                @Html.Partial("PartialViews/_TaskCard", task)
+                                
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> Please select a project to view its Kanban board.
+        </div>
+    }
+</div>
+
+@if (Model != null)
+{
+    @Html.Partial("PartialViews/_EditTaskModal")
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#projectSelect').change(function() {
+                const projectId = $(this).val();
+                if (projectId) {
+                    window.location.href = '@Url.Action("KanbanForProjectOwner")?projectId=' + projectId;
+                } else {
+                    window.location.href = '@Url.Action("KanbanForProjectOwner")';
+                }
+            });
+
+        @if (Model != null)
+        {
+            <text>
+                    initializeSortable();
+                    initializeColumnSortable();
+                    $("#priorityFilter, #statusFilter").on("change", filterTasks);
+            </text>
+        }
+        });
+    </script>
+}
