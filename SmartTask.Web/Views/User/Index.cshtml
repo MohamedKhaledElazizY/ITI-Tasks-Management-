@@ -186,6 +186,15 @@
         <h1 class="h3 mb-0">
             <i class="fas fa-users text-primary me-2"></i> Users Management
         </h1>
+        <div class="page-header">
+            <a asp-controller="User"
+               asp-action="WithoutDepartment"
+               class="btn btn-outline-primary"
+               style="border-radius: 20px; font-weight: 500;">
+                <i class="fas fa-user-slash me-2"></i> Users Without Department
+            </a>
+        </div>
+
         @* <secure-content asp-area="" asp-controller="Account" asp-action="Register"> *@
         @*     <a asp-action="Create" class="btn btn-create"> *@
         @*         <i class="fas fa-plus-circle me-2"></i> Create New *@
@@ -250,7 +259,15 @@
                                             <i class="fas fa-trash-alt"></i>
                                         </a> *@
                                     </secure-content>
-                                    
+                                    <secure-content asp-area="" asp-controller="Account" asp-action="ManageUserRoles">
+                                        <a asp-controller="Account"
+                                           asp-action="ManageUserRoles"
+                                           asp-route-id="@user?.Id"
+                                           class="btn btn-sm btn-outline-secondary me-2"
+                                           title="Manage Roles">
+                                            <i class="fas fa-user-shield"></i>
+                                        </a>
+                                    </secure-content>
                                 </div>
                             </td>
                         </tr>

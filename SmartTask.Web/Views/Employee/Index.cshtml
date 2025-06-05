@@ -169,6 +169,10 @@
 			background: linear-gradient(135deg, #667eea, #764ba2);
 		}
 
+		#card-2 .card-img-placeholder {
+			background: linear-gradient(135deg, #4facfe, #00f2fe);
+		}
+
 		#card-3 .card-img-placeholder {
 			background: linear-gradient(135deg, #f093fb, #f5576c);
 		}
@@ -525,27 +529,6 @@
 					</div>
 				</div>
 			</secure-content>
-			@if (Model.ProjectMemberships is not null)
-			{
-				@foreach (var proj in Model.ProjectMemberships)
-				{
-					<secure-content asp-area="" asp-controller="Project" asp-action="Details">
-					<div class="col-md-4">
-						<div class="card dashboard shadow">
-							<div class="card-img-placeholder" data-project>
-								<i class="bi bi-folder card-icon"></i>
-							</div>
-							<div class="card-body">
-								<h5 class="card-title">@proj.Project.Name</h5>
-								<a class="btn arrow-btn ms-auto d-block" asp-controller="Project" asp-action="Details" asp-route-id="@proj.ProjectId">
-									<i class="bi bi-arrow-right"></i>
-								</a>
-							</div>
-						</div>
-					</div>
-					</secure-content>
-				}
-			}
 			<secure-content asp-area="" asp-controller="ProjectProgress" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow">
@@ -563,6 +546,33 @@
 			</secure-content>
 		</div>
 	</div>
+	@if (Model.ProjectMemberships != null && Model.ProjectMemberships.Any())
+	{
+		<h4 class="text-center mb-4" style="color:#764ba2;">My Projects</h4>
+		<div class="row dashboard g-4 justify-content-center mb-5">
+			@foreach (var membership in Model.ProjectMemberships)
+			{
+				var project = membership.Project;
+				<div class="col-md-4">
+					<div class="card dashboard shadow" id="card-project-@project.Id">
+						<div class="card-img-placeholder" data-project>
+							<i class="bi bi-kanban card-icon"></i>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">@project.Name</h5>
+							<a class="btn arrow-btn ms-auto d-block"
+							   asp-controller="Project"
+							   asp-action="Details"
+							   asp-route-id="@project.Id">
+								<i class="bi bi-arrow-right"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	}
+
 
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 	<script>
