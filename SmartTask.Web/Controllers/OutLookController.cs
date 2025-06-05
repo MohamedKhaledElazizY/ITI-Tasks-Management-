@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.Options;
@@ -26,16 +27,17 @@ namespace SmartTask.Web.Controllers
         private readonly IProjectRepository projectRepository;
         private readonly ITaskRepository _taskRepository;
         private readonly IAssignTaskRepository _assignTaskRepository;
-
+        private readonly UserManager<ApplicationUser> userManager;
         public OutLookController(IConfiguration config,IEventRepository eventRepository
             ,IProjectRepository project,ITaskRepository taskRepository
-            ,IAssignTaskRepository assignTaskRepository)
+            ,IAssignTaskRepository assignTaskRepository,UserManager<ApplicationUser> userManager)
         {
             _config = config;
             this.eventRepository = eventRepository;
             projectRepository = project;
             _taskRepository=taskRepository;
             _assignTaskRepository=assignTaskRepository;
+            this.userManager = userManager;
         }
         [Authorize]
         public IActionResult Index()
@@ -176,7 +178,7 @@ namespace SmartTask.Web.Controllers
                 }
             }
             
-
+            ViewBag.emails=userManager.Users.Select(x=> new SelectListItem { Value = x.Email.ToString(), Text = x.Email+"("+x.UserName+")" }).ToList();
             return PartialView("_AddEventPartial", new OutlookEventViewModel() { 
                 StartDateTime=DateTime.Now,
             EndDateTime=DateTime.Now});
@@ -221,12 +223,8 @@ namespace SmartTask.Web.Controllers
                 IsOnlineMeeting = true
             };
 
-            if (!string.IsNullOrWhiteSpace(model.AttendeeEmails))
-            {
-                var emails = model.AttendeeEmails
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-                foreach (var email in emails)
+            
+                foreach (var email in model.AttendeeEmails)
                 {
                     newEvent.Attendees.Add(new Attendee
                     {
@@ -238,7 +236,6 @@ namespace SmartTask.Web.Controllers
                         Type = AttendeeType.Required
                     });
                 }
-            }
             var result = await graphClient.Me.Events.PostAsync(newEvent);
             return Ok();
         }

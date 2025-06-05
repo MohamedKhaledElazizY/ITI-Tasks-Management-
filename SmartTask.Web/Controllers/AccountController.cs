@@ -82,6 +82,11 @@ namespace SmartTask.Web.Controllers
                         var preference = await _dashboardService.GetUserDashboardSettingsAsync(user.Id);
                         preference.LastLoginDate = DateTime.Now;
                         await _dashboardService.UpdateUserPreferenceAsync(preference);
+                        var roles = await userManager.GetRolesAsync(user);
+                        if (!roles.Any())
+                        {
+                            return View("pendding");
+                        }
                         return RedirectToAction("Index", "Home");
                     }
                 }
