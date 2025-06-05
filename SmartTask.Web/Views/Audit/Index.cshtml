@@ -3,31 +3,334 @@
 @{
     ViewData["Title"] = "Audit Log";
 }
-<select class="form-control" onchange="filter(this.value)">
-	<option value="">Select User</option>
-	@foreach (var user in ViewBag.Users)
-	{
-		<option value="@user.Id">@user.UserName</option>
-	}
-</select>
-<div id="div1">
-    <partial name="FindAuditByUserId" model="Model" />
+
+<div class="container-fluid">
+    <div class="card shadow-sm" style="border-top: 3px solid #c1272c;">
+        <div class="card-header" style="background-color: #c1272c; color: white;">
+            <h5 class="mb-0">Audit Logs</h5>
+        </div>
+        <div class="card-body">
+            <!-- Improved Filter Section -->
+            <div class="row mb-4 g-3 align-items-end">
+                <!-- User Filter -->
+                <div class="col-md-3">
+                    <label for="userFilter" class="form-label small fw-bold text-muted">
+                        <i class="fas fa-user me-1"></i> User
+                    </label>
+                    <select id="userFilter" class="form-select form-select-sm">
+                        <option value="">All Users</option>
+                        @foreach (var user in ViewBag.Users)
+                        {
+                            <option value="@user.UserName">@user.UserName</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Action Filter -->
+                <div class="col-md-2">
+                    <label for="actionFilter" class="form-label small fw-bold text-muted">
+                        <i class="fas fa-bolt me-1"></i> Action
+                    </label>
+                    <select id="actionFilter" class="form-select form-select-sm">
+                        <option value="">All Actions</option>
+                        <option value="Create">Create</option>
+                        <option value="Update">Update</option>
+                        <option value="Delete">Delete</option>
+                    </select>
+                </div>
+
+                <!-- Date Range Filter -->
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">
+                        <i class="far fa-calendar-alt me-1"></i> Date Range
+                    </label>
+                    <div class="input-group input-group-sm">
+                        <input type="datetime-local" id="startDate" class="form-control form-control-sm">
+                        <span class="input-group-text">to</span>
+                        <input type="datetime-local" id="endDate" class="form-control form-control-sm">
+                        <button id="applyDateFilter" class="btn btn-danger  btn-sm">
+                            <i class="fas fa-filter me-1"></i> Apply
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Global Search -->
+                <div class="col-md-3">
+                    <label for="globalSearch" class="form-label small fw-bold text-muted">
+                        <i class="fas fa-search me-1"></i> Global Search
+                    </label>
+                    <div class="input-group input-group-sm">
+                        <input type="text" id="globalSearch" class="form-control form-control-sm" placeholder="Search...">
+                        <button id="resetFilters" class="btn btn-outline-secondary btn-sm" title="Reset all filters">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="auditTable" class="table table-sm table-hover table-bordered" style="width:100%">
+                    <!-- Table content remains the same -->
+                    <thead style="background-color: #dc3545; color: white;">
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Table</th>
+                            <th>Action</th>
+                            <th>User</th>
+                            <th>Timestamp</th>
+                            <th>Changes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.UserId</td>
+                                <td>@item.TableName</td>
+                                <td>
+                                    <span class="badge
+                                    @(item.Action == "Create" ? "bg-success" :
+                                      item.Action == "Update" ? "bg-warning text-dark" : "bg-danger")">
+                                        @item.Action
+                                    </span>
+                                </td>
+                                <td>@item.Username</td>
+                                <td data-order="@item.Timestamp.ToString("yyyyMMddHHmmss")">
+                                    @item.Timestamp.ToString("g")
+                                </td>
+                                <td style="max-width: 300px;">
+                                    <div class="changes-container">
+                                        @if (!string.IsNullOrEmpty(item.OldValues))
+                                        {
+                                            <div class="old-values text-danger">
+                                                <strong>Old:</strong> @item.OldValues
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.NewValues))
+                                        {
+                                            <div class="new-values text-success">
+                                                <strong>New:</strong> @item.NewValues
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-@section Scripts {
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script>
-         function filter(id){
-            event.preventDefault()
-             $.ajax({
-              url: "/Audit/FindAuditByUserId/"+id,
-
-              success: function(result)
-          {
-              console.log(result);
-            $("#div1").html(result);
-          }
-            });
+@section Styles {
+    <style>
+        .card {
+            border-radius: 0.5rem;
+            overflow: hidden;
         }
-	</script>
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            vertical-align: middle;
+        }
+
+        .changes-container {
+            max-height: 100px;
+            overflow-y: auto;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .old-values, .new-values {
+            margin-bottom: 5px;
+            padding: 3px;
+            border-left: 3px solid;
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            display: none;
+        }
+
+        #applyDateFilter {
+            background: #c1272c   !important;
+
+        }
+
+        .btn-outline-danger:hover {
+            background: #c1272c !important;
+            color: white !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+        }
+
+        /* Improved buttons styling */
+        .dt-buttons .btn {
+            margin-left: 3px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Filter section improvements */
+        .input-group-sm > .form-control,
+        .input-group-sm > .form-select,
+        .input-group-sm > .input-group-text,
+        .input-group-sm > .btn {
+            height: calc(1.5em + 0.5rem + 2px);
+            font-size: 0.875rem;
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .col-md-2, .col-md-3, .col-md-4 {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+}
+
+@section Scripts {
+    <!-- Required DataTables CSS and JS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+
+    <!-- JS Libraries -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
+    <!-- Your DataTable Initialization Code -->
+    <script>
+        $(document).ready(function () {
+            var table = $('#auditTable').DataTable({
+                dom: '<"top"<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 text-end"B>>>rt<"bottom"<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>>',
+                responsive: true,
+                pageLength: 25,
+                autoWidth: false,
+                buttons: {
+                    dom: {
+                        button: {
+                            className: 'btn btn-sm'
+                        }
+                    },
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            text: '<i class="fas fa-file-excel me-1"></i> Excel',
+                            className: 'btn-outline-success'
+                        },
+                        {
+                            extend: 'pdf',
+                            text: '<i class="fas fa-file-pdf me-1"></i> PDF',
+                            className: 'btn-outline-danger'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="fas fa-print me-1"></i> Print',
+                            className: 'btn-outline-info'
+                        }
+                    ]
+                },
+                columnDefs: [
+                    { targets: 5, type: 'date' },
+                    { targets: 6, orderable: false }
+                ],
+                language: {
+                    lengthMenu: "Show _MENU_ entries",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+
+            // Rest of your filter code remains the same...
+            // Global search
+            $('#globalSearch').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+
+            // User filter
+            $('#userFilter').on('change', function() {
+                table.column(4).search(this.value).draw();
+            });
+
+            // Action filter
+            $('#actionFilter').on('change', function() {
+                table.column(3).search(this.value).draw();
+            });
+
+            // Date range filter
+            var dateFilterApplied = false;
+            $('#applyDateFilter').on('click', function() {
+                if (dateFilterApplied) {
+                    $.fn.dataTable.ext.search.pop();
+                    dateFilterApplied = false;
+                }
+
+                var startDate = $('#startDate').val();
+                var endDate = $('#endDate').val();
+
+                if (startDate || endDate) {
+                    $.fn.dataTable.ext.search.push(
+                        function(settings, data, dataIndex) {
+                            var rowDate = new Date(data[5]);
+                            var start = startDate ? new Date(startDate) : null;
+                            var end = endDate ? new Date(endDate) : null;
+
+                            if ((!start || rowDate >= start) && (!end || rowDate <= end)) {
+                                return true;
+                            }
+                            return false;
+                        }
+                    );
+                    dateFilterApplied = true;
+                }
+
+                table.draw();
+            });
+
+            // Reset all filters
+            $('#resetFilters').on('click', function() {
+                $('#globalSearch').val('');
+                $('#userFilter').val('');
+                $('#actionFilter').val('');
+                $('#startDate').val('');
+                $('#endDate').val('');
+
+                if (dateFilterApplied) {
+                    $.fn.dataTable.ext.search.pop();
+                    dateFilterApplied = false;
+                }
+
+                table.search('').columns().search('').draw();
+            });
+        });
+    </script>
 }
