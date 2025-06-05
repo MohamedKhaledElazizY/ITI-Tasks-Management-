@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using SmartTask.BL.IServices;
 using SmartTask.Core.IRepositories;
 using SmartTask.Core.Models;
@@ -14,13 +15,15 @@ namespace SmartTask.BL.Services
         private ICommentRepository _commentRepository;
         private IAttachmentRepository _attachmentRepository;
         private ITaskDependencyRepository _taskDependencyRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TaskService(ITaskRepository taskRepository, ICommentRepository commentRepository, IAttachmentRepository attachmentRepository, ITaskDependencyRepository taskDependencyRepository)
+        public TaskService(ITaskRepository taskRepository, ICommentRepository commentRepository, IAttachmentRepository attachmentRepository, ITaskDependencyRepository taskDependencyRepository, UserManager<ApplicationUser> userManager)
         {
             _taskRepository = taskRepository;
             _commentRepository = commentRepository;
             _attachmentRepository = attachmentRepository;
             _taskDependencyRepository = taskDependencyRepository;
+            _userManager = userManager;
         }
 
         public async Task<Core.Models.Task> Details(int id)
@@ -77,7 +80,28 @@ namespace SmartTask.BL.Services
 
         public async Task<List<Core.Models.Task>> TasksForUserInProject(int projectId, string userId)
         {
-            var tasks = (await _taskRepository.GetByProjectIdAsync(projectId)).Where(t => t.Assignments.Select(u => u.UserId == userId).FirstOrDefault()).ToList();
+            var tasks = (await _taskRepository.GetByProjectIdAsync(projectId))
+                .Where(t => t.Assignments.Any(a => a.UserId == userId))
+                .ToList();
+
+            foreach (var task in tasks)
+            {
+                if (task.Assignments == null)
+                {
+                    task.Assignments = new List<AssignTask>();
+                }
+                else
+                {
+                    foreach (var assignment in task.Assignments)
+                    {
+                        if (assignment.User == null)
+                        {
+                            assignment.User = await _userManager.FindByIdAsync(assignment.UserId);
+                        }
+                    }
+                }
+            }
+
             return tasks;
         }
 

@@ -1,6 +1,6 @@
 ﻿.wrapper {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #c1272c 0%, #ee3633 100%);
     min-height: 100vh;
     color: #333;
 }
@@ -69,16 +69,6 @@
         animation-delay: 6s;
         animation-duration: 11s;
     }
-
-.task-icon {
-    width: 20px;
-    height: 20px;
-    background: rgba(59, 130, 246, 0.6);
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    animation: pulse 2s ease-in-out infinite;
-}
-
 .task-text {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.8);
@@ -260,7 +250,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #febe2d 0%, #fecc3d 100%);
     color: white;
     border: none;
     padding: 0.8rem 1.5rem;
@@ -275,7 +265,7 @@
 
     .show-more-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        box-shadow: 0 10px 25px rgba( 254, 190, 45, 0.4);
     }
 
     .show-more-btn.collapse {
@@ -327,7 +317,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #3b82f6, #1e40af);
+        background: linear-gradient(90deg, #c1272c 0%, #ee3633 100%);
     }
 
 .project-header {
@@ -361,7 +351,7 @@
 .meta-icon {
     width: 16px;
     height: 16px;
-    background: #3b82f6;
+    background: #c1272c;
     border-radius: 50%;
 }
 
@@ -382,21 +372,21 @@
 .stat-item {
     text-align: center;
     padding: 1.5rem;
-    background: rgba(59, 130, 246, 0.05);
+    background: rgba(217, 217, 216, 0.15);
     border-radius: 15px;
-    border: 1px solid rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(193, 39, 44, 0.3);
 }
 
 .stat-number {
     font-size: 2rem;
     font-weight: 700;
-    color: #3b82f6;
+    color: #c1272c;
     display: block;
 }
 
 .stat-label {
     font-size: 0.9rem;
-    color: #64748b;
+    color: #434343;
     margin-top: 0.5rem;
 }
 
@@ -405,7 +395,7 @@
     font-weight: 700;
     text-align: center;
     margin-bottom: 3rem;
-    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    background: linear-gradient(135deg, #c1272c 0%, #ee3633 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -437,7 +427,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #3b82f6, #1e40af);
+        background: linear-gradient(90deg, #c1272c 0%, #ee3633 100%);
     }
 
     .task-card:hover {
@@ -453,7 +443,7 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    background: linear-gradient(135deg, #c1272c 0%, #ee3633 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -553,7 +543,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #3b82f6, #1e40af);
+    background: linear-gradient(90deg, #c1272c 0%, #ee3633 100%);
     border-radius: 10px;
     transition: width 0.3s ease;
 }
@@ -656,7 +646,7 @@
     background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
     border-radius: 15px;
     padding: 1.5rem;
-    border-left: 4px solid #3b82f6;
+    border-left: 4px solid #c1272c;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
 }
@@ -675,7 +665,7 @@
 
 .upcoming-date {
     font-size: 0.9rem;
-    color: #3b82f6;
+    color: #c1272c;
     font-weight: 500;
     margin-bottom: 0.5rem;
 }
@@ -702,5 +692,11 @@
 
     .tasks-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:1500px){
+    .hero {
+        padding: 5rem 5rem;
     }
 }
