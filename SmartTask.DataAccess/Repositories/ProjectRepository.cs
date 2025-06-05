@@ -144,5 +144,18 @@ namespace SmartTask.DataAccess.Repositories
         {
             return await _context.Projects.AnyAsync(p => p.OwnerId == userId);
         }
+
+        public async Task<IEnumerable<Project>> GetProjectsByOwnerIdAsync(string ownerId)
+        {
+            return await _context.Projects
+                .Where(p => p.OwnerId == ownerId)
+                .ToListAsync();
+        }
+
+        public async Task<bool> IsUserProjectOwnerAsync(int projectId, string userId)
+        {
+            return await _context.Projects
+                .AnyAsync(p => p.Id == projectId && p.OwnerId == userId);
+        }
     }
 }

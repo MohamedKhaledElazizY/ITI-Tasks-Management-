@@ -1,8 +1,11 @@
 ﻿@model SmartTask.Web.ViewModels.KanbanVM.KanbanViewModel
 
+@{
+    ViewBag.IsProjectOwner = ViewBag.IsProjectOwner ?? false;
+}
+
 <div class="container my-5">
     <h2 class="text-center mb-4">Kanban Board</h2>
-  
 
     <div class="row mb-4">
         <div class="col-md-6">
@@ -13,7 +16,6 @@
                 <option value="Low">Low</option>
             </select>
         </div>
-
         <div class="col-md-6">
             <select id="statusFilter" class="form-control">
                 <option value="All">All Status</option>
@@ -23,7 +25,7 @@
             </select>
         </div>
     </div>
-     
+
     <div class="row" id="kanban-board">
         @foreach (var column in Model.Columns.OrderBy(c => c.Order))
         {
@@ -56,3 +58,12 @@
 
 @Html.Partial("PartialViews/_EditTaskModal")
 
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            initializeSortable();
+            initializeColumnSortable();
+            $("#priorityFilter, #statusFilter").on("change", filterTasks);
+        });
+    </script>
+}

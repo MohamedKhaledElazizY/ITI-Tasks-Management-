@@ -72,20 +72,54 @@ namespace SmartTask.DataAccess.Repositories
 
         public async Task<IEnumerable<ModelTask>> GetByProjectIdAsync(int projectId)
         {
-            return await _context.Tasks
-                .Include(t => t.Assignments)
+            var tasks = await _context.Tasks
+                .Include(t => t.Assignments).ThenInclude(a => a.User)
+                .Include(t => t.PredecessorDependencies)
+                .Include(t => t.SuccessorDependencies)
                 .Where(t => t.ProjectId == projectId)
                 .ToListAsync();
+
+            foreach (var task in tasks)
+            {
+
+                foreach (var dep in task.PredecessorDependencies)
+                {
+                    _context.Entry(dep).Reference(d => d.Successor).Load();
+                }
+
+                foreach (var dep in task.SuccessorDependencies)
+                {
+                    _context.Entry(dep).Reference(d => d.Predecessor).Load();
+                }
+            }
+            return tasks;
         }
 
         public async Task<IEnumerable<ModelTask>> GetByAssignedToIdAsync(string userId)
         {
-            return await _context.Tasks
+            var tasks = await _context.Tasks
                 .Include(t => t.Project)
-                .Include(t => t.Assignments)
-               .Where(t => t.Assignments.Any(a => a.UserId == userId))
-        .ToListAsync();
+                .Include(t => t.Assignments).ThenInclude(a => a.User)
+                .Include(t => t.PredecessorDependencies)
+                .Include(t => t.SuccessorDependencies)
+                .Where(t => t.Assignments.Any(a => a.UserId == userId))
+                .ToListAsync();
 
+            foreach (var task in tasks)
+            {
+               
+
+                foreach (var dep in task.PredecessorDependencies)
+                {
+                    _context.Entry(dep).Reference(d => d.Successor).Load();
+                }
+
+                foreach (var dep in task.SuccessorDependencies)
+                {
+                    _context.Entry(dep).Reference(d => d.Predecessor).Load();
+                }
+            }
+            return tasks;
         }
 
         public async Task<IEnumerable<ModelTask>> GetByParentTaskIdAsync(int parentTaskId)
