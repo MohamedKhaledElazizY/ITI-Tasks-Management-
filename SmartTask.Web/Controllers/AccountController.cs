@@ -216,7 +216,7 @@ namespace SmartTask.Web.Controllers
 
         
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles(string id)
         {

@@ -69,7 +69,7 @@
             Priority: <span class="badge bg-@(GetPriorityColor(Model.Priority))">@Model.Priority</span>
         </p>
         <p class="card-text">
-            Status: <span class="badge bg-dark text-white status-badge">@Model.Status</span>
+            Status: <span class="badge bg-@(GetStatusColor(Model.Status)) text-white status-badge">@Model.Status</span>
         </p>
         @if (isProjectOwner)
         {
@@ -94,4 +94,19 @@
             _ => "secondary"
         };
     }
+
+    string GetStatusColor(Status status)
+    {
+        return status switch
+        {
+            Status.InProgress => "warning",
+            Status.Cancelled => "danger",
+            Status.Todo => "info",
+            Status.Archieved => "info",
+            Status.Done => "success",
+            _ => "secondary"
+        };
+    }
+
+
 }

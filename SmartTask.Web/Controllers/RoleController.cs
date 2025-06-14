@@ -10,7 +10,7 @@ using SmartTask.Core.ViewModels;
 namespace SmartTask.Web.Controllers
 {
 
-    [Authorize]
+    //[Authorize]
     public class RoleController : Controller
     {
         private readonly IMvcControllerDiscovery _mvcControllerDiscovery;
@@ -23,7 +23,7 @@ namespace SmartTask.Web.Controllers
         }
 
         // GET: Role
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> Index()
         {
             var roles = await _roleManager.Roles.ToListAsync();
@@ -32,7 +32,7 @@ namespace SmartTask.Web.Controllers
         }
 
         // GET: Role/Create
-        [Authorize]
+        //[Authorize]
         public ActionResult Create()
         {
             ViewData["Controllers"] = _mvcControllerDiscovery.GetControllers();
