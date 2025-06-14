@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
@@ -628,6 +629,9 @@ namespace SmartTask.Web.Controllers
                 columns = await _userColumnPreferenceService.GetUserColumns(userId);
             }
 
+            bool isProjectOwner = await _projectRepository.IsUserProjectOwnerAsync(projectId, userId);
+            ViewBag.IsProjectOwner = isProjectOwner;
+
             var viewModel = new KanbanViewModel
             {
                 Tasks = tasks,
@@ -659,6 +663,8 @@ namespace SmartTask.Web.Controllers
                     columns = await _userColumnPreferenceService.GetUserColumns(userId);
                 }
 
+                ViewBag.IsProjectOwner = false;
+
                 var viewModel = new KanbanViewModel
                 {
                     Tasks = tasks,
@@ -674,12 +680,94 @@ namespace SmartTask.Web.Controllers
             }
         }
 
+        [DisplayName("Kanban for Project Owner")]
+        public async Task<IActionResult> KanbanForProjectOwner(int? projectId = null)
+        {
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var ownedProjects = await _projectRepository.GetProjectsByOwnerIdAsync(userId);
+
+            if (!ownedProjects.Any())
+            {
+                return RedirectToAction("NotFound", "Home");
+            }
+
+            ViewBag.Projects = new SelectList(ownedProjects, "Id", "Name", projectId);
+
+            KanbanViewModel viewModel = null;
+
+            if (projectId.HasValue)
+            {
+                bool isProjectOwner = await _projectRepository.IsUserProjectOwnerAsync(projectId.Value, userId);
+                ViewBag.IsProjectOwner = isProjectOwner;
+
+                if (!isProjectOwner)
+                {
+                    return Forbid();
+                }
+
+                List<Core.Models.Task> tasks = await _taskService.TasksForProject(projectId.Value);
+
+                var columns = await _userColumnPreferenceService.GetUserColumns(userId);
+                if (!columns.Any())
+                {
+                    await _userColumnPreferenceService.InitializeDefaultColumns(userId);
+                    columns = await _userColumnPreferenceService.GetUserColumns(userId);
+                }
+
+                viewModel = new KanbanViewModel
+                {
+                    Tasks = tasks,
+                    Columns = columns.OrderBy(c => c.Order).ToList(),
+                    SelectedProjectId = projectId
+                };
+            }
+
+            return View("KanbanForProjectOwner", viewModel);
+        }
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> UpdateStatus(int id, Core.Models.Enums.Status status)
+        //{
+        //    var task = await _taskRepository.GetByIdAsync(id);
+        //    if (task == null) return NotFound();
+
+        //    task.Status = status;
+        //    await _taskRepository.UpdateAsync(task);
+        //    return Ok();
+        //}
 
         [HttpPost]
         public async Task<IActionResult> UpdateStatus(int id, Core.Models.Enums.Status status)
         {
             var task = await _taskRepository.GetByIdAsync(id);
             if (task == null) return NotFound();
+
+            // لو كان الهدف InProgress
+            if (status == Core.Models.Enums.Status.InProgress)
+            {
+                var dependencies = await _taskDependencyRepo.GetBySuccessorIdAsync(id);
+
+                foreach (var dep in dependencies)
+                {
+                    var predecessor = dep.Predecessor;
+                    if (dep.DependencyType == DependencyType.FinishToStart)
+                    {
+                        if (predecessor.Status != Core.Models.Enums.Status.Done)
+                        {
+                            return BadRequest(new { message = $"This task depends on '{predecessor.Title}' (FinishToStart). You must finish it first." });
+                        }
+                    }
+                    else if (dep.DependencyType == DependencyType.StartToStart)
+                    {
+                        if (predecessor.Status != Core.Models.Enums.Status.InProgress && predecessor.Status != Core.Models.Enums.Status.Done)
+                        {
+                            return BadRequest(new { message = $"This task depends on '{predecessor.Title}' (StartToStart). It must be In Progress or Done." });
+                        }
+                    }
+                }
+            }
 
             task.Status = status;
             await _taskRepository.UpdateAsync(task);

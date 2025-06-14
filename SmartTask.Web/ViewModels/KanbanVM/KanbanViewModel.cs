@@ -7,5 +7,6 @@ namespace SmartTask.Web.ViewModels.KanbanVM
     {
         public IEnumerable<TaskModel> Tasks { get; set; }
         public IEnumerable<UserColumnPreference> Columns { get; set; }
+        public int? SelectedProjectId { get; set; }
     }
 }

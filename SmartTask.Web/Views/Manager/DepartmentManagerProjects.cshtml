@@ -1,4 +1,4 @@
-@model IEnumerable<SmartTask.Core.Models.Project>
+﻿@model IEnumerable<SmartTask.Core.Models.Project>
 @{
     ViewData["Title"] = "Department Manager - Projects";
 }
@@ -10,14 +10,15 @@
 
 <style>
     :root {
-        --primary-color: #6f42c1;
-        --primary-hover: #5a359a;
-        --secondary-color: #e9ecef;
-        --success-color: #28a745;
-        --warning-color: #ffc107;
-        --danger-color: #dc3545;
-        --info-color: #17a2b8;
+        --primary-color: #c1272c;
+        --primary-hover: #ee3633;
+        --secondary-color: #d9d9d8;
+        --success-color: #27ae60;
+        --warning-color: #febe2d;
+        --danger-color: #e74c3c;
+        --info-color: #007dc2;
     }
+   
 
     .manager-header {
         background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
@@ -142,6 +143,77 @@
         padding: 1rem;
         backdrop-filter: blur(10px);
     }
+
+
+    .card.filter-card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+        border: none;
+    }
+
+    .filter-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .filter-card .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .filter-card .form-select {
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        border: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+
+        .filter-card .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(193, 39, 44, 0.25);
+        }
+
+
+
+        .daterangepicker {
+    font-family: inherit;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.daterangepicker td.active, 
+.daterangepicker td.active:hover {
+    background-color: var(--primary-color);
+}
+
+.daterangepicker .input-mini {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 5px;
+}
+
+.daterangepicker .ranges li {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.daterangepicker .ranges li:hover {
+    background-color: #f5f5f5;
+}
+
+.daterangepicker .ranges li.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+    .dt-buttons .btn {
+        margin-left: 5px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.3em 0.8em;
+    }
 </style>
 
 <div class="container-fluid">
@@ -222,6 +294,50 @@
         </div>
     </div>
 
+
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-filter me-2"></i>Advanced Filters</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="statusFilter" class="form-label">Status</label>
+                            <select id="statusFilter" class="form-select">
+                                <option value="">All Statuses</option>
+                                <option value="Active">Active</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="progressFilter" class="form-label">Progress</label>
+                            <select id="progressFilter" class="form-select">
+                                <option value="">All Progress</option>
+                                <option value="completed">Completed (100%)</option>
+                                <option value="in-progress">In Progress (1-99%)</option>
+                                <option value="not-started">Not Started (0%)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="dateRangeFilter" class="form-label">Date Range</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="dateRangeFilter" placeholder="Select date range">
+                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button id="resetFilters" class="btn btn-secondary w-100">
+                                <i class="fas fa-undo me-2"></i>Reset Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Projects Table -->
     <div class="projects-table">
         <div class="table-responsive">
@@ -309,15 +425,35 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
+    
+    <!-- JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <!-- Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+    <!-- PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
+    <!-- HTML5 export buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
     
+    
+    <!-- مكتبات Date Range Picker -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker@3.1.0/daterangepicker.css" />
+
     <script>
         $(document).ready(function() {
-            $('#projectsTable').DataTable({
+            var table = $('#projectsTable').DataTable({
                 responsive: true,
                 pageLength: 10,
                 order: [[0, 'desc']],
@@ -325,9 +461,11 @@
                     { orderable: false, targets: [8] }
                 ],
                 language: {
-                    search: "Search Projects:",
+                    search: "Quick search:",
                     lengthMenu: "Show _MENU_ projects per page",
                     info: "Showing _START_ to _END_ of _TOTAL_ projects",
+                    infoEmpty: "Showing 0 to 0 of 0 projects",
+                    infoFiltered: "(filtered from _MAX_ total projects)",
                     paginate: {
                         first: "First",
                         last: "Last",
@@ -335,9 +473,96 @@
                         previous: "Previous"
                     }
                 },
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                dom: '<"row mb-3"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                     '<"row mb-3"<"col-sm-12"B>>' +
                      '<"row"<"col-sm-12"tr>>' +
-                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>'
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                buttons: [
+                    {
+                        extend: 'excel',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        className: 'btn btn-outline-success'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        className: 'btn btn-outline-danger'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        className: 'btn btn-outline-info'
+                    }
+                ]
+            });
+
+            // فلتر الحالة (Status)
+            $('#statusFilter').on('change', function() {
+                table.column(6).search(this.value).draw();
+            });
+
+            // فلتر التقدم (Progress)
+            $('#progressFilter').on('change', function() {
+                var value = this.value;
+                if (value === "completed") {
+                    table.column(7).search("100%").draw();
+                } else if (value === "in-progress") {
+                    table.column(7).search("^[1-9][0-9]?%$", true, false).draw();
+                } else if (value === "not-started") {
+                    table.column(7).search("0%").draw();
+                } else {
+                    table.column(7).search("").draw();
+                }
+            });
+
+            // تهيئة Date Range Picker
+            $('#dateRangeFilter').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear',
+                    format: 'MM/DD/YYYY'
+                },
+                opens: 'right'
+            });
+
+            $('#dateRangeFilter').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+                table.draw();
+            });
+
+        $('#dateRangeFilter').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+
+            picker.setStartDate(moment());
+            picker.setEndDate(moment());
+
+            table.draw();
+        });
+
+            $.fn.dataTable.ext.search.push(
+                function(settings, data, dataIndex) {
+                    var dateRange = $('#dateRangeFilter').val();
+                    if (!dateRange) return true; 
+
+                    var dates = dateRange.split(' - ');
+                    var minDate = moment(dates[0], 'MM/DD/YYYY');
+                    var maxDate = moment(dates[1], 'MM/DD/YYYY');
+                    
+                    var rowDateStr = data[3]; 
+                    var rowDate = moment(rowDateStr, 'MMM DD, YYYY');
+                    
+                    return rowDate.isBetween(minDate, maxDate, null, '[]');
+                }
+            );
+
+            $('#resetFilters').on('click', function() {
+                $('#statusFilter').val('');
+                $('#progressFilter').val('');
+                    $('#dateRangeFilter').val('');
+        $('#dateRangeFilter').data('daterangepicker').setStartDate(moment());
+        $('#dateRangeFilter').data('daterangepicker').setEndDate(moment());
+               
+                table.search('').columns().search('').draw();
             });
         });
     </script>

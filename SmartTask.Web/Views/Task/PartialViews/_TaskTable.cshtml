@@ -3,21 +3,68 @@
 
 @model IEnumerable<TaskViewModel>
 
-<table class="table">
+<style>
+    .task-table thead {
+        background: linear-gradient(90deg, #e0eafc 0%, #cfdef3 100%);
+        color: #333;
+    }
+
+    .task-table tbody tr:nth-child(odd) {
+        background-color: #f8f9fa;
+    }
+
+    .task-table tbody tr:nth-child(even) {
+        background-color: #e3f2fd;
+    }
+
+    .task-table tbody tr:hover {
+        background-color: #ffe082 !important;
+        transition: background 0.2s;
+    }
+
+    .action-icons .btn-action {
+        margin-right: 4px;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .action-icons .btn-outline-primary:hover {
+        background: #0d6efd;
+        color: #fff !important;
+    }
+
+    .action-icons .btn-outline-success:hover {
+        background: #198754;
+        color: #fff !important;
+    }
+
+    .action-icons .btn-outline-danger:hover {
+        background: #dc3545;
+        color: #fff !important;
+    }
+</style>
+
+<table class="table task-table table-striped table-hover">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.Id) *@
+            @* </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.ProjectName)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AssignedToId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParentTaskId)
-            </th>
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.AssignedToId) *@
+            @* </th> *@
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.ParentTaskId) *@
+            @* </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
@@ -36,37 +83,39 @@
             <th>
                 @Html.DisplayNameFor(model => model.Priority)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedById)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedById)
-            </th>
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.CreatedById) *@
+            @* </th> *@
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.UpdatedById) *@
+            @* </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.CreatedAt)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.UpdatedAt)
             </th>
-            <th></th>
+             <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
+                @* <td> *@
+                @*     @Html.DisplayFor(modelItem => item.Id) *@
+                @* </td> *@
                 <td>
                     @Html.DisplayFor(modelItem => item.ProjectName)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AssignedToId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ParentTaskId)
-                </td>
+                @* <td> *@
+                @*     @Html.DisplayFor(modelItem => item.AssignedToId) *@
+                @* </td> *@
+                @* <td> *@
+                @*     @Html.DisplayFor(modelItem => item.ParentTaskId) *@
+                @* </td> *@
                 <td>
                     @Html.DisplayFor(modelItem => item.Title)
                 </td>
@@ -85,12 +134,12 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Priority)
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedById)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdatedById)
-                </td>
+                @* <td> *@
+                @*     @Html.DisplayFor(modelItem => item.CreatedById) *@
+                @* </td> *@
+                @* <td> *@
+                @*     @Html.DisplayFor(modelItem => item.UpdatedById) *@
+                @* </td> *@
                 <td>
                     @Html.DisplayFor(modelItem => item.CreatedAt)
                 </td>
@@ -98,10 +147,41 @@
                     @Html.DisplayFor(modelItem => item.UpdatedAt)
                 </td>
                 <td>
-                    <a id="openPopup"
-                       onclick="loadTaskDetails(@item.Id)">Details</a>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    @* <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> *@
+                    @* <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
+                    <div class="action-icons">
+                        @* <secure-content asp-area="" asp-controller="Task" asp-action="Details"> *@
+                        @*     <a asp-action="Details" asp-route-id="@item.Id" *@
+                        @*        class="btn btn-sm btn-outline-primary btn-action" id="openPopup" *@
+                        @*        title="Details"> *@
+                        @*         <i class="fas fa-eye"></i>  *@
+                        @*     </a> *@
+                        @* </secure-content> *@
+                        <secure-content asp-area="" asp-controller="Task" asp-action="Details">
+                            <button class="btn btn-info btn-action" id="openPopup"
+                                    onclick="loadTaskDetails(@item.Id)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+
+                        </secure-content>
+                        <secure-content asp-area="" asp-controller="Task" asp-action="Edit">
+                            <a asp-action="Edit" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-warning btn-action"
+                               title="Edit">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                        </secure-content>
+
+                        <secure-content asp-area="" asp-controller="Task" asp-action="DeleteTask">
+                            <a asp-action="DeleteTask" asp-route-id="@item.Id"
+                               class="btn btn-sm btn-outline-danger btn-action"
+                               title="Delete"
+                               onclick="return confirm('Are you sure you want to delete this project?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </secure-content>
+                    </div>
+
                 </td>
             </tr>
         }

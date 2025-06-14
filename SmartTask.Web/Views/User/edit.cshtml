@@ -1,103 +1,260 @@
 ﻿@model SmartTask.Web.ViewModels.EditUserViewModel
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="ExistingImagePath" />
-
-    <!-- Full Name -->
-    <div class="form-group">
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
-    </div>
-
-    <!-- Email (Read Only) -->
-    <div class="form-group">
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" readonly />
-    </div>
-
-    <!-- Department -->
-    @*<div class="form-group">
-        <label asp-for="DepartmentId">Department</label>
-        <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.Departments">
-            <option value="">-- Select Department --</option>
-        </select>
-        <span asp-validation-for="DepartmentId" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="BranchId">Branch</label>
-        <select asp-for="BranchId" class="form-control"
-                asp-items="ViewBag.Branchs">
-            <option value="">-- Select branch --</option>
-        </select>
-        <span asp-validation-for="BranchId" class="text-danger"></span>
-    </div>*@
-    <div class="form-group">
-        <label asp-for="BranchId">Branch</label>
-        <select asp-for="BranchId" class="form-control"
-                asp-items="ViewBag.Branchs" id="branchSelect">
-            <option value="">-- Select branch --</option>
-        </select>
-        <span asp-validation-for="BranchId" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="DepartmentId">Department</label>
-        <select asp-for="DepartmentId" class="form-control"
-                asp-items="ViewBag.Departments" id="departmentSelect" disabled>
-            <option value="">-- Select Department --</option>
-        </select>
-        <span asp-validation-for="DepartmentId" class="text-danger"></span>
-    </div>
-
-    <!-- Current Image -->
-    @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
-    {
-        <div class="form-group">
-            <label>Current Image:</label><br />
-            <img src="@Model.ExistingImagePath" alt="User Image" style="max-width:150px;" />
-        </div>
+<style>
+    :root {
+        --primary-color: #c1272c;
+        --primary-hover: #a02126;
+        --light-gray: #d9d9d8;
+        --dark-gray: #6c757d;
+        --white: #ffffff;
     }
 
-    <!-- Upload New Image -->
-    <div class="form-group">
-        <label asp-for="ImageFile">Upload New Image</label>
-        <input asp-for="ImageFile" type="file" class="form-control" />
-        <span asp-validation-for="ImageFile" class="text-danger"></span>
-    </div>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    @* <hr /> *@
-    @* <h4>Change Password</h4> *@
+    .form-container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 30px;
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-top: 5px solid var(--primary-color);
+    }
 
-    <div class="form-group">
-        <label asp-for="CurrentPassword"></label>
-        <input asp-for="CurrentPassword" class="form-control" />
-        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
-    </div>
+    .form-title {
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 600;
+        border-bottom: 1px solid var(--light-gray);
+        padding-bottom: 15px;
+    }
 
-    <div class="form-group">
-        <label asp-for="NewPassword"></label>
-        <input asp-for="NewPassword" class="form-control" />
-        <span asp-validation-for="NewPassword" class="text-danger"></span>
-    </div>
+    .form-group label {
+        font-weight: 500;
+        color: var(--dark-gray);
+        margin-bottom: 8px;
+    }
 
-    <div class="form-group">
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
+    .form-control {
+        border: 1px solid var(--light-gray);
+        border-radius: 5px;
+        padding: 10px 15px;
+        transition: all 0.3s;
+    }
 
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(193, 39, 44, 0.25);
+        }
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="GetAll" class="btn btn-secondary">Cancel</a>
-</form>
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+        }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+    .btn-secondary {
+        background-color: var(--light-gray);
+        border-color: var(--light-gray);
+        color: #333;
+        padding: 10px 25px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #c9c9c9;
+            border-color: #c9c9c9;
+            color: #333;
+        }
+
+    .current-image-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+        .current-image-container img {
+            border: 3px solid var(--light-gray);
+            border-radius: 5px;
+            padding: 5px;
+            transition: all 0.3s;
+        }
+
+            .current-image-container img:hover {
+                border-color: var(--primary-color);
+            }
+
+    .text-danger {
+        font-size: 0.9em;
+    }
+
+    .password-section {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px dashed var(--light-gray);
+    }
+
+        .password-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--light-gray);
+    }
+
+    select.form-control:disabled {
+        background-color: #f8f9fa;
+        opacity: 0.7;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid var(--light-gray) !important;
+        height: calc(2.25rem + 2px) !important;
+        padding: 0.375rem 0.75rem !important;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-title">Edit User Profile</h2>
+
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ExistingImagePath" />
+
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label asp-for="FullName">Full Name</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Enter full name" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <!-- Email (Read Only) -->
+                <div class="form-group">
+                    <label asp-for="Email">Email Address</label>
+                    <input asp-for="Email" class="form-control" readonly />
+                </div>
+
+                <!-- Branch -->
+                <div class="form-group">
+                    <label asp-for="BranchId">Branch</label>
+                    <select asp-for="BranchId" class="form-control" asp-items="ViewBag.Branchs" id="branchSelect">
+                        <option value="">-- Select branch --</option>
+                    </select>
+                    <span asp-validation-for="BranchId" class="text-danger"></span>
+                </div>
+
+                <!-- Department -->
+                <div class="form-group">
+                    <label asp-for="DepartmentId">Department</label>
+                    <select asp-for="DepartmentId" class="form-control" asp-items="ViewBag.Departments" id="departmentSelect" disabled>
+                        <option value="">-- Select Department --</option>
+                    </select>
+                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <!-- Current Image -->
+                @if (!string.IsNullOrEmpty(Model.ExistingImagePath))
+                {
+                    <div class="current-image-container">
+                        <label>Current Profile Picture</label>
+                        <div class="mt-2">
+                            <img src="@Model.ExistingImagePath" alt="User Image" style="max-width:200px; max-height:200px;" class="img-thumbnail" />
+                        </div>
+                    </div>
+                }
+
+                <!-- Upload New Image -->
+                <div class="form-group">
+                    <label asp-for="ImageFile">Upload New Image</label>
+                    <div class="custom-file">
+                        <input asp-for="ImageFile" type="file" class="custom-file-input" id="customFile">
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+                    </div>
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                    <small class="form-text text-muted">Max file size: 5MB (JPEG, PNG)</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Section -->
+        <div class="password-section">
+            <h4>Change Password</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="CurrentPassword">Current Password</label>
+                        <input asp-for="CurrentPassword" class="form-control" placeholder="Enter current password" />
+                        <span asp-validation-for="CurrentPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="NewPassword">New Password</label>
+                        <input asp-for="NewPassword" class="form-control" placeholder="Enter new password" />
+                        <span asp-validation-for="NewPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword">Confirm Password</label>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm new password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-footer">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
     <script>
         $(document).ready(function () {
+            // File input label update
+            $('.custom-file-input').on('change', function() {
+                let fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').html(fileName || 'Choose file');
+            });
+
+            // Branch-Department AJAX
             $('#branchSelect').change(function () {
                 var branchId = $(this).val();
                 if (branchId) {
@@ -107,7 +264,7 @@
                         data: { branchId: branchId },
                         success: function (departments) {
                             var departmentSelect = $('#departmentSelect');
-                            departmentSelect.empty(); // Clear old options
+                            departmentSelect.empty();
                             departmentSelect.append('<option value="">-- Select Department --</option>');
 
                             $.each(departments, function (i, department) {
@@ -117,13 +274,24 @@
                             departmentSelect.prop('disabled', false);
                         },
                         error: function () {
-                            alert("There is an error when loading depts.");
+                            alert("Error loading departments. Please try again.");
                         }
                     });
                 } else {
                     $('#departmentSelect').empty().append('<option value="">-- Select Department --</option>').prop('disabled', true);
                 }
             });
+
+            // Initialize with current values if any
+        @if (Model.BranchId.HasValue)
+        {
+            <text>
+                    $('#branchSelect').trigger('change');
+                    setTimeout(function() {
+                        $('#departmentSelect').val('@Model.DepartmentId');
+                    }, 500);
+            </text>
+        }
         });
     </script>
 }
