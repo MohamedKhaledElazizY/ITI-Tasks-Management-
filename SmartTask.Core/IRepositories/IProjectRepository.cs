@@ -27,5 +27,8 @@ namespace SmartTask.Core.IRepositories
         Task<Project> GetProjectByIdAsync(int id, string userId);
         List<ApplicationUser> GetMembers(int id);
         Task<bool> IsUserOwnerAsync(string userId);
+
+        Task<IEnumerable<Project>> GetProjectsByOwnerIdAsync(string ownerId);
+        Task<bool> IsUserProjectOwnerAsync(int projectId, string userId);
     }
 }

@@ -260,6 +260,23 @@ namespace SmartTask.Web.Controllers
         {
             ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
             ViewBag.branches = await _branchService.GetAllAsync();
+            var project = await _projectService.GetProjectByIdAsync(model.Id);
+            var currentUserIds = project.ProjectMembers.Select(pm => pm.UserId).ToList();
+
+            var allUsers = await _userManager.Users.ToListAsync();
+
+            ViewBag.AllUsers = allUsers.Select(u => new SelectListItem
+            {
+                Value = u.Id,
+                Text = u.FullName,
+                Selected = currentUserIds.Contains(u.Id)
+            }).ToList();
+
+            //var nonAssignedUsers = allUsers.Where(u => !currentUserIds.Contains(u.Id)).ToList();
+
+
+            //ViewBag.NonAssignedUsers = new SelectList(nonAssignedUsers, "Id", "FullName");
+
             if (model.StartDate.HasValue && model.EndDate.HasValue && model.EndDate < model.StartDate)
             {
                 ModelState.AddModelError("EndDate", "End date must be after start date.");
@@ -272,7 +289,6 @@ namespace SmartTask.Web.Controllers
                 return View(model);
             }
 
-            var project = await _projectService.GetProjectByIdAsync(model.Id);
             if (project == null)
             {
                 return NotFound();

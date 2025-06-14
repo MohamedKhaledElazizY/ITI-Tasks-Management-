@@ -38,6 +38,31 @@ function initializeSortable() {
             const newStatus = newColumn.data("status");
             const prevParent = ui.item.data("prev-parent");
 
+            if (newStatus === "InProgress") {
+                const dependencies = ui.item.data("dependencies") || [];
+                let failed = false;
+                let failMessage = "";
+
+                dependencies.forEach(dep => {
+                    if (dep.type === "FinishToStart" && dep.status !== "Done") {
+                        failed = true;
+                        failMessage = `This task depends on: ${dep.title} (FinishToStart). It must be Done first.`;
+                    }
+                    if (dep.type === "StartToStart" && dep.status !== "InProgress" && dep.status !== "Done") {
+                        failed = true;
+                        failMessage = `This task depends on: ${dep.title} (StartToStart). It must be In Progress or Done.`;
+                    }
+                });
+
+                if (failed) {
+                    alert(failMessage);
+                    prevParent.append(ui.item.detach());
+                    ui.item.find(".status-badge").text(prevParent.data("status"));
+                    return;
+                }
+            }
+
+
             if (!prevParent.is(newColumn)) {
                 $.ajax({
                     url: "/Task/UpdateStatus",
@@ -221,4 +246,11 @@ $(document).ready(function () {
 
     // Initialize filters
     $("#priorityFilter, #statusFilter").on("change", filterTasks);
+});
+
+$('#projectSelect').change(function () {
+    const projectId = $(this).val();
+    if (projectId) {
+        window.location.href = '/Task/KanbanForProjectOwner?projectId=' + projectId;
+    }
 });

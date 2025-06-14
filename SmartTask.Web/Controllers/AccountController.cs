@@ -82,6 +82,11 @@ namespace SmartTask.Web.Controllers
                         var preference = await _dashboardService.GetUserDashboardSettingsAsync(user.Id);
                         preference.LastLoginDate = DateTime.Now;
                         await _dashboardService.UpdateUserPreferenceAsync(preference);
+                        var roles = await userManager.GetRolesAsync(user);
+                        if (!roles.Any())
+                        {
+                            return View("pendding");
+                        }
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -211,11 +216,23 @@ namespace SmartTask.Web.Controllers
 
         
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
-        public async Task<IActionResult> ManageUserRoles()
+        public async Task<IActionResult> ManageUserRoles(string id)
         {
-            var users = await userManager.Users.ToListAsync();
+            List<ApplicationUser> users;
+            if (!string.IsNullOrEmpty(id))
+            {
+                var user = await userManager.FindByIdAsync(id);
+                if (user == null)
+                    return NotFound();
+                users = new List<ApplicationUser> { user };
+            }
+            else
+            {
+                users = await userManager.Users.ToListAsync();
+            }
+            //var users = await userManager.Users.ToListAsync();
             var roles = await roleManager.Roles.Select(r => r.Name).ToListAsync();
 
             var model = new List<UserRoleAssignmentViewModel>();
@@ -242,7 +259,7 @@ namespace SmartTask.Web.Controllers
         [HttpPost]
 
         [Authorize]
-        public async Task<IActionResult> ManageUserRoles(List<UserRoleAssignmentViewModel> model)
+        public async Task<IActionResult> ManageUserRoles(List<UserRoleAssignmentViewModel> model, string id)
         {
             foreach (var userModel in model)
             {
@@ -262,6 +279,8 @@ namespace SmartTask.Web.Controllers
             }
 
             TempData["Message"] = "Roles updated successfully!";
+            if (!string.IsNullOrEmpty(id))
+                return RedirectToAction("ManageUserRoles", new { id });
             return RedirectToAction("ManageUserRoles");
         }
         [HttpGet]

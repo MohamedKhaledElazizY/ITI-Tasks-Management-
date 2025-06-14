@@ -82,7 +82,7 @@ namespace SmartTask.Web
                     options.SaveTokens = true;
                     options.Scope.Add("offline_access");
                     options.Scope.Add("User.Read");
-                    options.Scope.Add("Calendars.Read");
+                    options.Scope.Add("Calendars.ReadWrite");
                 });
 
             #endregion Authentication

@@ -31,7 +31,7 @@ namespace SmartTask.Web.Controllers
             _branchService = branchService;
             _branchDepartmentRepository = branchDepartmentRepository;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index(string searchString, int page = 1, int pageSize = 4)
         {
             var departments = await _departmentService.GetFilteredDepartments(searchString, page, pageSize);
@@ -46,6 +46,7 @@ namespace SmartTask.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             await PopulateViewBagsForDepartment();
@@ -55,6 +56,7 @@ namespace SmartTask.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(DepartmentFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -134,6 +136,7 @@ namespace SmartTask.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var department = await _departmentService.GetDepartmentWithDetailsAsync(id);
@@ -162,6 +165,7 @@ namespace SmartTask.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Edit(DepartmentFormViewModel model)
         {
             if (!ModelState.IsValid)

@@ -213,22 +213,37 @@
 
 <!-- Main Content -->
 <div class="calendar-wrapper">
-    <div class="calendar-header d-flex justify-content-between align-items-start mb-4">
-        <div>
-            <h2 class="calendar-title">
+    <div class="calendar-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <!-- Left Section -->
+        <div class="calendar-info">
+            <h2 class="calendar-title h4 text-dark mb-1">
                 <i class="fas fa-calendar-week text-primary me-2"></i>
                 My Calendar
             </h2>
-            <p class="calendar-subtitle">
+            <p class="calendar-subtitle text-muted mb-0">
                 Manage your meetings and link them to tasks
             </p>
         </div>
-        <button class="btn sync-btn"
-                title="Sync with Outlook"
-                onclick="location.href='@Url.Action("syncoutlook", "Outlook")'">
-            <i class="fas fa-sync-alt sync-icon"></i> Sync Calendar
-        </button>
+
+        <!-- Right Section -->
+        <div class="calendar-actions d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary d-flex align-items-center gap-2 px-3 py-2 shadow-sm rounded-pill transition"
+                    title="Sync with Outlook"
+                    onclick="location.href='@Url.Action("syncoutlook", "Outlook")'">
+                <i class="fas fa-sync-alt"></i>
+                <span class="fw-semibold">Sync Calendar</span>
+            </button>
+
+            <button class="btn btn-success d-flex align-items-center gap-2 px-3 py-2 shadow-sm rounded-pill transition"
+                    id="openAddEvent"
+                    data-bs-toggle="modal"
+                    data-bs-target="#eventModal">
+                <i class="fas fa-plus"></i>
+                <span class="fw-semibold">Add Event</span>
+            </button>
+        </div>
     </div>
+
 
     <div class="calendar-card">
         @if (Model.Any())
@@ -338,6 +353,24 @@
         </div>
     </div>
 </div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Outlook Event</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="eventModalBody">
+        <!-- Partial View will load here -->
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
@@ -453,7 +486,43 @@
     }, 3000);
     }
 </script>
+<script>
+    $(function () {
+        // Load partial view when button is clicked
+           $('#openAddEvent').on('click', function () {
+        $.ajax({
+            url: '@Url.Action("GetAddEventPartial", "OutLook")',
+            type: 'GET',
+            success: function (data) {
+                $('#eventModalBody').html(data);
+                $('#eventModal').modal('show');
+            },
+            error: function (xhr) {
+                if (xhr.status === 401) {
+                    window.location.href = '@Url.Action("Index", "OutLook")'; // redirect to your Outlook login
+                } else {
+                    alert('An error occurred while loading the form.');
+                }
+            }
+        });
+    });
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+        // Submit form with AJAX
+        $(document).on('submit', '#addEventForm', function (e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            $.post('@Url.Action("AddEvent", "OutLook")', formData)
+                .done(() => {
+                    alert("Event added!");
+                    $('#eventModal').modal('hide');
+                })
+                .fail((xhr) => {
+                    alert("Error: " + xhr.responseText);
+                });
+        });
+    });
+</script>
+@* @section Scripts { *@
+@*     <partial name="_ValidationScriptsPartial" /> *@
+@* } *@

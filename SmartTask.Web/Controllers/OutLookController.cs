@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using SmartTask.BL.IServices;
@@ -24,16 +27,17 @@ namespace SmartTask.Web.Controllers
         private readonly IProjectRepository projectRepository;
         private readonly ITaskRepository _taskRepository;
         private readonly IAssignTaskRepository _assignTaskRepository;
-
+        private readonly UserManager<ApplicationUser> userManager;
         public OutLookController(IConfiguration config,IEventRepository eventRepository
             ,IProjectRepository project,ITaskRepository taskRepository
-            ,IAssignTaskRepository assignTaskRepository)
+            ,IAssignTaskRepository assignTaskRepository,UserManager<ApplicationUser> userManager)
         {
             _config = config;
             this.eventRepository = eventRepository;
             projectRepository = project;
             _taskRepository=taskRepository;
             _assignTaskRepository=assignTaskRepository;
+            this.userManager = userManager;
         }
         [Authorize]
         public IActionResult Index()
@@ -150,6 +154,90 @@ namespace SmartTask.Web.Controllers
                 await eventRepository.AddAsync(b);
             }
             return RedirectToAction("Cal");
+        }
+
+        public async Task<IActionResult> GetAddEventPartial()
+        {
+        var accessToken = HttpContext.Session.GetString("access_token");
+        var refreshToken = HttpContext.Session.GetString("refresh_token");
+        var expiresAtStr = HttpContext.Session.GetString("expires_at");
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("access_token")) ||
+                string.IsNullOrEmpty(HttpContext.Session.GetString("refresh_token")))
+            {
+                return Unauthorized("Login required");
+            }
+            if (DateTime.TryParse(expiresAtStr, out var expiresAt))
+            {
+                if (DateTime.UtcNow > expiresAt)
+                {
+                    var a = await RefreshAccessTokenAsync(refreshToken);
+    HttpContext.Session.SetString("access_token", a.access_token);
+                    var at = DateTime.UtcNow.AddSeconds(a.expires_in);
+    HttpContext.Session.SetString("expires_at", at.ToString("o"));
+                    HttpContext.Session.SetString("refresh_token", a.refresh_token);
+                }
+            }
+            
+            ViewBag.emails=userManager.Users.Select(x=> new SelectListItem { Value = x.Email.ToString(), Text = x.Email+"("+x.UserName+")" }).ToList();
+            return PartialView("_AddEventPartial", new OutlookEventViewModel() { 
+                StartDateTime=DateTime.Now,
+            EndDateTime=DateTime.Now});
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddEvent(OutlookEventViewModel model)
+        {
+            var accessToken = HttpContext.Session.GetString("access_token");
+            var authProvider = new MyAccessTokenProvider(accessToken);
+            var graphClient = new GraphServiceClient(authProvider);
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid event data.");
+
+            var newEvent = new Microsoft.Graph.Models.Event
+            {
+                Subject = model.Subject,
+                Body = new ItemBody
+                {
+                    ContentType = BodyType.Text,
+                    Content = model.Body ?? ""
+                },
+                Start = new DateTimeTimeZone
+                {
+                    DateTime = model.StartDateTime.ToString("yyyy-MM-ddTHH:mm:ss")
+                    ,TimeZone = "Egypt Standard Time"
+                },
+                End = new DateTimeTimeZone
+                {
+                    DateTime = model.EndDateTime.ToString("yyyy-MM-ddTHH:mm:ss")
+                    ,TimeZone = "Egypt Standard Time"
+                },
+                Location = new Location
+                {
+                    DisplayName = model.Location
+                },
+                Attendees = new List<Attendee>(),
+                IsReminderOn = true,
+                ReminderMinutesBeforeStart = 15 // Set reminder 15 minutes before the event
+               ,
+                IsOnlineMeeting = true
+            };
+
+            
+                foreach (var email in model.AttendeeEmails)
+                {
+                    newEvent.Attendees.Add(new Attendee
+                    {
+                        EmailAddress = new EmailAddress
+                        {
+                            Address = email,
+                            Name = email
+                        },
+                        Type = AttendeeType.Required
+                    });
+                }
+            var result = await graphClient.Me.Events.PostAsync(newEvent);
+            return Ok();
         }
 
         private async Task<OAuthResponse> RefreshAccessTokenAsync(string refreshToken)
