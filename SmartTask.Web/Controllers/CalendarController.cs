@@ -69,6 +69,24 @@ namespace SmartTask.Web.Controllers
             }
             return Json(CalendarViewModels);
         }
+        public async Task<IActionResult> GetTasksForProjectOfUser(int ProjectId)
+        {
+            var tasks = await _taskRepository.GetAllTasksPerProject(ProjectId);
+            var CalendarViewModels = new List<CalendarViewModel>();
+            foreach (var task in tasks)
+            {
+                var taskVM = new CalendarViewModel()
+                {
+                    Id = task.Id,
+                    Title = task.Title,
+                    Start = task.StartDate?.ToString("yyyy-MM-dd"),
+                    End = task.EndDate?.ToString("yyyy-MM-dd"),
+                    TaskStatus = task.Status
+                };
+                CalendarViewModels.Add(taskVM);
+            }
+            return Json(CalendarViewModels);
+        }
         public async Task<IActionResult> UpdateTask(TaskCalendarUpdateVM TaskVM)
         {
             var taskDependancies = await _taskDependencyRepository.GetBySuccessorIdAsync(TaskVM.Id);
