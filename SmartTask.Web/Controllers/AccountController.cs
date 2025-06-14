@@ -216,7 +216,7 @@ namespace SmartTask.Web.Controllers
 
         
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
@@ -246,7 +246,7 @@ namespace SmartTask.Web.Controllers
 
         [HttpPost]
 
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> ManageUserRoles(List<UserRoleAssignmentViewModel> model)
         {
             foreach (var userModel in model)

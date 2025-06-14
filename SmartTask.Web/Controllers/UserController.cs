@@ -13,7 +13,7 @@ using System.Linq.Expressions;
 
 namespace SmartTask.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
