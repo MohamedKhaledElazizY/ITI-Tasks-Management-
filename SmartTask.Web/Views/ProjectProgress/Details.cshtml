@@ -480,21 +480,25 @@
     
     <!-- Add ApexCharts library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.0/apexcharts.min.js"></script>
+    @{
+        bool isOwner = ViewBag.owner == true;
+        var projectId = Model.Id;
+    }
 
     <script>
-        const projectId = @Model.Id;
+        const projectId = @projectId;
 
-        fetch(`/Task/TasksForProject?projectId=${projectId}&isPartial=true`)
+        fetch(`/Task/@(isOwner ? "TasksForProject" : "TasksForUserInProject")?projectId=${projectId}&isPartial=true`)
             .then(res => res.text())
             .then(html => {
                 document.getElementById('tasks-container').innerHTML = html;
-                
             })
             .catch(err => {
                 document.getElementById('tasks-container').innerHTML = "<div class='text-danger'>Failed to load tasks.</div>";
                 console.error(err);
             });
     </script>
+    
     <script src="~/js/TasksViewFunc.js"></script>
     <script>
         $(document).ready(function() {

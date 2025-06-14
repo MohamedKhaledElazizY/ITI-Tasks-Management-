@@ -220,7 +220,10 @@ namespace SmartTask.BL.Services
         {
             return _projectRepository.GetUserProjectsAsync(userId);
         }
-
+        public Task<List<Project>> GetUserProjectOwnerAsync(string userId)
+        {
+            return _projectRepository.GetUserProjectsAsync(userId);
+        }
         public Task<Project> GetProjectDetailsAsync(int projectId, string userId)
         {
             return _projectRepository.GetProjectByIdAsync(projectId, userId);
