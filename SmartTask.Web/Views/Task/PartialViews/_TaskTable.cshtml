@@ -1,5 +1,6 @@
 ﻿@using SmartTask.Web.ViewModels
 @using SmartTask.Core
+@using SmartTask.Core.Models.Enums
 
 @model IEnumerable<TaskViewModel>
 
@@ -129,10 +130,25 @@
                     @Html.DisplayFor(modelItem => item.EndDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Status)
+                    <span class="badge bg-@GetStatusColor(item.Status.ToString()) text-white">
+                        @item.Status
+                    </span>
+
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Priority)
+                    @{
+                        string priorityClass = item.Priority switch
+                        {
+                            Priority.Low => "bg-success",
+                            Priority.Medium => "bg-warning",
+                            Priority.High => "bg-danger",
+
+                            _ => "bg-secondary"
+                        };
+                    }
+                    <span class="badge text-white @priorityClass">
+                        @item.Priority
+                    </span>
                 </td>
                 @* <td> *@
                 @*     @Html.DisplayFor(modelItem => item.CreatedById) *@
@@ -187,3 +203,17 @@
         }
     </tbody>
 </table>
+
+@functions {
+    public string GetStatusColor(string status)
+    {
+        return status switch
+        {
+            "Todo" => "info",
+            "InProgress" => "warning",
+            "Done" => "success",
+            "Cancelled" => "danger",
+            _ => "secondary"
+        };
+    }
+}
