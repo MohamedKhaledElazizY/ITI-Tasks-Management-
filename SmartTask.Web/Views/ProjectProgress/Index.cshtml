@@ -120,7 +120,8 @@
                                     <span>@project.DaysLeft days left</span>
                                 }
                             </span>
-                            <a href="@Url.Action("Details", "ProjectProgress", new { id = project.Id })" class="btn btn-primary btn-sm shadow-sm">
+
+                            <a href="@Url.Action("Details", "ProjectProgress", new { id = project.Id,owner=(bool)ViewData["owner"] })" class="btn btn-primary btn-sm shadow-sm">
                                 <i class="fas fa-chart-line me-1"></i> Project Details
                             </a>
                         </div>

@@ -85,7 +85,7 @@ namespace SmartTask.Web.Controllers
             {
                 Projects = projectProgressViewModels
             };
-            ViewBag.owner = false;
+            ViewData["owner"] = false;
             return View(model);
         }
         [Authorize]
@@ -152,14 +152,15 @@ namespace SmartTask.Web.Controllers
             {
                 Projects = projectProgressViewModels
             };
-            ViewBag.owner = true;
+            ViewData["owner"] = true;
             return View("Index",model);
         }
 
 
         //مسئول عن عرض تفاصيل المشروع
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id,bool owner=false)
         {
+            ViewData["owner"] = owner;
             var currentUserId = _userManager.GetUserId(User);
             var project = await _projectService.GetProjectDetailsAsync(id, currentUserId);
 
