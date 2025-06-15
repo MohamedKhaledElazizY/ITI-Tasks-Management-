@@ -90,7 +90,7 @@ namespace SmartTask.Web.Controllers
                         return RedirectToAction("Index", "Home");
                     }
                 }
-                ModelState.AddModelError("", "Invalid Email or Password");
+                ModelState.AddModelError("", "Invalid username or Password");
             }
             return View("Login", account);
         }
@@ -214,9 +214,9 @@ namespace SmartTask.Web.Controllers
             return BadRequest(result.Errors);
         }
 
-        
 
-        //[Authorize]
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles(string id)
         {
