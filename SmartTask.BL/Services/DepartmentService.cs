@@ -142,5 +142,10 @@ namespace SmartTask.BL.Services
         {
             return await _departmentRepository.GetWithDetailsAsync(id);
         }
+
+        public async Task<IEnumerable<Department>> GetDepartmentsByBranchIdAsync(int branchId)
+        {
+            return await _departmentRepository.GetByBranchIdAsync(branchId);
+        }
     }
 }

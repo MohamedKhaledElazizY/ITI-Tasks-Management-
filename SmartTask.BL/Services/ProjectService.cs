@@ -167,6 +167,12 @@ namespace SmartTask.BL.Services
 
         public async Task DeleteProjectAsync(int id)
         {
+            var tasks = await _taskRepository.GetByProjectIdAsync(id);
+
+            foreach (var task in tasks)
+            {
+                await _taskRepository.DeleteAsync(task.Id);
+            }
             await _projectRepository.DeleteAsync(id);
         }
 

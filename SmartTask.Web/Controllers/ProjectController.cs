@@ -103,7 +103,7 @@ namespace SmartTask.Web.Controllers
         {
             //var admins = await _userManager.GetUsersInRoleAsync("Admin");
             //ViewBag.AdminUsers = new SelectList(admins, "Id", "FullName");
-            ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
+            //ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
             ViewBag.branches = await _branchService.GetAllAsync();
 
 
@@ -115,7 +115,7 @@ namespace SmartTask.Web.Controllers
         {
             //var admins = await _userManager.GetUsersInRoleAsync("Admin");
             //ViewBag.AdminUsers = new SelectList(admins, "Id", "FullName");
-            ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
+            //ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
             ViewBag.branches = await _branchService.GetAllAsync();
 
             if (model.StartDate.HasValue && model.EndDate.HasValue && model.EndDate < model.StartDate)
@@ -207,7 +207,7 @@ namespace SmartTask.Web.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var project = await _projectService.GetProjectByIdAsync(id);
-            ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
+            //ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
             ViewBag.branches = await _branchService.GetAllAsync();
             //var admins = await _userManager.GetUsersInRoleAsync("Admin");
             //ViewBag.AdminUsers = new SelectList(admins, "Id", "FullName");
@@ -258,7 +258,7 @@ namespace SmartTask.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(ProjectEditViewModel model, List<string> AssignedUserIds)
         {
-            ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
+            //ViewBag.departments = await _departmentService.GetAllDepartmentsAsync();
             ViewBag.branches = await _branchService.GetAllAsync();
             var project = await _projectService.GetProjectByIdAsync(model.Id);
             var currentUserIds = project.ProjectMembers.Select(pm => pm.UserId).ToList();
@@ -497,6 +497,18 @@ namespace SmartTask.Web.Controllers
                 .ToListAsync();
 
             return Json(users);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDepartmentsByBranch(int branchId)
+        {
+            var departments = await _departmentService.GetDepartmentsByBranchIdAsync(branchId);
+            var result = departments.Select(d => new {
+                Id = d.Id,
+                Name = d.Name,
+            }).ToList();
+
+            return Json(result);
         }
     }
        
