@@ -2,55 +2,127 @@
 @using SmartTask.Web.ViewModels.DepartmentVM
 @model DepartmentFormViewModel
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
-<h1>Edit Department</h1>
+<style>
+    .edit-department-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
-<div asp-validation-summary="All"></div>
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
+    .edit-department-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
+        padding: 2.5rem 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid #f0f0f0;
+    }
 
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
+        .edit-department-card label {
+            font-weight: 500;
+            color: #c1272c;
+            margin-bottom: 0.3rem;
+        }
 
-    <div class="form-group">
-        <label asp-for="ManagerId"></label>
-        <select asp-for="ManagerId" asp-items="@ViewBag.Managers" class="form-control select2-single">
-            <option value="">-- Select Manager --</option>
-        </select>
-        <span asp-validation-for="ManagerId" class="text-danger"></span>
-    </div>
+        .edit-department-card .form-control,
+        .edit-department-card .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: none;
+            transition: border-color 0.2s;
+        }
 
-    <div class="form-group">
-        <label>Branches</label>
-        <select id="branchesDropdown"
-                name="SelectedBranchIds"
-                class="form-control select2-multiple"
-                multiple="multiple"
-                data-placeholder="-- Select Branches --">
-            @foreach (var branch in ViewBag.Branches as IEnumerable<Branch>)
-            {
-                <option value="@branch.Id" selected="@Model.SelectedBranchIds.Contains(branch.Id)">
-                    @branch.Name
-                </option>
+            .edit-department-card .form-control:focus,
+            .edit-department-card .form-select:focus {
+                border-color: #c1272c;
+                box-shadow: 0 0 0 2px rgba(193, 39, 44, 0.08);
             }
-        </select>
-    </div>
 
-    <div class="form-group">
-        <label>Select Users</label>
-        <select id="usersDropdown"
-                name="SelectedUserIds"
-                class="form-control select2-multiple"
-                multiple="multiple"
-                data-placeholder="-- Select Users --">
-        </select>
-    </div>
+        .edit-department-card .select2-container--default .select2-selection--multiple {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            min-height: 38px;
+        }
 
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+        .edit-department-card .btn-primary {
+            background: linear-gradient(90deg, #c1272c 0%, #ee3633 100%);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.6rem 2.2rem;
+            transition: background 0.2s;
+        }
+
+            .edit-department-card .btn-primary:hover {
+                background: linear-gradient(90deg, #ee3633 0%, #c1272c 100%);
+            }
+
+        .edit-department-card .text-danger {
+            font-size: 0.95rem;
+        }
+
+        .edit-department-card .form-actions {
+            margin-top: 2.5rem;
+            text-align: center;
+        }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+<div class="edit-department-container mt-4">
+    <div class="edit-department-card">
+        <h3 class="mb-4">Edit Department</h3>
+        <div asp-validation-summary="All"></div>
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ManagerId"></label>
+                <select asp-for="ManagerId" asp-items="@ViewBag.Managers" class="form-select select2-single">
+                    <option value="">-- Select Manager --</option>
+                </select>
+                <span asp-validation-for="ManagerId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label>Branches</label>
+                <select id="branchesDropdown"
+                        name="SelectedBranchIds"
+                        class="form-select select2-multiple"
+                        multiple="multiple"
+                        data-placeholder="-- Select Branches --">
+                    @foreach (var branch in ViewBag.Branches as IEnumerable<Branch>)
+                    {
+                        <option value="@branch.Id" selected="@Model.SelectedBranchIds.Contains(branch.Id)">
+                            @branch.Name
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label>Select Users</label>
+                <select id="usersDropdown"
+                        name="SelectedUserIds"
+                        class="form-select select2-multiple"
+                        multiple="multiple"
+                        data-placeholder="-- Select Users --">
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>

@@ -52,10 +52,10 @@
                     <div class="kanban-column"
                          data-status="@column.Status"
                          data-column-id="@column.Id">
-                        <div class="kanban-header bg-secondary text-white p-2">
-                            <h5 class="text-center">
+                        <div class="kanban-header bg-@GetStatusHeaderColor(column.Status.ToString()) text-white p-2">
+                            <h5 class="text-center d-flex justify-content-between align-items-center">
                                 <span class="display-name">@column.DisplayName</span>
-                                <button class="btn btn-sm btn-light edit-column-name"
+                                <button class="btn btn-sm text-white btn-@GetStatusHeaderColor(column.Status.ToString()) edit-column-name"
                                         data-status="@column.Status">
                                     Edit
                                 </button>
@@ -108,4 +108,16 @@
         }
         });
     </script>
+}
+@functions {
+    string GetStatusHeaderColor(string status)
+    {
+        return status switch
+        {
+            "Todo" => "info",
+            "InProgress" => "warning",
+            "Done" => "success",
+            _ => "secondary"
+        };
+    }
 }
