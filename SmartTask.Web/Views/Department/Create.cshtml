@@ -8,68 +8,6 @@
 }
 
 <style>
-    .create-department-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .create-department-card {
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
-        padding: 2.5rem 2rem;
-        margin-bottom: 2rem;
-        border: 1px solid #f0f0f0;
-    }
-
-        .create-department-card label {
-            font-weight: 500;
-            color: #c1272c;
-            margin-bottom: 0.3rem;
-        }
-
-        .create-department-card .form-control,
-        .create-department-card .form-select {
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: none;
-            transition: border-color 0.2s;
-        }
-
-            .create-department-card .form-control:focus,
-            .create-department-card .form-select:focus {
-                border-color: #c1272c;
-                box-shadow: 0 0 0 2px rgba(193, 39, 44, 0.08);
-            }
-
-        .create-department-card .select2-container--default .select2-selection--multiple {
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            min-height: 38px;
-        }
-
-        .create-department-card .btn-primary {
-            background: linear-gradient(90deg, #c1272c 0%, #ee3633 100%);
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            padding: 0.6rem 2.2rem;
-            transition: background 0.2s;
-        }
-
-            .create-department-card .btn-primary:hover {
-                background: linear-gradient(90deg, #ee3633 0%, #c1272c 100%);
-            }
-
-        .create-department-card .text-danger {
-            font-size: 0.95rem;
-        }
-
-        .create-department-card .form-actions {
-            margin-top: 2.5rem;
-            text-align: center;
-        }
-
     .select2-selection__clear {
         position: absolute !important;
         right: 1.2rem !important;
@@ -80,9 +18,9 @@
         cursor: pointer;
         z-index: 10;
     }
+ 
 </style>
-
-<div class="create-department-container mt-4">
+<div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="d-flex align-items-center">
             <i class="fas fa-plus-circle fa-2x text-primary me-2"></i>
@@ -93,7 +31,7 @@
         </a>
     </div>
 
-    <div class="create-department-card">
+    <div class="card shadow-sm p-4">
         <form asp-action="Create" method="post">
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
@@ -101,50 +39,50 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="ManagerId" class="control-label">Manager Name</label>
-                <select asp-for="ManagerId"
-                        asp-items="@ViewBag.Managers"
-                        class="form-select select2"
-                        data-placeholder="-- Select a Manager --">
-                    <option value="">Select a Manager</option>
-                </select>
-                <span asp-validation-for="ManagerId" class="text-danger"></span>
-            </div>
 
-            <div class="mb-3">
-                <label>Branches</label>
-                <select id="branchesDropdown"
-                        name="SelectedBranchIds"
-                        class="form-select select2-multiple"
-                        multiple="multiple"
-                        data-placeholder="-- Select Branches --">
-                    @foreach (var branch in ViewBag.Branches as IEnumerable<Branch>)
-                    {
-                        <option value="@branch.Id">@branch.Name</option>
-                    }
-                </select>
-            </div>
 
-            <div class="mb-3">
-                <label>Select Users</label>
-                <select id="usersDropdown"
-                        name="SelectedUserIds"
-                        class="form-select select2-multiple"
-                        multiple="multiple"
-                        data-placeholder="-- Select Users --">
-                </select>
-            </div>
+    <div class="form-group">
+        <label asp-for="ManagerId" class="control-label">Manager Name</label>
+        <select asp-for="ManagerId"
+                asp-items="@ViewBag.Managers"
+                class="form-control select2"
+                data-placeholder="-- Select a Manager --">
+            <option value="">Select a Manager</option>
+        </select>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-1"></i> Create Department
-                </button>
-            </div>
+        <span asp-validation-for="ManagerId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Branches</label>
+        <select id="branchesDropdown"
+                name="SelectedBranchIds"
+                class="form-control select2-multiple"
+                multiple="multiple"
+                data-placeholder="-- Select Branches --">
+            @foreach (var branch in ViewBag.Branches as IEnumerable<Branch>)
+            {
+                <option value="@branch.Id">@branch.Name</option>
+            }
+        </select>
+    </div>
+             
+    <div class="form-group">
+        <label>Select Users</label>
+        <select id="usersDropdown"
+                name="SelectedUserIds"
+                class="form-control select2-multiple"
+                multiple="multiple"
+                data-placeholder="-- Select Users --">
+        </select>
+    </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-1"></i> Create Department
+            </button>
         </form>
     </div>
 </div>
-
 
 @section Scripts {
     @{

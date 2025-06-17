@@ -83,14 +83,14 @@ namespace SmartTask.Web.Controllers
                         preference.LastLoginDate = DateTime.Now;
                         await _dashboardService.UpdateUserPreferenceAsync(preference);
                         var roles = await userManager.GetRolesAsync(user);
-                        if (!roles.Any()&&account.UserName!="mkelazizy")
+                        if (!roles.Any())
                         {
                             return View("pendding");
                         }
                         return RedirectToAction("Index", "Home");
                     }
                 }
-                ModelState.AddModelError("", "Invalid username or Password");
+                ModelState.AddModelError("", "Invalid Email or Password");
             }
             return View("Login", account);
         }
@@ -214,9 +214,9 @@ namespace SmartTask.Web.Controllers
             return BadRequest(result.Errors);
         }
 
+        
 
-
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles(string id)
         {

@@ -4,10 +4,7 @@
 @{
     var userId = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 	var userName = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-	var email = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value; 
-    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
-    var isRegisterView = currentController == "Account" && currentAction == "Register";
+	var email = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
 }
 <!DOCTYPE html>
@@ -120,8 +117,7 @@
         <div class="page-loader"></div>
     </div>
     <div class="main-wrapper">
-        @if (!isRegisterView)
-        {
+
         <!-- Header -->
         <div class="header custom-navbar">
             <div class="main-header">
@@ -278,16 +274,6 @@
                                             </a>
                                                 </li>
                                             </secure-content>
-                                                <secure-content asp-area="" asp-action="Index" asp-controller="Task">
-                                                    <li>
-                                                        <a asp-controller="Task"
-                                                           asp-action="Index" class="d-block py-2">
-                                                            <span class="avatar avatar-md bg-transparent-dark me-2">
-                                                                <i class="ti ti-subtask text-gray-9"></i>
-                                                            </span>Tasks
-                                                        </a>
-                                                    </li> 
-                                                </secure-content>
                                         </div>
                                     </div>
                                 </div>
@@ -402,7 +388,7 @@
 
             </div>
 
-        
+        </div>
         <!-- /Header -->
         <!-- Sidebar -->
     <div class="sidebar custom-sidebar" id="sidebar">
@@ -607,7 +593,6 @@
             </div>
         </div>
         <!-- /Sidebar -->
-        }
         <!-- Page Wrapper -->
         <div class="page-wrapper">
             <div class="content">
@@ -625,10 +610,10 @@
 
             </div>
 
-            @* <div class="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3"> *@
-            @*     <p class="mb-0">2014 - 2025 &copy; SmartHR.</p> *@
-            @*     <p>Designed &amp; Developed By <a href="javascript:void(0);" class="text-primary">Dreams</a></p> *@
-            @* </div> *@
+            <div class="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
+                <p class="mb-0">2014 - 2025 &copy; SmartHR.</p>
+                <p>Designed &amp; Developed By <a href="javascript:void(0);" class="text-primary">Dreams</a></p>
+            </div>
 
         </div>
 

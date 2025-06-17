@@ -167,12 +167,6 @@ namespace SmartTask.BL.Services
 
         public async Task DeleteProjectAsync(int id)
         {
-            var tasks = await _taskRepository.GetByProjectIdAsync(id);
-
-            foreach (var task in tasks)
-            {
-                await _taskRepository.DeleteAsync(task.Id);
-            }
             await _projectRepository.DeleteAsync(id);
         }
 
@@ -226,10 +220,7 @@ namespace SmartTask.BL.Services
         {
             return _projectRepository.GetUserProjectsAsync(userId);
         }
-        public Task<List<Project>> GetUserProjectOwnerAsync(string userId)
-        {
-            return _projectRepository.GetUserProjectsAsync(userId);
-        }
+
         public Task<Project> GetProjectDetailsAsync(int projectId, string userId)
         {
             return _projectRepository.GetProjectByIdAsync(projectId, userId);

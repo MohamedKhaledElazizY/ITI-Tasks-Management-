@@ -57,7 +57,7 @@ namespace SmartTask.DataAccess.Repositories
             return await _context.BranchDepartments
                 .Where(bd => bd.BranchId == branchId)
                 .Select(bd => bd.Department)
-                //.Include(d => d.Manager)
+                .Include(d => d.Manager)
                 .ToListAsync();
         }
 
@@ -115,6 +115,6 @@ namespace SmartTask.DataAccess.Repositories
             await _context.SaveChangesAsync();        
         }
 
-        
+     
     }
 }

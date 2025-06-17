@@ -456,7 +456,7 @@
 				</div>
 			</secure-content>
 
-			<secure-content asp-area="" asp-action="ManagedProject" asp-controller="ProjectProgress">
+			<secure-content asp-area="" asp-action="BranchManagerProjects" asp-controller="Manager">
 				<div class="col-md-4">
 					<div class="card dashboard shadow">
 						<div class="card-img-placeholder" data-projects>
@@ -464,7 +464,7 @@
 						</div>
 						<div class="card-body">
 							<h5 class="card-title">Managed Projects</h5>
-							<a class="btn arrow-btn ms-auto d-block" asp-controller="ProjectProgress" asp-action="ManagedProject">
+							<a class="btn arrow-btn ms-auto d-block" asp-controller="Manager" asp-action="BranchManagerProjects">
 								<i class="bi bi-arrow-right"></i>
 							</a>
 						</div>
@@ -499,7 +499,7 @@
 			@* 		</div> *@
 			@* 	</div> *@
 			@* </div> *@
-			<secure-content asp-area="" asp-action="Cal" asp-controller="OutLook">
+			<secure-content asp-area="" asp-action="Cal" asp-controller="Outlook">
 			<div class="col-md-4">
 				<div class="card dashboard shadow">
 					<div class="card-img-placeholder" data-outlook>
@@ -507,28 +507,28 @@
 					</div>
 					<div class="card-body">
 						<h5 class="card-title">Outlook</h5>
-							<a class="btn arrow-btn ms-auto d-block" asp-controller="OutLook" asp-action="Cal">
+						<a class="btn arrow-btn ms-auto d-block" asp-controller="Outlook" asp-action="Cal">
 							<i class="bi bi-arrow-right"></i>
 						</a>
 					</div>
 				</div>
 			</div>
 			</secure-content>
-			@* <secure-content asp-area="" asp-controller="DataTable" asp-action="Index"> *@
-			@* 	<div class="col-md-4"> *@
-			@* 		<div class="card dashboard shadow" id="card-2"> *@
-			@* 			<div class="card-img-placeholder"> *@
-			@* 				<i class="bi bi-people-fill card-icon"></i> *@
-			@* 			</div> *@
-			@* 			<div class="card-body"> *@
-			@* 				<h5 class="card-title">All Users</h5> *@
-			@* 				<a class="btn arrow-btn ms-auto d-block" asp-controller="DataTable" asp-action="Index"> *@
-			@* 					<i class="bi bi-arrow-right"></i> *@
-			@* 				</a> *@
-			@* 			</div> *@
-			@* 		</div> *@
-			@* 	</div> *@
-			@* </secure-content> *@
+			<secure-content asp-area="" asp-controller="DataTable" asp-action="Index">
+				<div class="col-md-4">
+					<div class="card dashboard shadow" id="card-2">
+						<div class="card-img-placeholder">
+							<i class="bi bi-people-fill card-icon"></i>
+						</div>
+						<div class="card-body">
+							<h5 class="card-title">All Users</h5>
+							<a class="btn arrow-btn ms-auto d-block" asp-controller="DataTable" asp-action="Index">
+								<i class="bi bi-arrow-right"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</secure-content>
 			<secure-content asp-area="" asp-controller="ProjectProgress" asp-action="Index">
 			<div class="col-md-4">
 				<div class="card dashboard shadow">

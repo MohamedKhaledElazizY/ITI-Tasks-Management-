@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace SmartTask.Web.Controllers
 {
-    [Authorize]
     public class CalendarController : Controller
     {
         private readonly ITaskRepository _taskRepository;

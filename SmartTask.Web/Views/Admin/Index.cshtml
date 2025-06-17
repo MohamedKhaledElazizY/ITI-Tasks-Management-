@@ -487,16 +487,29 @@
 					</div>
 				</div>
 			</div>
-			</secure-content>		
-			<secure-content asp-area="" asp-controller="OutLook" asp-action="Cal">
+			</secure-content>
+			@* <div class="col-md-4"> *@
+			@* 	<div class="card dashboard shadow" id="card-7"> *@
+			@* 		<div class="card-img-placeholder"> *@
+			@* 			<i class="bi bi-bell-fill card-icon"></i> *@
+			@* 		</div> *@
+			@* 		<div class="card-body"> *@
+			@* 			<h5 class="card-title">Notification</h5> *@
+			@* 			<a class="btn arrow-btn ms-auto d-block" asp-controller="Notification" asp-action="Index"> *@
+			@* 				<i class="bi bi-arrow-right"></i> *@
+			@* 			</a> *@
+			@* 		</div> *@
+			@* 	</div> *@
+			@* </div> *@
+			<secure-content asp-area="" asp-controller="Outlook" asp-action="Cal">
 			<div class="col-md-4">
-				<div class="card dashboard shadow" id="card-7">
+				<div class="card dashboard shadow" id="card-8">
 					<div class="card-img-placeholder">
 						<i class="bi bi-envelope-fill card-icon"></i>
 					</div>
 					<div class="card-body">
 						<h5 class="card-title">Outlook</h5>
-							<a class="btn arrow-btn ms-auto d-block" asp-controller="OutLook" asp-action="Cal">
+						<a class="btn arrow-btn ms-auto d-block" asp-controller="Outlook" asp-action="Cal">
 							<i class="bi bi-arrow-right"></i>
 						</a>
 					</div>
