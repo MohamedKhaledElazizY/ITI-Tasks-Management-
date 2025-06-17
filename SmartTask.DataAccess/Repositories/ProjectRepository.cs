@@ -128,7 +128,14 @@ namespace SmartTask.DataAccess.Repositories
                 .Where(p => p.ProjectMembers.Any(pm => pm.UserId == userId))
                 .ToListAsync();
         }
-
+        public async Task<List<Project>> GetUserProjectsownerAsync(string userId)
+        {
+            return await _context.Projects
+                .Include(p => p.ProjectMembers)
+                .Include(p => p.Tasks)
+                .Where(p => p.OwnerId == userId)
+                .ToListAsync();
+        }
         public async Task<Project> GetProjectByIdAsync(int id, string userId)
         {
             return await _context.Projects

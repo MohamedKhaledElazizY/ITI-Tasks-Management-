@@ -85,15 +85,82 @@ namespace SmartTask.Web.Controllers
             {
                 Projects = projectProgressViewModels
             };
-
+            ViewData["owner"] = false;
             return View(model);
+        }
+        [Authorize]
+        public async Task<IActionResult> ManagedProject()
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            var userProjects = await _projectService.GetUserProjectsAsync(currentUserId);
+
+            var projectProgressViewModels = new List<ProjectProgressViewModel>();
+
+
+            foreach (var project in userProjects)
+            {
+                // Calculate tasks status
+                var tasks = project.Tasks ?? new List<Task>();
+                int totalTasks = tasks?.Count ?? 0;
+                int completedTasks = tasks.Count(t => t.Status == Core.Models.Enums.Status.Done);
+                int inProgressTasks = tasks.Count(t => t.Status == Core.Models.Enums.Status.InProgress);
+                int todoTasks = tasks.Count(t => t.Status == Core.Models.Enums.Status.Todo);
+
+
+                // Calculate progress percentage
+                int progressPercentage = totalTasks > 0 ? (completedTasks * 100) / totalTasks : 0;
+
+
+                // Calculate days left
+                int daysLeft = 0;
+                if (project.EndDate.HasValue)
+                {
+                    daysLeft = Math.Max(0, (project.EndDate.Value - DateTime.Today).Days);
+                }
+
+                // Get project members count
+                int membersCount = project.ProjectMembers?.Count ?? 0;
+                if (!project.ProjectMembers.Any(pm => pm.UserId == project.OwnerId))
+                {
+                    membersCount++;
+                }
+
+                projectProgressViewModels.Add(new ProjectProgressViewModel
+                {
+                    Id = project.Id,
+                    Name = project.Name,
+                    Description = project.Description,
+                    StartDate = project.StartDate,
+                    EndDate = project.EndDate,
+                    ProgressPercentage = progressPercentage,
+                    DaysLeft = daysLeft,
+                    MembersCount = membersCount,
+                    CompletedTasks = completedTasks,
+                    InProgressTasks = inProgressTasks,
+                    TodoTasks = todoTasks,
+                    OwnerId = project.OwnerId
+
+                });
+            }
+
+            var model = new ProjectsProgressViewModel
+            {
+                Projects = projectProgressViewModels
+            };
+            ViewData["owner"] = true;
+            return View("Index",model);
         }
 
 
-
         //مسئول عن عرض تفاصيل المشروع
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id,bool owner=false)
         {
+            ViewData["owner"] = owner;
             var currentUserId = _userManager.GetUserId(User);
             var project = await _projectService.GetProjectDetailsAsync(id, currentUserId);
 

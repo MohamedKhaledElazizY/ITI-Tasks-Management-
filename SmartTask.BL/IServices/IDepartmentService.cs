@@ -19,5 +19,7 @@ namespace SmartTask.BL.IServices
         Task<IEnumerable<Department>> GetAllDepartmentsAsync();
         Task<Department> GetDepartmentWithDetailsAsync(int id);
 
+        Task<IEnumerable<Department>> GetDepartmentsByBranchIdAsync(int branchId);
+
     }
 }

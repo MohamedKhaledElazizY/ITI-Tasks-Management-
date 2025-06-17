@@ -41,7 +41,7 @@ namespace SmartTask.Web.Controllers
 
             return View(viewModel);
         }
-
+        [Authorize]
         public async Task<IActionResult> WithoutDepartment(int page = 1, int pageSize = 10)
         {
 
@@ -243,6 +243,7 @@ namespace SmartTask.Web.Controllers
         //}
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Delete(string id)
         {
             try

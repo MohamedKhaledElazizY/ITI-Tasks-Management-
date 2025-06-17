@@ -88,16 +88,16 @@
 			</div>
 
 			<div class="form-group">
-				<label>Department</label>
-				<select class="form-select" asp-for="SelectedDepartmentId" asp-items="@(new SelectList(ViewBag.Departments, "Id", "Name"))">
-					<option value="">-- Select Department --</option>
+				<label>Branch</label>
+				<select class="form-select" asp-for="SelectedBranchId" asp-items="@(new SelectList(ViewBag.Branches, "Id", "Name"))" id="SelectedBranchId">
+					<option value="">-- Select Branch --</option>
 				</select>
 			</div>
 
 			<div class="form-group">
-				<label>Branch</label>
-				<select class="form-select" asp-for="SelectedBranchId" asp-items="@(new SelectList(ViewBag.Branches, "Id", "Name"))">
-					<option value="">-- Select Branch --</option>
+				<label>Department</label>
+				<select class="form-select" asp-for="SelectedDepartmentId" id="SelectedDepartmentId">
+					<option value="">-- Select Department --</option>
 				</select>
 			</div>
 
@@ -115,6 +115,8 @@
 					<option value="Active">Active</option>
 					<option value="Pending">Pending</option>
 					<option value="Completed">Completed</option>
+					<option value="Archived">Archived</option>
+					
 				</select>
 			</div>
 
@@ -138,53 +140,91 @@
 	</div>
 </div>
 
-<script src="~/lib/jquery/jquery.min.js"></script>
-<script src="~/lib/select2/js/select2.min.js"></script>
+
 
 @section Scripts {
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script>
 		$(document).ready(function () {
 			$('#userDropdown').select2({
-				tags: true,
 				placeholder: "-- Select Users --",
 				allowClear: true,
-				width: '100%',
+				width: '100%'
 			});
-		});
 
-		function loadOwners(selectedOwnerId) {
-			var branchId = $('#SelectedBranchId').val();
-			var departmentId = $('#SelectedDepartmentId').val();
+			var initialBranchId = $('#SelectedBranchId').val();
+			var initialDepartmentId = '@Model.SelectedDepartmentId';
+			var initialOwnerId = '@Model.OwnerId';
 
-			if (!branchId || !departmentId) {
-				$('#ownerDropdown').empty().append('<option value="">-- Select Owner --</option>');
-				return;
+			function loadDepartments(branchId, selectedDepartmentId, callback) {
+				$('#SelectedDepartmentId').empty().append('<option value="">-- Select Department --</option>');
+				if (!branchId) {
+					if (callback) callback();
+					return;
+				}
+				$.ajax({
+					url: '@Url.Action("GetDepartmentsByBranch", "Project")',
+					type: 'GET',
+					data: { branchId: branchId },
+					success: function (departments) {
+						$.each(departments, function (i, dept) {
+							var selected = (dept.id == selectedDepartmentId) ? 'selected' : '';
+							$('#SelectedDepartmentId').append($('<option>', {
+								value: dept.id,
+								text: dept.name,
+								selected: selected
+							}));
+						});
+						if (callback) callback();
+					}
+				});
 			}
 
-			$.ajax({
-				url: '@Url.Action("GetUsersByBranchAndDepartment", "Project")',
-				type: 'GET',
-				data: { branchId: branchId, departmentId: departmentId },
-				success: function (users) {
-					var $dropdown = $('#ownerDropdown');
-					$dropdown.empty();
-					$dropdown.append('<option value="">-- Select Owner --</option>');
-					$.each(users, function (i, user) {
-						var selected = selectedOwnerId && user.id === selectedOwnerId ? 'selected' : '';
-						$dropdown.append('<option value="' + user.id + '" ' + selected + '>' + user.fullName + '</option>');
-					});
-				}
-			});
-		}
+			function loadOwners(selectedOwnerId) {
+				var branchId = $('#SelectedBranchId').val();
+				var departmentId = $('#SelectedDepartmentId').val();
 
-		$(document).ready(function () {
-			$('#SelectedBranchId, #SelectedDepartmentId').on('change', function () {
+				$('#ownerDropdown').empty().append('<option value="">-- Select Owner --</option>');
+				if (!branchId || !departmentId) {
+					return;
+				}
+
+				$.ajax({
+					url: '@Url.Action("GetUsersByBranchAndDepartment", "Project")',
+					type: 'GET',
+					data: { branchId: branchId, departmentId: departmentId },
+					success: function (users) {
+						var $dropdown = $('#ownerDropdown');
+						$dropdown.empty().append('<option value="">-- Select Owner --</option>');
+						$.each(users, function (i, user) {
+							var selected = selectedOwnerId && user.id == selectedOwnerId ? 'selected' : '';
+							$dropdown.append('<option value="' + user.id + '" ' + selected + '>' + user.fullName + '</option>');
+						});
+					}
+				});
+			}
+
+			$('#SelectedBranchId').on('change', function () {
+				var branchId = $(this).val();
+				loadDepartments(branchId, null, function () {
+					$('#SelectedDepartmentId').val('');
+					loadOwners();
+				});
+			});
+
+			$('#SelectedDepartmentId').on('change', function () {
 				loadOwners();
 			});
 
-			var initialOwnerId = '@Model.OwnerId';
-			loadOwners(initialOwnerId);
+			if (initialBranchId) {
+				loadDepartments(initialBranchId, initialDepartmentId, function () {
+					loadOwners(initialOwnerId);
+				});
+			}
 		});
 	</script>
 }
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/lib/select2/js/select2.min.js"></script>
