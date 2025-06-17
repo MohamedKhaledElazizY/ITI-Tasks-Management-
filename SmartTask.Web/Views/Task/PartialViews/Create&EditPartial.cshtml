@@ -4,7 +4,7 @@
 
 @{
     var projects = new SelectList(ViewBag.Projects, nameof(Project.Id), nameof(Project.Name));
-    var users = new SelectList(ViewBag.Users, nameof(ApplicationUser.Id), nameof(ApplicationUser.FullName));
+    // var users = new SelectList(ViewBag.Users, nameof(ApplicationUser.Id), nameof(ApplicationUser.FullName));
     var disable = ViewBag.title == "Create" ? null : "disabled";
     var tasks = ViewBag.title == "Create" ? null : new SelectList(ViewBag.Tasks, nameof(SmartTask.Core.Models.Task.Id), nameof(SmartTask.Core.Models.Task.Title));
 
@@ -22,8 +22,11 @@
 </div>
 
 <div class="form-group mb-3">
-    <label asp-for="AssignedToId" class="control-label">Assign To</label> 
-    <select asp-items="@users" asp-for="AssignedToId" class="select2" multiple="multiple">
+    <label asp-for="AssignedToId" class="control-label">Assign To</label>
+    @* <select asp-items="@users" asp-for="AssignedToId" id="AssignToUser" class="select2" multiple="multiple"disabled> *@
+    <select  asp-for="AssignedToId" id="AssignToUser" class="select2" multiple="multiple" >
+		
+
     </select>
 </div>
 
@@ -75,16 +78,31 @@
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
+        $(document).ready(function () {
+        $('#AssignToUser').select2({
+            placeholder: "-- Select Users --",
+            allowClear: true,
+        });     
+              getTasks();//incase of edit
+    });
     function getTasks()
     {
        var selectedValue= document.getElementById('ProjectId').value;
        var tasks = document.getElementById('Task');
+       var Users = document.getElementById('AssignToUser');
        tasks.innerHTML = `<option value="">--Select Task --</option>`;
+	   Users.innerHTML = ``;
        $.ajax({
            url:"/Task/GetTaskByProject?id="+selectedValue
            ,success:function(result)
            {
+               console.log(selectedValue);
+			 if(selectedValue){
 
+			  console.log(selectedValue);
+			
+			   getUsers(selectedValue);
+             }
                for(let task of result)
                {
                    tasks.innerHTML+=`<option value="${task.id}">${task.title}</option>`
@@ -92,6 +110,32 @@
            }
        })
     }
+	function getUsers(projectId) {
+    var selectedId=document.getElementById("ProjectId").value;
+    var Users = document.getElementById('AssignToUser');
+   
+
+       $.ajax({
+           url:"/Task/GetUsersInProject?ProjectId="+selectedId
+           ,success:function(result)
+           {
+                 console.log(result);
+           
+               for(let User of result)
+               {
+                   Users.innerHTML+=`<option value="${User.id}">${User.fullName}</option>`
+               }
+           }
+            ,error:function(result)
+           {
+                 console.log(result);
+				 if(result.status === 403) {
+					 alert("You are not allowed to access Users to assign them to project.");
+				 } 
+              
+           }
+       })
+	}
 
 
 </script>

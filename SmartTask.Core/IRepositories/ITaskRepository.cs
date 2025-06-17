@@ -30,5 +30,6 @@ namespace SmartTask.Core.IRepositories
 
         Task SaveChangesAsync();
         Task UpdateTaskDates(int id, DateOnly? start, DateOnly? End);
+        Task<IEnumerable<ModelTask>> GetAllTasksPerProjectForUser(int projectId, string userId);
     }
 }

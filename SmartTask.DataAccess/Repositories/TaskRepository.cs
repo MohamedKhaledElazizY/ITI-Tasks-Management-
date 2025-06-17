@@ -194,6 +194,12 @@ namespace SmartTask.DataAccess.Repositories
 
             return await _context.Tasks.Where(t => t.ProjectId == projectId).Include(t => t.Project).ToListAsync();
         }
+        public async Task<IEnumerable<ModelTask>> GetAllTasksPerProjectForUser(int projectId, string userId)
+        {
+
+            return await _context.Tasks.Where(t => t.ProjectId == projectId && t.Assignments.Any(u => u.UserId == userId)).Include(t => t.Project).ToListAsync();
+        }
+
 
         public async Task<IEnumerable<ModelTask>> GetTasksOverviewAsync()
         {

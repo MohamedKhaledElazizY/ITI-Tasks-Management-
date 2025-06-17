@@ -1,8 +1,12 @@
 ﻿@using SmartTask.Core.Models
+@using System.Security.Claims
 @{
 	Layout = "_Layout";
 
 	ViewData["Title"] = "Calendar";
+	var UserId = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+	var UserRole = User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
 }
 
 @section Styles {
@@ -126,6 +130,27 @@
 		.fc-h-event {
 			transition: all 0.2s ease-in-out;
 		}
+
+		.tooltip-inner {
+			background-color: white !important;
+			color: #cf331f !important;
+			border: 1px solid #cf331f;
+			font-weight: bold;
+		}
+
+		.custom-tooltip-content {
+			display: flex;
+			align-items: center;
+			color: #cf331f;
+		}
+
+			.custom-tooltip-content .tooltip-text {
+				margin-left: 5px;
+			}
+
+		.tooltip.bs-tooltip-top .arrow::before {
+			border-top-color: white !important;
+		}
 	</style>
 }
 
@@ -163,6 +188,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+				
 			</div>
 		</div>
 	</div>
@@ -172,20 +198,23 @@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/js/index.global.min.js"></script>
 	<script>
+		const userRole = "@UserRole";
 		var data = [];
 
 		$(document).ready(function () {
 			var projectId = document.getElementById("SelectedProject").value;
 			$.ajax({
-				url: '@Url.Action("GetTasksForProject", "Calendar")',
+				url: '@Url.Action("GetTasksForProjectOfUser", "Calendar")',
 				method: 'GET',
-				data: { ProjectId: projectId },
+				data: { ProjectId: projectId,UserId:"@UserId" },
 				success: function (Tasks) {
 					data = Tasks;
+					console.log("hey");
 					initializeCalendar();
 				},
 				error: function () {
 					alert("Failed to load tasks.");
+							console.log("no");
 					$('#taskTable').slideDown(200);
 				}
 			});
@@ -194,9 +223,9 @@
 		function OnSelection() {
 			var projectId = document.getElementById("SelectedProject").value;
 			$.ajax({
-				url: '@Url.Action("GetTasksForProject", "Calendar")',
+				url: '@Url.Action("GetTasksForProjectOfUser", "Calendar")',
 				method: 'GET',
-				data: { ProjectId: projectId },
+				data: { ProjectId: projectId ,UserId:"@UserId" },
 				success: function (Tasks) {
 					data = Tasks;
 					initializeCalendar();
@@ -249,9 +278,9 @@
 				nowIndicator: true,
 				weekNumbers: true,
 				weekNumberCalculation: 'ISO',
-				editable: true,
-				durationEditable: true,
-				eventResizableFromStart: true,
+				editable:userRole.toLowerCase() === "admin" || userRole === "manager",
+				durationEditable: userRole.toLowerCase() === "admin" || userRole === "manager",
+				eventResizableFromStart: userRole.toLowerCase() === "admin" || userRole === "manager",
 				selectable: true,
 				dayMaxEvents: true,
 				events: data,
@@ -294,7 +323,23 @@
 					console.log(taskVM.start);
 					console.log(taskVM.end);
 					UpdateTask(taskVM);
-				}
+				},
+					eventDidMount: function(info) {
+				if (!(userRole.toLowerCase() === "admin" || userRole.toLowerCase() === "manager")) {
+			$(info.el).tooltip({
+				title: `<span class="custom-tooltip-content">
+							⚠️ <span class="tooltip-text">You are not authorized to Update this task's Timeline you must be an admin or manager!</span>
+						</span>`,
+				placement: "top",
+				trigger: "hover",
+				container: "body",
+				html: true 
+			});
+		}
+
+		}
+
+
 			});
 
 			calendar.render();

@@ -27,11 +27,12 @@ namespace SmartTask.Web.Controllers
             var projects = await _projectRepository.GetAllAsyncWithoutInclude();
 
             if (projects == null || !projects.Any())
-                return NotFound("No projects found.");
+                return View("NoProjectsFound");
 
             ViewBag.Projects = projects;    
             return View();
         }
+        [Authorize]
         public async Task<IActionResult> CalendarByUserId(string id)
         {
 
@@ -39,7 +40,7 @@ namespace SmartTask.Web.Controllers
             var projects = await _projectRepository. GetUserProjectsAsync(id);
 
             if (projects == null || !projects.Any())
-                return NotFound("No projects found.");
+                return View("NoProjectsFound");
 
             ViewBag.Projects = projects;
             return View();
@@ -69,9 +70,27 @@ namespace SmartTask.Web.Controllers
             }
             return Json(CalendarViewModels);
         }
-        public async Task<IActionResult> GetTasksForProjectOfUser(int ProjectId)
+        //public async Task<IActionResult> GetTasksForProjectOfUser(int ProjectId)
+        //{
+        //    var tasks = await _taskRepository.GetAllTasksPerProject(ProjectId);
+        //    var CalendarViewModels = new List<CalendarViewModel>();
+        //    foreach (var task in tasks)
+        //    {
+        //        var taskVM = new CalendarViewModel()
+        //        {
+        //            Id = task.Id,
+        //            Title = task.Title,
+        //            Start = task.StartDate?.ToString("yyyy-MM-dd"),
+        //            End = task.EndDate?.ToString("yyyy-MM-dd"),
+        //            TaskStatus = task.Status
+        //        };
+        //        CalendarViewModels.Add(taskVM);
+        //    }
+        //    return Json(CalendarViewModels);
+        //}
+        public async Task<IActionResult> GetTasksForProjectOfUser(int ProjectId ,string UserId)
         {
-            var tasks = await _taskRepository.GetAllTasksPerProject(ProjectId);
+            var tasks = await _taskRepository.GetAllTasksPerProjectForUser(ProjectId, UserId);
             var CalendarViewModels = new List<CalendarViewModel>();
             foreach (var task in tasks)
             {

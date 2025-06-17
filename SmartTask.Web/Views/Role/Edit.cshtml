@@ -2,113 +2,133 @@
 @using SmartTask.Core.Models.BasePermission
 
 @{
-    ViewData["Title"] = "Edit Role";
-    var controllers = (IEnumerable<MvcControllerInfo>)ViewData["Controllers"];
+	ViewData["Title"] = "Edit Role";
+	var controllers = (IEnumerable<MvcControllerInfo>)ViewData["Controllers"];
 }
 
 @section Header {
-    <link href="~/lib/jquery-bonsai/jquery.bonsai.css" rel="stylesheet" />
+	<link href="~/lib/jquery-bonsai/jquery.bonsai.css" rel="stylesheet" />
 }
 
 <div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header bg-warning text-white">
-            <h4 class="mb-0">Edit Role</h4>
-        </div>
-        <div class="card-body">
-            <form asp-action="Edit" class="needs-validation" novalidate>
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+	<div class="card shadow">
+		<div class="card-header bg-warning text-white">
+			<h4 class="mb-0">Edit Role</h4>
+		</div>
+		<div class="card-body">
+			<form asp-action="Edit" class="needs-validation" novalidate>
+				<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="mb-4">
-                    <label asp-for="Name" class="form-label fw-semibold"></label>
-                    <input asp-for="Name" class="form-control" />
-                    <span asp-validation-for="Name" class="text-danger small"></span>
-                </div>
+				<div class="mb-4">
+					<label asp-for="Name" class="form-label fw-semibold"></label>
+					<input asp-for="Name" class="form-control" />
+					<span asp-validation-for="Name" class="text-danger small"></span>
+				</div>
 
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">Access Permissions</label>
-                    <div class="border rounded p-3" style="background-color: #f8f9fa;">
-                        <ol id="tree" class="mb-0">
-                            @foreach (var controller in controllers)
-                            {
-                                var selectedController = Model?.SelectedControllers?.SingleOrDefault(c => c.Id == controller.Id);
-                                var name = controller.DisplayName ?? controller.Name;
+				<div class="mb-4">
+					<label class="form-label fw-semibold">Access Permissions</label>
+					<div class="border rounded p-3" style="background-color: #f8f9fa;">
+						<div class="d-flex justify-content-end mb-2">
+							<button type="button" id="checkAllBtn" class="btn btn-sm btn-primary">
+								<i class="bi bi-check2-square"></i> Check All
+							</button>
+						</div>
 
-                                <li class="controller mb-1" data-value="@controller.Name"
-                                @(selectedController != null ? "data-checked='1'" : "")>
-                                    <input type="hidden" class="area" value="@controller.AreaName" />
-                                    <span class="fw-bold">@name</span>
-                                    @if (controller.Actions.Any())
-                                    {
-                                        <ul>
-                                            @foreach (var action in controller.Actions)
-                                            {
-                                                var isChecked = selectedController?.Actions.Any(a => a.Id == action.Id) ?? false;
-                                                var actionName = action.DisplayName ?? action.Name;
+						<ol id="tree" class="mb-0">
+							@foreach (var controller in controllers)
+							{
+								var selectedController = Model?.SelectedControllers?.SingleOrDefault(c => c.Id == controller.Id);
+								var name = controller.DisplayName ?? controller.Name;
 
-                                                <li data-value="@action.Name"
-                                                @(isChecked ? "data-checked='1'" : "")>@actionName</li>
-                                            }
-                                        </ul>
-                                    }
-                                </li>
-                            }
-                        </ol>
-                    </div>
-                </div>
+								<li class="controller mb-1" data-value="@controller.Name"
+								@(selectedController != null ? "data-checked='1'" : "")>
+									<input type="hidden" class="area" value="@controller.AreaName" />
+									<span class="fw-bold">@name</span>
+									@if (controller.Actions.Any())
+									{
+										<ul>
+											@foreach (var action in controller.Actions)
+											{
+												var isChecked = selectedController?.Actions.Any(a => a.Id == action.Id) ?? false;
+												var actionName = action.DisplayName ?? action.Name;
 
-                <div class="d-flex justify-content-between mt-4">
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left-circle"></i> Back to List
-                    </a>
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-check-circle"></i> Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+												<li data-value="@action.Name"
+												@(isChecked ? "data-checked='1'" : "")>@actionName</li>
+											}
+										</ul>
+									}
+								</li>
+							}
+						</ol>
+					</div>
+				</div>
+
+				<div class="d-flex justify-content-between mt-4">
+					<a asp-action="Index" class="btn btn-secondary">
+						<i class="bi bi-arrow-left-circle"></i> Back to List
+					</a>
+					<button type="submit" class="btn btn-success">
+						<i class="bi bi-check-circle"></i> Save Changes
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
-    @await Html.PartialAsync("_ValidationScriptsPartial")
-    <script src="~/lib/jquery-qubit/jquery.qubit.js"></script>
-    <script src="~/lib/jquery-bonsai/jquery.bonsai.js"></script>
-    <script>
-        $(function () {
-            $('#tree').bonsai({
-                expandAll: false,
-                checkboxes: true,
-                createInputs: 'checkbox'
-            });
+	@await Html.PartialAsync("_ValidationScriptsPartial")
+	<script src="~/lib/jquery-qubit/jquery.qubit.js"></script>
+	<script src="~/lib/jquery-bonsai/jquery.bonsai.js"></script>
+	<script>
+		//My Change
+				  let allChecked = false;
 
-            $('form').submit(function () {
-                var i = 0, j = 0;
-                $('.controller > input[type="checkbox"]:checked, .controller > input[type="checkbox"]:indeterminate').each(function () {
-                    var controller = $(this);
-                    if (controller.prop('indeterminate')) {
-                        controller.prop("checked", true);
-                    }
+		$('#checkAllBtn').on('click', function () {
+			allChecked = !allChecked;
 
-                    var controllerName = 'SelectedControllers[' + i + ']';
-                    controller.prop('name', controllerName + '.Name');
+			$('#tree input[type="checkbox"]').each(function () {
+				this.checked = allChecked;
+				this.indeterminate = false;
+			});
 
-                    var area = controller.siblings('.area');
-                    area.prop('name', controllerName + '.AreaName');
+			$(this).html(allChecked ? '<i class="bi bi-x-square"></i> Uncheck All' : '<i class="bi bi-check2-square"></i> Check All');
+		});
+		//end
+		$(function () {
+			$('#tree').bonsai({
+				expandAll: false,
+				checkboxes: true,
+				createInputs: 'checkbox'
+			});
 
-                    $('ul > li > input[type="checkbox"]:checked', controller.closest('li')).each(function () {
-                        var action = $(this);
-                        var actionName = controllerName + '.Actions[' + j + '].Name';
-                        action.prop('name', actionName);
-                        j++;
-                    });
+			$('form').submit(function () {
+				var i = 0, j = 0;
+				$('.controller > input[type="checkbox"]:checked, .controller > input[type="checkbox"]:indeterminate').each(function () {
+					var controller = $(this);
+					if (controller.prop('indeterminate')) {
+						controller.prop("checked", true);
+					}
 
-                    j = 0;
-                    i++;
-                });
+					var controllerName = 'SelectedControllers[' + i + ']';
+					controller.prop('name', controllerName + '.Name');
 
-                return true;
-            });
-        });
-    </script>
+					var area = controller.siblings('.area');
+					area.prop('name', controllerName + '.AreaName');
+
+					$('ul > li > input[type="checkbox"]:checked', controller.closest('li')).each(function () {
+						var action = $(this);
+						var actionName = controllerName + '.Actions[' + j + '].Name';
+						action.prop('name', actionName);
+						j++;
+					});
+
+					j = 0;
+					i++;
+				});
+
+				return true;
+			});
+		});
+	</script>
 }

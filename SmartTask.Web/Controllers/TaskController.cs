@@ -301,7 +301,7 @@ namespace SmartTask.Web.Controllers
         [DisplayName("Create Task")]
         public async Task<IActionResult> Create()
         {
-            ViewBag.Users = await _userManager.Users.ToListAsync();
+            //ViewBag.Users = await _userManager.Users.ToListAsync();
             ViewBag.Projects = await _projectRepository.GetAllAsyncWithoutInclude();
             return View();
         }
@@ -315,7 +315,7 @@ namespace SmartTask.Web.Controllers
             taskVM.CreatedById = userId;
             if (!ModelState.IsValid)
             {
-                ViewBag.Users = await _userManager.Users.ToListAsync();
+                //ViewBag.Users = await _userManager.Users.ToListAsync();
                 ViewBag.Projects = await _projectRepository.GetAllAsyncWithoutInclude();
                 return View(taskVM);
 
@@ -380,7 +380,7 @@ namespace SmartTask.Web.Controllers
 
             var tasks = await GetTaskByProject(task.ProjectId);
             ViewBag.Tasks = JsonSerializer.Deserialize<List<TaskViewModel>>(JsonSerializer.Serialize(tasks.Value));
-            ViewBag.Users = await _userManager.Users.ToListAsync();
+            //ViewBag.Users = await _userManager.Users.ToListAsync();
             ViewBag.Projects = await _projectRepository.GetAllAsyncWithoutInclude();
             return View(taskVM);
         }
@@ -417,7 +417,7 @@ namespace SmartTask.Web.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            ViewBag.Users = await _userManager.Users.ToListAsync();
+            //ViewBag.Users = await _userManager.Users.ToListAsync();
             ViewBag.Projects = await _projectRepository.GetAllAsyncWithoutInclude();
             return View(taskVM);
         }
@@ -799,6 +799,28 @@ namespace SmartTask.Web.Controllers
             task.Status = status;
             await _taskRepository.UpdateAsync(task);
             return Ok();
+        }
+        public async Task<IActionResult> GetUsersInProject(int ProjectId)
+        {
+            var project = await _projectRepository.GetByIdAsync(ProjectId);
+            if (project is not null)
+            {
+                var users = _projectRepository.GetMembers(ProjectId);
+                List<UserVM> userList = new List<UserVM>();
+                foreach (var user in users)
+                {
+                    userList.Add(new UserVM
+                    {
+                        Id = user.Id,
+                        FullName = user.FullName
+                    });
+                }
+                return Json(userList);
+            }
+            else
+            {
+                return Json(new { message = "Select Project First" });
+            }
         }
 
     }
